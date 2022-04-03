@@ -1,0 +1,136 @@
+body {
+  margin: 0;
+/*   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif; */
+    font-family: 'Roboto';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html, body, #root {
+  height: 100%;
+  background-color: antiquewhite;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+
+/* ===== Scrollbar CSS ===== */
+  /* Firefox */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #a07d40 #e5e3dc;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 16px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #e5e3dc;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #a07d40;
+    border-radius: 10px;
+    border: 3px solid #e5e3dc;
+  }
+
+  
+
+a[target='_blank']:before {
+  content: '↪';
+}
+
+a {
+  color:rgb(0, 89, 119);
+  text-underline-offset: 2px;
+  font-size: .9rem;
+}
+
+a:hover {
+  color:rgb(0, 138, 184);
+  text-underline-offset: 1px;
+}
+
+.panel {
+  flex: none;
+  padding: 4em .5em 2em;
+  border-right: 1px dotted darkgray;
+  border-left: 1px solid white;
+  min-width: 26em;
+  width: min-content;
+  flex-grow: 1;
+  h3 {
+    span {
+      font-size: .7em;
+      font-weight: 100;
+      display: block;
+      color: gray;
+    }
+    a {
+      font-size: .7em;
+    }
+  }
+
+  .search {
+    position: sticky;
+    top: 4em;
+    z-index: 3;
+    > p {
+      width: 250px;
+      font-size: .8em;
+      text-shadow: 1px 1px 0px rgba(255,255,255,.3);
+      position: relative;
+      display: inline-flex;
+      margin: 0;
+      height: 3.5em;
+    }
+    input {
+      width: 250px;
+      background-color: antiquewhite;
+      &:focus {
+        background-color: white;
+      }
+    }
+  } 
+}
+
+.accordionSum > div {
+  align-items: center;
+  .spinner {
+    width: 30px!important;
+    height: 30px!important;
+    margin: 0;
+    position: absolute;
+    right: 3em;
+  }
+  span:last-child {
+    margin-left: .7em;
+  }
+}
+
+span.MuiBadge-root span {
+  opacity: .6;
+}
+
+button.found {
+  box-shadow: 0 -6px 0 -3px inset rgb(163, 218, 12) !important;
+}
+
+.pos {
+  margin: .5em 0;
+}
+#map {
+  position: absolute;
+  top: 120px;
+  width: 600px;
+  height: 600px;
+  ul {
+    display: none;
+  };
+}

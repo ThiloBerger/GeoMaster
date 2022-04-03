@@ -1,0 +1,41 @@
+.maxHeight300 {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.info {
+  .infoentry {
+    border-bottom: 1px solid lightgrey;
+    padding-bottom: 0.5em;
+    &:last-child {
+      border: none;
+      padding-bottom: 0;
+    }
+  }
+}
+.region {
+  position: fixed;
+  top: 5em;
+  z-index: 3;
+  margin-left: 285px;
+}
+
+button {
+  &[aria-pressed='true'].Mui-selected {
+    background-color: #1976d2;
+    color: white;
+    padding: 0 0.4em!important;;
+    font-weight: bold;
+    &:hover {
+      background-color: #11477e;
+    }
+  }
+  &[aria-pressed='false'] {
+    background-color: rgb(161, 161, 161);
+    color: white;
+    padding: 0 0.4em!important;;
+    &:hover {
+      background-color: #425970;
+    }
+  }
+}

@@ -1,0 +1,932 @@
+{
+    "response": {
+        "docs": [
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "BV043880413",
+                "layer_slug_s": "BV043880413",
+                "layer_id_s": "gpo:BV043880413",
+                "layer_geom_type_s": "Raster",
+                "dc_format_s": "GeoTIFF",
+                "dct_provenance_s": "5163= Zone 17 Kol.XXI",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "Cegléd",
+                "dc_type_s": "Topografische Karte",
+                "dct_isPartOf_sm": [
+                    "GeoPortOst"
+                ],
+                "dc_spatial_sm": [
+                    "Cegléd",
+                    "Cegléd (Region)"
+                ],
+                "dc_spatial_en_sm": [
+                    "Cegléd",
+                    "Cegléd (Region)"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/4085189-8",
+                    "http://d-nb.info/gnd/4488449-7"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_isFormatOf_s": "http://geoportost.ios-regensburg.de/image/BV043880413.tif",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/BV043880413\", \"http://schema.org/downloadUrl\": \"http://geoportost.ios-regensburg.de/image/BV043880413.tif\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(19.3297200272122, 19.8334889866724, 47.2496193499897, 46.997671898751705)",
+                "dct_requires_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV012989108",
+                "rdfs_seeAlso_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV043880413",
+                "owl_sameAs_s": "https://lod.b3kat.de/page/title/BV043880413",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/BV043880413.jpg",
+                "rdagr1_dimensionsOfMapEtc_s": "75000",
+                "maps_hasScale_i": 75000,
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/BV043880413",
+                "_version_": 1701251910895403008,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 11.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "BV043899980",
+                "layer_slug_s": "BV043899980",
+                "layer_id_s": "gpo:BV043899980",
+                "layer_geom_type_s": "Raster",
+                "dc_format_s": "GeoTIFF",
+                "dct_provenance_s": "5262= Zone 18 Kol.XX",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "Dunaföldvár",
+                "dc_type_s": "Topografische Karte",
+                "dct_isPartOf_sm": [
+                    "GeoPortOst"
+                ],
+                "dc_spatial_sm": [
+                    "Dunaföldvár",
+                    "Dunaföldvár (Region)"
+                ],
+                "dc_spatial_en_sm": [
+                    "Dunaföldvár",
+                    "Dunaföldvár (Region)"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/7577913-4",
+                    "http://d-nb.info/gnd/7577914-6"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_isFormatOf_s": "http://geoportost.ios-regensburg.de/image/BV043899980.tif",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/BV043899980\", \"http://schema.org/downloadUrl\": \"http://geoportost.ios-regensburg.de/image/BV043899980.tif\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(18.8318076453661, 19.3339874182261, 46.998875036470096, 46.748265202225504)",
+                "dct_requires_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV012989108",
+                "rdfs_seeAlso_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV043899980",
+                "owl_sameAs_s": "https://lod.b3kat.de/page/title/BV043899980",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/BV043899980.jpg",
+                "rdagr1_dimensionsOfMapEtc_s": "75000",
+                "maps_hasScale_i": 75000,
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/BV043899980",
+                "_version_": 1701251910950977536,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 11.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "BV043900010",
+                "layer_slug_s": "BV043900010",
+                "layer_id_s": "gpo:BV043900010",
+                "layer_geom_type_s": "Raster",
+                "dc_format_s": "GeoTIFF",
+                "dct_provenance_s": "5263= Zone 18 Kol.XXI",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "Kecskemét",
+                "dc_type_s": "Topografische Karte",
+                "dct_isPartOf_sm": [
+                    "GeoPortOst"
+                ],
+                "dcat_keyword_sm": [
+                    "Versteckte Karten"
+                ],
+                "dcat_keyword_en_sm": [
+                    "Hidden Maps"
+                ],
+                "dc_spatial_sm": [
+                    "Kecskemét"
+                ],
+                "dc_spatial_en_sm": [
+                    "Kecskemét"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/4097759-6"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_isFormatOf_s": "http://geoportost.ios-regensburg.de/image/BV043900010.tif",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/BV043900010\", \"http://schema.org/downloadUrl\": \"http://geoportost.ios-regensburg.de/image/BV043900010.tif\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(19.3337896565515, 19.8322981267643, 46.9987542039684, 46.749363691267604)",
+                "dct_requires_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV012989108",
+                "rdfs_seeAlso_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV043900010",
+                "owl_sameAs_s": "https://lod.b3kat.de/page/title/BV043900010",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/BV043900010.jpg",
+                "rdagr1_dimensionsOfMapEtc_s": "75000",
+                "maps_hasScale_i": 75000,
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/BV043900010",
+                "_version_": 1701251910953074688,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 11.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "BV043869627",
+                "layer_slug_s": "BV043869627",
+                "layer_id_s": "gpo:BV043869627",
+                "layer_geom_type_s": "Raster",
+                "dc_format_s": "GeoTIFF",
+                "dct_provenance_s": "5063= Zone 16 Kol.XXI",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "Nagykáta",
+                "dc_type_s": "Topografische Karte",
+                "dct_isPartOf_sm": [
+                    "Digitale Sammlungen"
+                ],
+                "dcat_keyword_sm": [
+                    "Versteckte Karten"
+                ],
+                "dcat_keyword_en_sm": [
+                    "Hidden Maps"
+                ],
+                "dc_spatial_sm": [
+                    "Nagykáta",
+                    "Komitat Pest"
+                ],
+                "dc_spatial_en_sm": [
+                    "Nagykáta",
+                    "Pest"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/4481652-2",
+                    "http://d-nb.info/gnd/4379779-9"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_isFormatOf_s": "http://geoportost.ios-regensburg.de/image/BV043869627.tif",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/BV043869627\", \"http://schema.org/downloadUrl\": \"http://geoportost.ios-regensburg.de/image/BV043869627.tif\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(19.330950534564103, 19.8320857997405, 47.4986202406295, 47.2480772095139)",
+                "dct_requires_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV012989108",
+                "rdfs_seeAlso_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV043869627",
+                "owl_sameAs_s": "https://lod.b3kat.de/page/title/BV043869627",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/BV043869627.jpg",
+                "rdagr1_dimensionsOfMapEtc_s": "75000",
+                "maps_hasScale_i": 75000,
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/BV043869627",
+                "_version_": 1701251910795788288,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 11.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "BV044703591",
+                "layer_slug_s": "BV044703591",
+                "layer_id_s": "gpo:BV044703591",
+                "layer_geom_type_s": "Raster",
+                "dc_format_s": "GeoTIFF",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "Plan von Budapest mit kurzem Wegweiser und Straßenverzeichnis",
+                "dc_type_s": "Stadtplan",
+                "dct_isPartOf_sm": [
+                    "GeoPortOst"
+                ],
+                "dct_issued_s": "18…",
+                "solr_year_i": 1800,
+                "dc_spatial_sm": [
+                    "Budapest"
+                ],
+                "dc_spatial_en_sm": [
+                    "Budapest"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/4008684-7"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_isFormatOf_s": "http://geoportost.ios-regensburg.de/image/BV044703591.tif",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/BV044703591\", \"http://schema.org/downloadUrl\": \"http://geoportost.ios-regensburg.de/image/BV044703591.tif\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(19.0208841327912, 19.0936208363234, 47.5247543309289, 47.466084154891995)",
+                "rdfs_seeAlso_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV044703591",
+                "owl_sameAs_s": "https://lod.b3kat.de/page/title/BV044703591",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/BV044703591.jpg",
+                "rdagr1_dimensionsOfMapEtc_s": "[Ca. 1:15000]",
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/BV044703591",
+                "_version_": 1701251911662960640,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 11.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "BV043880228",
+                "layer_slug_s": "BV043880228",
+                "layer_id_s": "gpo:BV043880228",
+                "layer_geom_type_s": "Raster",
+                "dc_format_s": "GeoTIFF",
+                "dct_provenance_s": "5162= Zone 17 Kol.XX",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "Rác-Adony",
+                "dc_type_s": "Topografische Karte",
+                "dct_isPartOf_sm": [
+                    "GeoPortOst"
+                ],
+                "dc_spatial_sm": [
+                    "Adony",
+                    "Adony (Region)"
+                ],
+                "dc_spatial_en_sm": [
+                    "Adony",
+                    "Adony (Region)"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/4845409-6"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_isFormatOf_s": "http://geoportost.ios-regensburg.de/image/BV043880228.tif",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/BV043880228\", \"http://schema.org/downloadUrl\": \"http://geoportost.ios-regensburg.de/image/BV043880228.tif\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(18.832695426631, 19.3351175375895, 47.2493998909199, 46.99884957802529)",
+                "dct_requires_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV012989108",
+                "rdfs_seeAlso_s": "https://www.regensburger-katalog.de/s/ubrwios/de/2/1035/BV043880228",
+                "owl_sameAs_s": "https://lod.b3kat.de/page/title/BV043880228",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/BV043880228.jpg",
+                "rdagr1_dimensionsOfMapEtc_s": "75000",
+                "maps_hasScale_i": 75000,
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/BV043880228",
+                "_version_": 1701251910880722944,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 11.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "gbvppn_743631862_58_1",
+                "layer_slug_s": "gbvppn_743631862_58_1",
+                "layer_id_s": "gpo:gbvppn_743631862_58_1",
+                "dct_provenance_s": "58",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "2 Ofen-Pest",
+                "dc_type_s": "Stadtplan",
+                "dct_isPartOf_sm": [
+                    "gei digital"
+                ],
+                "dcat_keyword_sm": [
+                    "Versteckte Karten"
+                ],
+                "dcat_keyword_en_sm": [
+                    "Hidden Maps"
+                ],
+                "dct_issued_s": "1912",
+                "solr_year_i": 1912,
+                "dc_spatial_sm": [
+                    "Budapest"
+                ],
+                "dc_spatial_en_sm": [
+                    "Budapest"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/4008684-7"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/gbvppn_743631862_58_1\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(18.7074724666717, 19.417107087235998, 47.7306107348141, 47.32182488706739)",
+                "dct_requires_s": "http://opac.lbs-braunschweig.gbv.de/DB=6.1/PPN?PPN=743631862",
+                "dct_replaces_s": "http://gei-digital.gei.de/viewer/resolver?urn=urn%3Anbn%3Ade%3A0220-gd-14179947",
+                "rdfs_seeAlso_s": "http://gei-digital.gei.de/viewer/!metadata/PPN743631862/58/-/",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/gbvppn_743631862_58_1.jpg",
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/gbvppn_743631862_58_1",
+                "_version_": 1701251920403890176,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 1.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "gbvppn_679423346_93_1",
+                "layer_slug_s": "gbvppn_679423346_93_1",
+                "layer_id_s": "gpo:gbvppn_679423346_93_1",
+                "dct_provenance_s": "93",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "2. Pyrenäenfriede 1659",
+                "dc_type_s": "Geschichtskarte",
+                "dct_isPartOf_sm": [
+                    "gei digital"
+                ],
+                "dcat_keyword_sm": [
+                    "Versteckte Karten"
+                ],
+                "dcat_keyword_en_sm": [
+                    "Hidden Maps"
+                ],
+                "dct_issued_s": "1918",
+                "solr_year_i": 1918,
+                "dc_spatial_sm": [
+                    "Mitteleuropa"
+                ],
+                "dc_spatial_en_sm": [
+                    "Central Europe"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/4039677-0"
+                ],
+                "dc_subject_sm": [
+                    "Pyrenäenfriede"
+                ],
+                "dc_subject_en_sm": [
+                    "Pyrenäenfriede"
+                ],
+                "dct_temporal_sm": [
+                    "1659/1659"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/gbvppn_679423346_93_1\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(-2.90427338554859, 26.650443883580298, 56.8104155694057, 41.373210640146496)",
+                "dct_requires_s": "http://opac.lbs-braunschweig.gbv.de/DB=6.1/PPN?PPN=679423346",
+                "dct_replaces_s": "http://gei-digital.gei.de/viewer/resolver?urn=urn%3Anbn%3Ade%3A0220-gd-5464579",
+                "rdfs_seeAlso_s": "http://gei-digital.gei.de/viewer/!metadata/PPN679423346/93/-/",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/gbvppn_679423346_93_1.jpg",
+                "rdagr1_dimensionsOfMapEtc_s": "30000000",
+                "maps_hasScale_i": 30000000,
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/gbvppn_679423346_93_1",
+                "_version_": 1701251916929957888,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 1.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "gbvppn_679404570_71",
+                "layer_slug_s": "gbvppn_679404570_71",
+                "layer_id_s": "gpo:gbvppn_679404570_71",
+                "dct_provenance_s": "71",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "20. Europa im 16. Jahrhundert (1559)",
+                "dc_type_s": "Geschichtskarte",
+                "dct_isPartOf_sm": [
+                    "gei digital"
+                ],
+                "dcat_keyword_sm": [
+                    "Versteckte Karten"
+                ],
+                "dcat_keyword_en_sm": [
+                    "Hidden Maps"
+                ],
+                "dct_issued_s": "1896",
+                "solr_year_i": 1896,
+                "dc_spatial_sm": [
+                    "Europa"
+                ],
+                "dc_spatial_en_sm": [
+                    "Europe"
+                ],
+                "dct_temporal_sm": [
+                    "1559/1559"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/gbvppn_679404570_71\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(-18.9373033695315, 40.5488285396778, 61.05712116617121, 29.8149577825833)",
+                "dct_requires_s": "http://opac.lbs-braunschweig.gbv.de/DB=6.1/PPN?PPN=679404570",
+                "dct_replaces_s": "http://gei-digital.gei.de/viewer/resolver?urn=urn%3Anbn%3Ade%3A0220-gd-5458181",
+                "rdfs_seeAlso_s": "http://gei-digital.gei.de/viewer/!metadata/PPN679404570/71/-/",
+                "dct_relation_sm": [
+                    "http://gei-digital.gei.de/viewer/resolver?urn=urn%3Anbn%3Ade%3A0220-gd-5457616"
+                ],
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/gbvppn_679404570_71.jpg",
+                "rdagr1_dimensionsOfMapEtc_s": "15000000",
+                "maps_hasScale_i": 15000000,
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/gbvppn_679404570_71",
+                "_version_": 1701251916278792192,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 1.0
+            },
+            {
+                "geoblacklight_version": "1.0",
+                "dc_identifier_s": "gbvppn_68332554X_26",
+                "layer_slug_s": "gbvppn_68332554X_26",
+                "layer_id_s": "gpo:gbvppn_68332554X_26",
+                "dct_provenance_s": "26",
+                "dc_language_s": "ger",
+                "dc_rights_s": "Public",
+                "dc_title_s": "20. Nord u. Ost-Europa im Jahre 1310",
+                "dc_type_s": "Geschichtskarte",
+                "dct_isPartOf_sm": [
+                    "gei digital"
+                ],
+                "dcat_keyword_sm": [
+                    "Versteckte Karten"
+                ],
+                "dcat_keyword_en_sm": [
+                    "Hidden Maps"
+                ],
+                "dct_issued_s": "1879",
+                "solr_year_i": 1879,
+                "dc_spatial_sm": [
+                    "Nordeuropa",
+                    "Osteuropa"
+                ],
+                "dc_spatial_en_sm": [
+                    "Northern Europe",
+                    "Eastern Europe"
+                ],
+                "dct_spatial_sm": [
+                    "http://d-nb.info/gnd/4075739-0"
+                ],
+                "dct_temporal_sm": [
+                    "1310/1310"
+                ],
+                "dct_license_s": "Public Domain",
+                "dct_references_s": "{\"http://schema.org/url\": \"http://geoportost.ios-regensburg.de/map/gbvppn_68332554X_26\", \"http://www.opengis.net/def/serviceType/ogc/wms\": \"http://geoportost.ios-regensburg.de:8080/geoserver/wms\"}",
+                "solr_geom": "ENVELOPE(8.45266607062537, 55.94758018870439, 63.015581978370896, 41.207203522065605)",
+                "dct_requires_s": "http://opac.lbs-braunschweig.gbv.de/DB=6.1/PPN?PPN=68332554X",
+                "dct_replaces_s": "http://gei-digital.gei.de/viewer/resolver?urn=urn%3Anbn%3Ade%3A0220-gd-5610555",
+                "rdfs_seeAlso_s": "http://gei-digital.gei.de/viewer/!metadata/PPN68332554X/26/-/",
+                "thumbnail_path_ss": "http://geoportost.ios-regensburg.de/image/thumbnail/gbvppn_68332554X_26.jpg",
+                "bibo_uri_s": "http://geoportost.ios-regensburg.de/map/gbvppn_68332554X_26",
+                "_version_": 1701251917227753472,
+                "timestamp": "2021-05-31T05:50:37.652Z",
+                "score": 1.0
+            }
+        ],
+        "facets": [
+            {
+                "name": "dct_isPartOf_sm",
+                "items": [
+                    {
+                        "value": "IEG-Maps",
+                        "hits": 336,
+                        "label": "IEG-Maps"
+                    },
+                    {
+                        "value": "gei digital",
+                        "hits": 325,
+                        "label": "gei digital"
+                    },
+                    {
+                        "value": "GeoPortOst",
+                        "hits": 196,
+                        "label": "GeoPortOst"
+                    },
+                    {
+                        "value": "Ethnodoc",
+                        "hits": 160,
+                        "label": "Ethnodoc"
+                    },
+                    {
+                        "value": "Eisenbahnnetz_Südosteuropa 1888-1941",
+                        "hits": 104,
+                        "label": "Eisenbahnnetz_Südosteuropa 1888-1941"
+                    },
+                    {
+                        "value": "OstDok",
+                        "hits": 64,
+                        "label": "OstDok"
+                    },
+                    {
+                        "value": "Online-Handbuch zur Geschichte Südosteuropas",
+                        "hits": 26,
+                        "label": "Online-Handbuch zur Geschichte Südosteuropas"
+                    },
+                    {
+                        "value": "Digitale Sammlungen",
+                        "hits": 20,
+                        "label": "Digitale Sammlungen"
+                    }
+                ],
+                "label": "Project"
+            },
+            {
+                "name": "dc_type_s",
+                "items": [
+                    {
+                        "value": "Geschichtskarte",
+                        "hits": 623,
+                        "label": "Geschichtskarte"
+                    },
+                    {
+                        "value": "Bevölkerungskarte",
+                        "hits": 216,
+                        "label": "Bevölkerungskarte"
+                    },
+                    {
+                        "value": "Topografische Karte",
+                        "hits": 140,
+                        "label": "Topografische Karte"
+                    },
+                    {
+                        "value": "Verkehrskarte",
+                        "hits": 122,
+                        "label": "Verkehrskarte"
+                    },
+                    {
+                        "value": "Wirtschaftskarte",
+                        "hits": 49,
+                        "label": "Wirtschaftskarte"
+                    },
+                    {
+                        "value": "Altkarte",
+                        "hits": 45,
+                        "label": "Altkarte"
+                    },
+                    {
+                        "value": "Politische Karte",
+                        "hits": 16,
+                        "label": "Politische Karte"
+                    },
+                    {
+                        "value": "Stadtplan",
+                        "hits": 4,
+                        "label": "Stadtplan"
+                    },
+                    {
+                        "value": "Geologische Karte",
+                        "hits": 3,
+                        "label": "Geologische Karte"
+                    }
+                ],
+                "label": "Map Type"
+            },
+            {
+                "name": "maps_hasScale_i",
+                "items": [
+                    {
+                        "value": "15000000",
+                        "hits": 28,
+                        "label": "15000000"
+                    },
+                    {
+                        "value": "1000000",
+                        "hits": 23,
+                        "label": "1000000"
+                    },
+                    {
+                        "value": "6000000",
+                        "hits": 20,
+                        "label": "6000000"
+                    },
+                    {
+                        "value": "75000",
+                        "hits": 17,
+                        "label": "75000"
+                    },
+                    {
+                        "value": "5000000",
+                        "hits": 14,
+                        "label": "5000000"
+                    },
+                    {
+                        "value": "1500000",
+                        "hits": 13,
+                        "label": "1500000"
+                    },
+                    {
+                        "value": "2500000",
+                        "hits": 13,
+                        "label": "2500000"
+                    },
+                    {
+                        "value": "9000000",
+                        "hits": 13,
+                        "label": "9000000"
+                    },
+                    {
+                        "value": "20000000",
+                        "hits": 13,
+                        "label": "20000000"
+                    },
+                    {
+                        "value": "12000000",
+                        "hits": 12,
+                        "label": "12000000"
+                    }
+                ],
+                "label": "Map Scale"
+            },
+            {
+                "name": "dcat_theme_sm",
+                "items": [
+                    {
+                        "value": "Ethnografie",
+                        "hits": 150,
+                        "label": "Ethnografie"
+                    },
+                    {
+                        "value": "Migration",
+                        "hits": 82,
+                        "label": "Migration"
+                    },
+                    {
+                        "value": "Eisenbahn",
+                        "hits": 75,
+                        "label": "Eisenbahn"
+                    },
+                    {
+                        "value": "Militärgeschichte",
+                        "hits": 63,
+                        "label": "Militärgeschichte"
+                    },
+                    {
+                        "value": "Infrastruktur",
+                        "hits": 34,
+                        "label": "Infrastruktur"
+                    }
+                ],
+                "label": "Theme"
+            },
+            {
+                "name": "dcat_keyword_sm",
+                "items": [
+                    {
+                        "value": "Versteckte Karten",
+                        "hits": 618,
+                        "label": "Versteckte Karten"
+                    }
+                ],
+                "label": "Keyword"
+            },
+            {
+                "name": "dc_subject_sm",
+                "items": [
+                    {
+                        "value": "Eisenbahnnetz",
+                        "hits": 75,
+                        "label": "Eisenbahnnetz"
+                    },
+                    {
+                        "value": "Siedlung",
+                        "hits": 69,
+                        "label": "Siedlung"
+                    },
+                    {
+                        "value": "Migration",
+                        "hits": 49,
+                        "label": "Migration"
+                    },
+                    {
+                        "value": "Deutscher Zollverein",
+                        "hits": 36,
+                        "label": "Deutscher Zollverein"
+                    },
+                    {
+                        "value": "Deutsche",
+                        "hits": 30,
+                        "label": "Deutsche"
+                    },
+                    {
+                        "value": "Slowaken",
+                        "hits": 26,
+                        "label": "Slowaken"
+                    },
+                    {
+                        "value": "Serben",
+                        "hits": 25,
+                        "label": "Serben"
+                    },
+                    {
+                        "value": "Statistik",
+                        "hits": 25,
+                        "label": "Statistik"
+                    },
+                    {
+                        "value": "Landwirtschaft",
+                        "hits": 24,
+                        "label": "Landwirtschaft"
+                    }
+                ],
+                "label": "Subject"
+            },
+            {
+                "name": "dc_spatial_sm",
+                "items": [
+                    {
+                        "value": "Europa",
+                        "hits": 184,
+                        "label": "Europa"
+                    },
+                    {
+                        "value": "Ungarn",
+                        "hits": 103,
+                        "label": "Ungarn"
+                    },
+                    {
+                        "value": "Deutschland",
+                        "hits": 101,
+                        "label": "Deutschland"
+                    },
+                    {
+                        "value": "Südosteuropa",
+                        "hits": 87,
+                        "label": "Südosteuropa"
+                    },
+                    {
+                        "value": "Balkanhalbinsel",
+                        "hits": 79,
+                        "label": "Balkanhalbinsel"
+                    },
+                    {
+                        "value": "Jugoslawien",
+                        "hits": 70,
+                        "label": "Jugoslawien"
+                    },
+                    {
+                        "value": "Russland",
+                        "hits": 58,
+                        "label": "Russland"
+                    },
+                    {
+                        "value": "Mitteleuropa",
+                        "hits": 53,
+                        "label": "Mitteleuropa"
+                    },
+                    {
+                        "value": "Österreich-Ungarn",
+                        "hits": 53,
+                        "label": "Österreich-Ungarn"
+                    }
+                ],
+                "label": "Place"
+            },
+            {
+                "name": "dc_creator_sm",
+                "items": [
+                    {
+                        "value": "Kunz, Andreas",
+                        "hits": 305,
+                        "label": "Kunz, Andreas"
+                    },
+                    {
+                        "value": "Moeschl, Joachim Robert",
+                        "hits": 233,
+                        "label": "Moeschl, Joachim Robert"
+                    },
+                    {
+                        "value": "Bottlik, Zsolt",
+                        "hits": 100,
+                        "label": "Bottlik, Zsolt"
+                    },
+                    {
+                        "value": "Hofinger, Veronika",
+                        "hits": 60,
+                        "label": "Hofinger, Veronika"
+                    },
+                    {
+                        "value": "Treiling, Thomas",
+                        "hits": 40,
+                        "label": "Treiling, Thomas"
+                    },
+                    {
+                        "value": "Kunz, Andreas ; Röss, Wolf ; Moeschl, Joachim Robert ",
+                        "hits": 28,
+                        "label": "Kunz, Andreas ; Röss, Wolf ; Moeschl, Joachim Robert "
+                    },
+                    {
+                        "value": "Zwick, J.",
+                        "hits": 26,
+                        "label": "Zwick, J."
+                    },
+                    {
+                        "value": "Petrovskij, A.N.",
+                        "hits": 22,
+                        "label": "Petrovskij, A.N."
+                    },
+                    {
+                        "value": "Zverinskij, V.V.",
+                        "hits": 10,
+                        "label": "Zverinskij, V.V."
+                    }
+                ],
+                "label": "Author"
+            },
+            {
+                "name": "dc_publisher_s",
+                "items": [],
+                "label": "Publisher"
+            },
+            {
+                "name": "solr_year_i",
+                "items": [
+                    {
+                        "value": "2004",
+                        "hits": 153,
+                        "label": "2004"
+                    },
+                    {
+                        "value": "2018",
+                        "hits": 100,
+                        "label": "2018"
+                    },
+                    {
+                        "value": "2003",
+                        "hits": 59,
+                        "label": "2003"
+                    },
+                    {
+                        "value": "1880",
+                        "hits": 56,
+                        "label": "1880"
+                    },
+                    {
+                        "value": "2008",
+                        "hits": 54,
+                        "label": "2008"
+                    },
+                    {
+                        "value": "1918",
+                        "hits": 45,
+                        "label": "1918"
+                    },
+                    {
+                        "value": "2001",
+                        "hits": 40,
+                        "label": "2001"
+                    },
+                    {
+                        "value": "2005",
+                        "hits": 36,
+                        "label": "2005"
+                    },
+                    {
+                        "value": "1903",
+                        "hits": 33,
+                        "label": "1903"
+                    },
+                    {
+                        "value": "1913",
+                        "hits": 32,
+                        "label": "1913"
+                    }
+                ],
+                "label": "Publication Year"
+            },
+            {
+                "name": "dct_license_s",
+                "items": [
+                    {
+                        "value": "Public Domain",
+                        "hits": 544,
+                        "label": "Public Domain"
+                    },
+                    {
+                        "value": "CC BY-NC 4.0",
+                        "hits": 522,
+                        "label": "CC BY-NC 4.0"
+                    },
+                    {
+                        "value": "Copyright",
+                        "hits": 61,
+                        "label": "Copyright"
+                    }
+                ],
+                "label": "License"
+            },
+            {
+                "name": "dc_rights_s",
+                "items": [
+                    {
+                        "value": "Public",
+                        "hits": 1127,
+                        "label": "Public"
+                    },
+                    {
+                        "value": "Restricted",
+                        "hits": 104,
+                        "label": "Restricted"
+                    }
+                ],
+                "label": "Access"
+            },
+            {
+                "name": "layer_geom_type_s",
+                "items": [
+                    {
+                        "value": "Raster",
+                        "hits": 406,
+                        "label": "Raster"
+                    }
+                ],
+                "label": "Data Type"
+            },
+            {
+                "name": "dc_format_s",
+                "items": [
+                    {
+                        "value": "GeoTIFF",
+                        "hits": 406,
+                        "label": "GeoTIFF"
+                    }
+                ],
+                "label": "Format"
+            }
+        ],
+        "pages": {
+            "current_page": 1,
+            "next_page": 2,
+            "prev_page": null,
+            "total_pages": 124,
+            "limit_value": 10,
+            "offset_value": 0,
+            "total_count": 1231,
+            "first_page?": true,
+            "last_page?": false
+        }
+    }
+}

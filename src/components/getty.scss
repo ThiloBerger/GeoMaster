@@ -1,0 +1,32 @@
+.note {
+    background-color: rgba(255,255,255,.7);
+    padding: .5em;
+    border: 1px solid brown;
+    border-radius: .3em;
+    box-shadow: 2px 2px 2px 0 rgba(0,0,0,.1);
+    margin-bottom: 1em;
+    p:first-child {
+        margin: 0 0 0.5em;
+    }
+}
+.names {
+    .namesentry {
+        margin: 0 0 .25em .5em;
+        em {
+            color: gray;
+        }
+    }
+}
+.facts {
+    .factsentry {
+        border-bottom: 1px solid lightgrey;
+        padding-bottom: .5em;
+        &:last-child {
+            border: none;
+            padding-bottom: 0;
+        }
+    }
+}
+.lh14 {
+    line-height: 1.4em;
+}
