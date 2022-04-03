@@ -140,11 +140,12 @@ export class LOB {
           </i>
         ));
       };
-      static extractString(item: string[]): string {
-        if (item.length === 1) return item[0];
-        let x = '';
-        item.forEach((e) => (x += `${e} ─ `));
-        return x.replace(/─ $/g, '');
+      static extractString(item: string[]): ReactElement {
+        if (item.length === 1) return <p className='alternate'><em>item[0]</em></p>;
+/*        let x = '';
+         item.forEach((e) => (x += `${e} ─ `));
+        return x.replace(/─ $/g, ''); */
+        return <p className='alternate'>{item.map((s,i) => <em key={i}>{s}</em>)}</p>
       }; 
       static extractStringAsBlock(item: string[]): ReactElement[] {
 

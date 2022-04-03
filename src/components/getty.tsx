@@ -1,14 +1,13 @@
+import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
+import { AutoStories, ExpandMore, FactCheck, Language } from '@mui/icons-material';
+import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { getGettyNoteAndNames, getGettyPlaceTypes } from '../service/api';
+import { GettyItem } from '../interfaces/gettyJson';
+import { HREF } from './piglets/Link';
 import { PanelProps } from '../interfaces/panelProps';
 
 import './getty.scss';
-import { GettyItem } from '../interfaces/gettyJson';
-import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
-import { HREF } from './piglets/Link';
-import { AutoStories, ExpandMore, FactCheck, Language } from '@mui/icons-material';
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material';
-
 
 export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearchIds}): ReactElement => {
     
@@ -65,14 +64,12 @@ export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearch
             
             {data.filter(f=>f.lab).length > 0 && (
               <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMore />}
-                  className='accordionSum'
-                >
-                  <Language /><span>andere Namen und Sprachvarianten ({data.filter(f=>f.lab).length})</span>
+                <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+                  <Badge badgeContent={data.filter(f=>f.lab).length} color="primary"><Language /></Badge>
+                  <span>andere Namen und Sprachvarianten</span>
                 </AccordionSummary>
                 <AccordionDetails className='names'>
-                  <div className='geonameslist'>
+                  <div className='tablelist'>
                     {
                       data.filter(f=>f.lab).map((s, i) => 
                         <p key={`name${i}`}>
@@ -94,11 +91,9 @@ export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearch
 
             {data.filter(f=>f.ScopeNote).length > 0 && (
               <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMore />}
-                  className='accordionSum'
-                >
-                  <AutoStories /><span>Note\Summary:</span>
+                <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+                  <AutoStories />
+                  <span>Note\Summary:</span>
                 </AccordionSummary>
                 <AccordionDetails className='names'>
                   <div className='facts lh14'>
@@ -112,13 +107,11 @@ export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearch
               </Accordion>
             )}
 
-            {data.filter(f=>f.lab).length > 0 && (
+            {places.filter(f=>f.objectID && f.comment).length > 0 && (
               <Accordion>
-                <AccordionSummary
-                  expandIcon={<ExpandMore />}
-                  className='accordionSum'
-                >
-                  <FactCheck /><span>Facts:</span>
+                <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+                  <Badge badgeContent={places.filter(f=>f.objectID && f.comment).length} color="primary"><FactCheck /></Badge>
+                  <span>Facts:</span>
                 </AccordionSummary>
                 <AccordionDetails className='names'>
                   <div className='facts'>

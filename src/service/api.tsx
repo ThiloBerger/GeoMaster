@@ -39,7 +39,11 @@ export const getOverpassLayer = async (wdId: string, [lon, lat]: LngLat): Promis
   return await response.json();
 }
 
-
+export const testtest = async (): Promise<{}> => {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&osm_id=62649&osm_type=R&polygon_geojson=1`;
+  const response = await fetch(url)
+  return await response.json();
+}
 
 export const getGeonamesSearch = async (search: string, lang: Lang, option: string[]): Promise<GeonamesSearch> => {
   const de = option?.includes('DE') ? 'de' : '';

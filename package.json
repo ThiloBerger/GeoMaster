@@ -15,6 +15,7 @@
     "@types/jest": "^27.4.1",
     "@types/node": "^16.11.26",
     "@types/node-sass": "^4.11.2",
+    "framer-motion": "^6.2.8",
     "node-sass": "^7.0.1",
     "ol": "^6.13.0",
     "osmtogeojson": "^3.0.0-beta.4",

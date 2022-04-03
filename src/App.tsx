@@ -1,69 +1,21 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
+import { Button } from '@mui/material';
+import { CheckBoxOutlineBlankTwoTone, CheckBoxTwoTone, SwitchLeft} from '@mui/icons-material';
 import { FunctionComponent, ReactElement, useState } from 'react';
-import { Wikidata } from './components/wikidata';
-import { Gov } from './components/gov';
-import { Getty } from './components/getty';
-import { Lang } from './types/lang';
-import { Lobid } from './components/lobid';
-import { Button, ButtonGroup } from '@mui/material';
-import { ArrowLeft, ArrowRight, CheckBoxOutlineBlankTwoTone, CheckBoxTwoTone } from '@mui/icons-material';
-
-import { MapPopup } from './components/piglets/MapPopup';
-import { ListID } from './interfaces/listID';
-import { Slub } from './components/slub';
 import { Geonames } from './components/geonames';
-
-
+import { GeoPortOst } from './components/geoportost';
+import { Getty } from './components/getty';
+import { Gov } from './components/gov';
+import { Lang } from './types/lang';
+import { ListID } from './interfaces/listID';
+import { Lobid } from './components/lobid';
+import { MapPopup } from './components/piglets/MapPopup';
+import { Slub } from './components/slub';
+import { Wikidata } from './components/wikidata';
 
 import '@fontsource/roboto'
 import './App.scss';
-import { GeoPortOst } from './components/geoportost';
-/* import { GeoPortOst } from './components/geoportost'; */
+
 export const App: FunctionComponent = (): ReactElement => {
-  
-
-/*     const [isDown, setIsDown] = useState(false);
-    const [startX, setStartX] = useState(0);
-    const [scrollLeft, setScrollLeft] = useState(0);
-
-useEffect(() => {
-
-    const slider = document.querySelector('.horizontal') as HTMLElement;
-
-    
-    if (slider) {
-    slider.addEventListener('mousedown', (e: any) => {
-      setIsDown(true);
-      slider.classList.add('active');
-      setStartX(e.pageX - slider.offsetLeft);
-      setScrollLeft(slider.scrollLeft);
-    });
-    slider.addEventListener('mouseleave', () => {
-      setIsDown(false);
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mouseup', () => {
-      setIsDown(false);
-      slider.classList.remove('active');
-    });
-    slider.addEventListener('mousemove', (e: any) => {
-      if(!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - slider.offsetLeft;
-      const walk = (x - startX) * 3; //scroll-fast
-      slider.scrollLeft = scrollLeft - walk;
-      console.log(walk);
-    });
-  
-    }
-    console.log(slider);
-}, [isDown, scrollLeft, startX]);
- */
-
-
-
-
-
 
   const lang = Lang.DE;
   const [showWikidata, setShowWikidata] = useState<boolean>(true);
@@ -160,43 +112,36 @@ useEffect(() => {
           {searchIds.geoportost.status && <div></div>}
       </div>
       <div data-buttons>
-        <ButtonGroup variant='contained' style={{order: buttonOrder.findIndex((i) => i === 1)}}>
-          <Button onClick={()=>sort(1,-1)}><ArrowLeft /></Button>
-          <Button onClick={()=>onClickWikidataHandler()} className={searchIds.wikidata.id !== '' ? 'found': ''}>Wikidata&nbsp;{showWikidata?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
-          <Button onClick={()=>sort(1,1)}><ArrowRight /></Button>
-        </ButtonGroup>
-        <ButtonGroup variant='contained' style={{order: buttonOrder.findIndex((i) => i === 2)}}>
-          <Button onClick={()=>sort(2,-1)}><ArrowLeft /></Button>
-          <Button onClick={()=>onClickGovHandler()} className={searchIds.gov.id !== '' ? 'found': ''}>GOV&nbsp;{showGov?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
-          <Button onClick={()=>sort(2,1)}><ArrowRight /></Button>
-        </ButtonGroup>
-        <ButtonGroup variant='contained' style={{order: buttonOrder.findIndex((i) => i === 3)}}>
-          <Button onClick={()=>sort(3,-1)}><ArrowLeft /></Button>
-          <Button onClick={()=>onClickLobidHandler()} className={searchIds.lobid.id !== '' ? 'found': ''}>LOBID&nbsp;{showLobid?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
-          <Button onClick={()=>sort(3,1)}><ArrowRight /></Button>
-        </ButtonGroup>
-        <ButtonGroup variant='contained' style={{order: buttonOrder.findIndex((i) => i === 4)}}>
-          <Button onClick={()=>sort(4,-1)}><ArrowLeft /></Button>
-          <Button onClick={()=>onClickGettyHandler()} className={searchIds.getty.id !== '' ? 'found': ''}>GETTY TGN&nbsp;{showGetty?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
-          <Button onClick={()=>sort(4,1)}><ArrowRight /></Button>
-        </ButtonGroup>
-        <ButtonGroup variant='contained' style={{order: buttonOrder.findIndex((i) => i === 5)}}>
-          <Button onClick={()=>sort(5,-1)}><ArrowLeft /></Button>
-          <Button onClick={()=>onClickGeonamesHandler()} className={searchIds.geonames.id !== '' ? 'found': ''}>GeoNames&nbsp;{showGeonames?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
-          <Button onClick={()=>sort(5,1)}><ArrowRight /></Button>
-        </ButtonGroup>
-        <ButtonGroup variant='contained' style={{order: buttonOrder.findIndex((i) => i === 6)}}>
-          <Button onClick={()=>sort(6,-1)}><ArrowLeft /></Button>
-          <Button onClick={()=>onClickSlubHandler()} className={searchIds.slub.id !== '' ? 'found': ''}>SLUB Maps&nbsp;{showSlub?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
-          <Button onClick={()=>sort(6,1)}><ArrowRight /></Button>
-        </ButtonGroup>
-        <ButtonGroup variant='contained' style={{order: buttonOrder.findIndex((i) => i === 7)}}>
-          <Button onClick={()=>sort(7,-1)}><ArrowLeft /></Button>
-          <Button onClick={()=>onClickGeoPortOstHandler()} className={searchIds.slub.id !== '' ? 'found': ''}>GeoPortOst&nbsp;{showGeoPortOst?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
-          <Button onClick={()=>sort(7,1)}><ArrowRight /></Button>
-        </ButtonGroup>
+        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 1)}}>
+          <Button variant='contained' onClick={()=>sort(1,-1)}><SwitchLeft /></Button>
+          <Button variant='contained' onClick={()=>onClickWikidataHandler()} className={searchIds.wikidata.id !== '' ? 'found': ''}>Wikidata&nbsp;{showWikidata?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
+        </div>
+        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 2)}}>
+          <Button variant='contained' onClick={()=>sort(2,-1)}><SwitchLeft /></Button>
+          <Button variant='contained' onClick={()=>onClickGovHandler()} className={searchIds.gov.id !== '' ? 'found': ''}>GOV&nbsp;{showGov?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
+        </div>
+        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 3)}}>
+          <Button variant='contained' onClick={()=>sort(3,-1)}><SwitchLeft /></Button>
+          <Button variant='contained' onClick={()=>onClickLobidHandler()} className={searchIds.lobid.id !== '' ? 'found': ''}>GND&nbsp;{showLobid?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
+        </div>
+        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 4)}}>
+          <Button variant='contained' onClick={()=>sort(4,-1)}><SwitchLeft /></Button>
+          <Button variant='contained' onClick={()=>onClickGettyHandler()} className={searchIds.getty.id !== '' ? 'found': ''}>TGN&nbsp;{showGetty?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
+        </div>
+        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 5)}}>
+          <Button variant='contained' onClick={()=>sort(5,-1)}><SwitchLeft /></Button>
+          <Button variant='contained' onClick={()=>onClickGeonamesHandler()} className={searchIds.geonames.id !== '' ? 'found': ''}>GeoNames&nbsp;{showGeonames?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
+        </div>
+        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 6)}}>
+          <Button variant='contained' onClick={()=>sort(6,-1)}><SwitchLeft /></Button>
+          <Button variant='contained' onClick={()=>onClickSlubHandler()} className={searchIds.slub.id !== '' ? 'found': ''}>SLUB&nbsp;{showSlub?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
+        </div>
+        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 7)}}>
+          <Button variant='contained' onClick={()=>sort(7,-1)}><SwitchLeft /></Button>
+          <Button variant='contained' onClick={()=>onClickGeoPortOstHandler()} className={searchIds.slub.id !== '' ? 'found': ''}>GeoPort&nbsp;{showGeoPortOst?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
+        </div>
       </div>
-      
+      <div id='svg'><div></div></div>
       <div className='tabs'>
         {showWikidata && <Wikidata style={{order: buttonOrder.findIndex((i) => i === 1)}} searchIds={searchIds} lang={lang} openPopup={openPopup} onSearchIds={onSearchIdsHandler} />}
         {showGov && <Gov style={{order: buttonOrder.findIndex((i) => i === 2)}} searchIds={searchIds} openPopup={openPopup}  onSearchIds={onSearchIdsHandler}/>}

@@ -1,35 +1,32 @@
 import { Accordion, AccordionSummary, AccordionDetails, Card, CardActionArea, CardContent, CardMedia, 
   CardActions, CircularProgress, Badge } from '@mui/material';
-import Masonry from '@mui/lab/Masonry';
 import { AccountBalance, Castle, Church, ExpandMore, Flag, GpsFixed, InsertChart, ListAlt, SportsKabaddi,VolumeUp }from '@mui/icons-material';
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react'
-import { getGovSearch, getOverpassLayer, getWbSearchEntities, getWikidataArchaelog, getWikidataCityData, getWikidataCityExtra, getWikidataCityPopulation, ifExistGovId } from '../service/api';
+import { getGovSearch, getOverpassLayer, getWbSearchEntities, getWikidataArchaelog, getWikidataCityData, getWikidataCityExtra, getWikidataCityPopulation, ifExistGovId, testtest } from '../service/api';
 import { GOVKEY } from '../types/govkey';
+import { GOVLib, WikidataLib } from '../util/util';
 import { HREF } from './piglets/Link';
 import { Lang } from '../types/lang';
 import { ListID } from '../interfaces/listID';
 import { LngLat } from '../util/WGS84';
+import Masonry from '@mui/lab/Masonry';
+import osmtogeojson from 'osmtogeojson';
 import { OverlayerOsm } from '../interfaces/overlayerOsm';
 import { OverpassOSMLayer } from './piglets/overpassOSMLayer';
 import { PanelProps } from '../interfaces/panelProps';
 import { SearchList } from './piglets/SearchList';
 import { Table } from '../types/table';
+import { TrueDate } from '../util/TrueDate';
 import { v4 as uuidv4 } from 'uuid';
 import { WbSearchEntities } from '../interfaces/wbSearch';
 import { WdExtraItem } from './piglets/WdExtraItem';
 import { WikidataArchaelogResult, WikidataExtraResult } from '../interfaces/wikidataCityData';
-import { GOVLib, WikidataLib } from '../util/util';
 import { WikidataArchealogMaps, WikidataMaps, WikiDataPosition } from './GovPosition';
 import { WDPop, WikidataPopulationChart } from './WikidataPopulationChart';
-import { TrueDate } from '../util/TrueDate';
-import osmtogeojson from 'osmtogeojson';
-
-
 
 
 
 import './wikidata.scss';
-
 
 export const Wikidata: FunctionComponent<PanelProps> = ({
   style,
@@ -83,6 +80,8 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
     setWdChurch([]);
     setWdBattle([]);
     setGovLocatorId('');
+
+    testtest().then(data => console.log('testtest', data))
 
     const table: Table = [];
     const readId = async (from: GOVKEY, id: string) => {
@@ -232,7 +231,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
           err => setWdChurchStatus(false)
         );     
         
-        setWdBattleStatus(true);
+        setWdBattleStatus(true); //Q13418847 historisches Ereignis
         getWikidataArchaelog(lang, lngLat, 40, 'Q178561').then(data => {
           console.log('Wikidata Battle:', data);
           setWdBattleStatus(false);

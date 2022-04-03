@@ -1,4 +1,4 @@
-import { Accordion, AccordionSummary, AccordionDetails, ToggleButtonGroup, ToggleButton } from '@mui/material';
+import { Accordion, AccordionSummary, AccordionDetails, ToggleButtonGroup, ToggleButton, Badge } from '@mui/material';
 import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
 import { DbPediaInfo } from '../interfaces/dbpediaJson';
 import { ExpandMore, GpsFixed, Hive, Language, Search }from '@mui/icons-material';
@@ -12,9 +12,10 @@ import { ListID } from '../interfaces/listID';
 import { LngLat } from '../util/WGS84';
 import { OverpassItem } from '../interfaces/overpass';
 import { PanelProps } from '../interfaces/panelProps';
+import { SearchList } from './piglets/SearchList';
 
 import './geonames.scss';
-import { SearchList } from './piglets/SearchList';
+
 
 export const Geonames: FunctionComponent<PanelProps> = ({
   style,
@@ -107,6 +108,21 @@ export const Geonames: FunctionComponent<PanelProps> = ({
     onSearchIds(newListId);
   };
 
+  const overpassLen = (overpass: OverpassItem): number => {
+    if (!overpass.tags) return 0;
+    const arr  = [
+      overpass.tags['contact:website'],
+      overpass.tags['de:amtlicher_gemeindeschluessel'],
+      overpass.tags['de:regionalschluessel'],
+      overpass.tags.nickname,
+      overpass.tags['note:de'],
+      overpass.tags.official_name,
+      overpass.tags.population,
+      overpass.tags.wikidata
+    ];
+    return arr.reduce((sum, a) => sum + (a === undefined ? 0 : 1), 0);
+  }
+
   const handleOption = ( event: MouseEvent<HTMLElement>, newOption: string[] ) => setOption(newOption);
 
   return (
@@ -127,9 +143,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
       </ToggleButtonGroup>
 
 
-      <h3>
-        geonames.org
-        <br />
+      <h3>geonames.org<br />
         <span>The GeoNames Geographical Database</span>
       </h3>
       {searchIds.geonames.id !== '' && (
@@ -158,60 +172,54 @@ export const Geonames: FunctionComponent<PanelProps> = ({
 
           {geonamesChildren && geonamesChildren.length > 0 && (
             <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                className='accordionSum'
-              >
-                <Hive /><span>{geonamesChildren.length} Stadtteile ({geonamesChildren.length})</span>
+              <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+                <Badge badgeContent={geonamesChildren.length} color="primary"><Hive /></Badge>
+                <span>Stadtteile</span>
               </AccordionSummary>
               <AccordionDetails className='children'>
-                {geonamesChildren.map((s, i) => <p key={`children${i}`}>{s.name}</p>)}
+                <p className='alternate'>
+                  {geonamesChildren.map((s, i) => <em key={`children${i}`}>{s.name}</em>)}
+                </p>
               </AccordionDetails>
             </Accordion>
           )}
 
-          {geonamesEntity && geonamesEntity.alternateNames && (
+          {geonamesEntity && geonamesEntity.alternateNames && geonamesEntity.alternateNames.length > 0 && (
             <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                className='accordionSum'
-              >
-                <Language /><span>Name in anderen Sprachen ({geonamesEntity.alternateNames.length})</span>
+              <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+                <Badge badgeContent={geonamesEntity.alternateNames.length} color="primary"><Language /></Badge>
+                <span>Name in anderen Sprachen</span>
               </AccordionSummary>
               <AccordionDetails className='names'>
-                <div className='geonameslist'>
-                  {
-                    geonamesEntity.alternateNames.map((s, i) => 
-                      <p key={`nameslang${i}`}>
-                        <b>{s.name}</b>
-                        <span>
-                          <i>{s.lang} <em>{COUNTRIES_DB_DE.find(el => s.lang.toLowerCase() === el.iso639)?.sprache}</em></i>
-                        </span>
-                      </p>
-                    )
-                  }
+                <div className='tablelist'>
+                  { geonamesEntity.alternateNames.map((s, i) => 
+                    <p key={`nameslang${i}`}>
+                      <b>{s.name}</b>
+                      <span>
+                        <i>{s.lang} <em>{COUNTRIES_DB_DE.find(el => s.lang.toLowerCase() === el.iso639)?.sprache}</em></i>
+                      </span>
+                    </p>
+                  )}
                 </div>
               </AccordionDetails>
             </Accordion>
           )}
 
-          {overpass && (
+          {overpass && overpassLen(overpass) > 0 && (
             <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                className='accordionSum'
-              >
-                <Search /><span>overpass-api.de</span>
+              <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+                <Badge badgeContent={overpassLen(overpass)} color="primary"><Search /></Badge>
+                <span>overpass-api.de</span>
               </AccordionSummary>
               <AccordionDetails className='overpass'>
-                <div className='geonameslist'>
+                <div className='tablelist'>
                   {overpass.tags['contact:website'] && <p><b>Website</b><span>{overpass.tags['contact:website']}</span></p>}
                   {overpass.tags['de:amtlicher_gemeindeschluessel'] && <p><b>amtlicher Gemeindeschlüssel</b><span>{overpass.tags['de:amtlicher_gemeindeschluessel']}</span></p>}
                   {overpass.tags['de:regionalschluessel'] && <p><b>Regionalschlüssel</b><span>{overpass.tags['de:regionalschluessel']}</span></p>}
                   {overpass.tags.nickname && <p><b>Alias</b><span>{overpass.tags.nickname}</span></p>}
                   {overpass.tags['note:de'] && <p><b>Notiz</b><span>{overpass.tags['note:de']}</span></p>}
                   {overpass.tags.official_name && <p><b>offizieler Name</b><span>{overpass.tags.official_name}</span></p>}
-                  {overpass.tags.population&& <p><b>Einwohner</b><span>{overpass.tags.population}</span></p>}
+                  {overpass.tags.population && <p><b>Einwohner</b><span>{overpass.tags.population}</span></p>}
                   {overpass.tags.wikidata && <p><b>Wikidata ID</b><span>{overpass.tags.wikidata}</span></p>}
                 </div>
               </AccordionDetails>
@@ -220,11 +228,9 @@ export const Geonames: FunctionComponent<PanelProps> = ({
 
           {dbPedia.length > 0 && (
             <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMore />}
-                className='accordionSum'
-              >
-                <Search /><span>dbpedia.org</span>
+              <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+                <Badge badgeContent={dbPedia.length} color="primary"><Search /></Badge>
+                <span>dbpedia.org</span>
               </AccordionSummary>
               <AccordionDetails className='dbpedia'>
                   <div className='info'>

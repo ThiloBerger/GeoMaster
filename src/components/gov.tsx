@@ -80,7 +80,7 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
               <strong>GOV ID: </strong>
               <HREF link={`http://gov.genealogy.net/item/show/${searchIds.gov.id}`} text={searchIds.gov.id} />
             </p>
-            {searchIds.gov.id !== '' && govPop.chart && (
+            {searchIds.gov.id !== '' && govPop.chart && govPop.total > 0 && (
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
                   <Badge badgeContent={govPop.total} color="primary"><InsertChart /></Badge><span>Einwohner</span>
