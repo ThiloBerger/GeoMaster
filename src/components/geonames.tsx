@@ -5,7 +5,7 @@ import { ExpandMore, GpsFixed, Hive, Language, Search }from '@mui/icons-material
 import { Fragment, FunctionComponent, MouseEvent, ReactElement, useEffect, useState } from 'react';
 import { GeonameById, GeonamesSearchItem } from '../interfaces/geonamesSearch';
 import { GeonamesMaps, GeonamesPosition } from './GovPosition';
-import { getDbPedia, getGeonamesChildren, getGeonamesEntity, getGeonamesSearch, getOverpass } from '../service/api';
+import { API } from '../service/api';
 import { HREF } from './piglets/Link';
 import { Lang } from '../types/lang';
 import { ListID } from '../interfaces/listID';
@@ -49,7 +49,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
     setDbPedia([]);
 
 
-    getGeonamesEntity(searchIds.geonames.id, lang).then(async (result) => {
+    API.getGeonamesEntity(searchIds.geonames.id, lang).then(async (result) => {
       console.log('Geonames USEEFFECT 1: ',result);
       const data = result;
       data.alternateNames = result.alternateNames.filter(f => f.lang && (f.lang.length === 2 || f.lang.length === 3) );
@@ -67,7 +67,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
 
       setOverpass(undefined);
       if (data.adminCode4 && data.adminCode4.length === 8 && /^\d+$/.test(data.adminCode4)) {
-        await getOverpass(data.adminCode4).then(async (result) => {
+        await API.getOverpass(data.adminCode4).then(async (result) => {
           const data = result.elements.filter(f => f.type === 'relation');
           console.log('OVERPASS: ', data);
           setOverpass(data[0]);
@@ -76,7 +76,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
             onSearchIds({...searchIds});
           }
           if (data[0].tags['de:amtlicher_gemeindeschluessel']) {
-            getDbPedia(data[0].tags['de:amtlicher_gemeindeschluessel']).then(data => {
+            API.getDbPedia(data[0].tags['de:amtlicher_gemeindeschluessel']).then(data => {
               setDbPedia(data.results.bindings);
             })
           }
@@ -85,7 +85,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
       searchIds.geonames.status = false;
       onSearchIds({...searchIds});
     });
-    getGeonamesChildren(searchIds.geonames.id, lang).then(async (data) => {
+    API.getGeonamesChildren(searchIds.geonames.id, lang).then(async (data) => {
       console.log('Geonames USEEFFECT 2: ',data.geonames);
       setGeonamesChildren(data.geonames)
     });
@@ -95,7 +95,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
   const onChangeSearchHandler = (text: string) => {
     if (text !== "")
       setTimeout(() => {
-        getGeonamesSearch(text, lang, option).then((data) => {
+        API.getGeonamesSearch(text, lang, option).then((data) => {
           setGeonamesSearchEntities(data.geonames);
         });
       }, 50);

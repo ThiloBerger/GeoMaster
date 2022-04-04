@@ -1,6 +1,6 @@
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { Slider } from '@mui/material';
-import { getSlubMaps } from '../service/api';
+import { API } from '../service/api';
 import { Hits } from '../interfaces/maps';
 import { PanelProps } from '../interfaces/panelProps';
 
@@ -32,7 +32,7 @@ export const Slub: FunctionComponent<PanelProps> = ({style, searchIds, onSearchI
       onSearchIds({...searchIds});
 
       const lngLat = JSON.parse(searchIds.slub.id);
-      getSlubMaps(lngLat, radius).then(async (data) => {
+      API.getSlubMaps(lngLat, radius).then(async (data) => {
         console.log('Slub USEEFFECT: ', data.hits)
         setHits(data.hits);
 
@@ -46,7 +46,7 @@ export const Slub: FunctionComponent<PanelProps> = ({style, searchIds, onSearchI
       const r = newValue as number;
       setRadius(r === 0 ? 1 : r);
       const lngLat: LngLat = JSON.parse(searchIds.slub.id);
-      getSlubMaps(lngLat, radius).then(async (data) => {
+      API.getSlubMaps(lngLat, radius).then(async (data) => {
         setHits(data.hits);
       });
     };

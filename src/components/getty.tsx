@@ -2,7 +2,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/mater
 import { AutoStories, ExpandMore, FactCheck, Language } from '@mui/icons-material';
 import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { getGettyNoteAndNames, getGettyPlaceTypes } from '../service/api';
+import { API } from '../service/api';
 import { GettyItem } from '../interfaces/gettyJson';
 import { HREF } from './piglets/Link';
 import { PanelProps } from '../interfaces/panelProps';
@@ -22,11 +22,11 @@ export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearch
       searchIds.getty.status = true;
       onSearchIds({...searchIds});
 
-      getGettyNoteAndNames(searchIds.getty.id).then(async (data) => {
+      API.getGettyNoteAndNames(searchIds.getty.id).then(async (data) => {
         console.log('Getty USEEFFECT 1: ', data.results.bindings)
         setData(data.results.bindings);
       });
-      getGettyPlaceTypes(searchIds.getty.id).then(async (data) => {
+      API.getGettyPlaceTypes(searchIds.getty.id).then(async (data) => {
         const allPlaces = data.results.bindings;
         const objID: string[] = [];
         allPlaces.forEach(place => {

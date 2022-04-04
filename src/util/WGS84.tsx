@@ -201,6 +201,82 @@ export class WGS84 {
     return `${lu[0]} ${lu[1]} ${ro[0]} ${ro[1]}`;
   }
 
+// https://www.orchids.de/haynold/koordinatenermittler/
+  /* Copyright (c) 2006, HELMUT H. HEIMEIER
+     Permission is hereby granted, free of charge, to any person obtaining a
+     copy of this software and associated documentation files (the "Software"),
+     to deal in the Software without restriction, including without limitation
+     the rights to use, copy, modify, merge, publish, distribute, sublicense,
+     and/or sell copies of the Software, and to permit persons to whom the
+     Software is furnished to do so, subject to the following conditions:
+     The above copyright notice and this permission notice shall be included
+     in all copies or substantial portions of the Software.*/
+  
+  /* Die Funktion verschiebt das Kartenbezugssystem (map datum) vom
+     WGS84 Datum (World Geodetic System 84) zum in Deutschland
+     gebräuchlichen Potsdam-Datum. Geographische Länge lw und Breite
+     bw gemessen in grad auf dem WGS84 Ellipsoid müssen
+     gegeben sein. Ausgegeben werden geographische Länge lp
+     und Breite bp (in grad) auf dem Bessel-Ellipsoid.
+     Bei der Transformation werden die Ellipsoidachsen parallel
+     verschoben um dx = -587 m, dy = -16 m und dz = -393 m.
+     Fehler berichten Sie bitte an Helmut.Heimeier@t-online.de*/
+  
+  // Geographische Länge lw und Breite bw im WGS84 Datum
+  static wgs2pot = (lngLat: LngLat) => {
+
+    const [lw, bw] = lngLat;
+    const DEG2RAD = Math.PI / 180.0;
+    // Quellsystem WGS 84 Datum
+    // Abplattung fq
+    const fq = 3.35281066e-3;
+    // Zielsystem Potsdam Datum
+    // Abplattung f
+    const f = fq - 1.003748e-5
+    // Quadrat der ersten numerischen Exzentrizität in Quell- und Zielsystem
+    const e2q = (2 * fq - fq * fq);
+    const e2 = (2 * f - f * f);
+    // Breite und Länge in Radianten
+    const b1 = bw * DEG2RAD;
+    const l1 = lw * DEG2RAD;
+    // Querkrümmungshalbmesser nd
+    const nd = WGS84.SEMI_MAJOR_AXIS / Math.sqrt(1 - e2q * Math.sin(b1) * Math.sin(b1));
+    // Kartesische Koordinaten des Quellsystems WGS84
+    const xw = nd * Math.cos(b1) * Math.cos(l1);
+    const yw = nd * Math.cos(b1) * Math.sin(l1);
+    const zw = (1 - e2q) * nd * Math.sin(b1);
+    // Kartesische Koordinaten des Zielsystems (datum shift) Potsdam
+    const x = xw - 587;
+    const y = yw - 16;
+    const z = zw - 393;
+    // Berechnung von Breite und Länge im Zielsystem
+    const rb = Math.sqrt(x * x + y * y);
+    const bp = Math.atan(z / rb / (1 - e2)) / DEG2RAD;
+  
+    let lp = 0;
+    if (x > 0)
+       lp = Math.atan(y/x) / DEG2RAD;
+    if (x < 0 && y > 0)
+       lp = Math.atan(y/x) / DEG2RAD + 180;
+    if (x < 0 && y < 0)
+       lp = Math.atan(y/x) / DEG2RAD - 180;
+  
+  
+    return [lp, bp];
+     
+  }
+
+  static pot2tkq = ([lp, bp]:number[]) => {
+
+    console.log([lp, bp]);
+    //TK
+    const tkv = Math.floor(560 - (bp * 10.0));
+    const tkh = Math.floor((lp * 6.0) - 34);
+    const tk = tkv * 100 + tkh;
+    return tk.toString().padStart(4, '0');
+
+  }
+
   static pointInPolygon(lngLat: LngLat, polygon: Polygon) {
 
     const [x, y] = lngLat;
@@ -241,6 +317,7 @@ export class WGS84 {
   
     return (crossings % 2 === 1);
   }
+
 }
 
 export interface Point {

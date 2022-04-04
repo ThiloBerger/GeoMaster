@@ -6,7 +6,7 @@ import View from 'ol/View';
 import {fromLonLat} from 'ol/proj';
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
-import { getOverpass } from './service/api';
+import { API } from './service/api';
 
 export class variante_1 {
   fill = new Fill({
@@ -59,7 +59,7 @@ export class variante_1 {
       map.addLayer(layer);
     }
 
-    getOverpass('14713000').then(data => {
+    API.getOverpass('14713000').then(data => {
       let points:[number,number][];
       points = data.elements.filter(e => e.type === 'node')
       .sort((a,b)=> a.id - b.id)

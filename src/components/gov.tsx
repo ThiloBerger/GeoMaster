@@ -1,9 +1,9 @@
-import { ExpandMore, GpsFixed, InsertChart } from '@mui/icons-material';
+import { ExpandMore, GpsFixed } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { GovObject } from '../interfaces/govRdf';
 import { PanelProps } from '../interfaces/panelProps';
-import { getGovObject } from '../service/api';
+import { API } from '../service/api';
 import { GOV, GOVLib } from '../util/util';
 import { LngLat } from '../util/WGS84';
 import { GOVPop, GovPopulationChart } from './GovPopulationChart';
@@ -30,7 +30,7 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
         searchIds.gov.status = true;
         onSearchIds({...searchIds});
 
-        getGovObject(searchIds.gov.id).then( async data => {
+        API.getGovObject(searchIds.gov.id).then( async data => {
             const json = GOV.xml2json(data);
             const govObj = GOV.jsonToGOV(json);
             console.log('GOV USEEFFECT: ', govObj);
@@ -47,11 +47,6 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
                 searchIds.slub.id = JSON.stringify(lngLat);
                 onSearchIds({...searchIds});
             }
-
-            // const d = '1990-10-30'
-            // const date = Date.parse(d)
-            // console.log(date)
-            // console.log((new Date(date)).toLocaleString('de-DE',{dateStyle: 'long'}))
 
               searchIds.gov.status = false;
               onSearchIds({...searchIds});
@@ -83,7 +78,7 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
             {searchIds.gov.id !== '' && govPop.chart && govPop.total > 0 && (
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
-                  <Badge badgeContent={govPop.total} color="primary"><InsertChart /></Badge><span>Einwohner</span>
+                  <Badge badgeContent={govPop.total} color="primary"><div className='icon population'/></Badge><span>Einwohner</span>
                 </AccordionSummary>
                 <AccordionDetails>{govPop.chart}</AccordionDetails>
               </Accordion>

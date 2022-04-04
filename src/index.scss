@@ -1,3 +1,26 @@
+@font-face {
+  font-family: 'icons';
+  src: url('./fa-solid-900.woff2') format('woff2');
+}
+.icon::before {
+  font-family: 'icons';
+  width: 1.2em;
+  height: 1.2em;
+  display: inline-block;
+  color: currentColor;
+  font-size: 1.25em;
+  position: relative;
+  top: .125em;
+  left: .125em;
+}
+.icon.swords::before { content: '\f71d'; }
+.icon.ref::before { content: '\f08e'; }
+.icon.population::before { content: '\e300'; }
+.icon.dungeon::before { content: '\f6d9'; }
+.icon.excavation::before { content: '\f713'; }
+
+
+
 body {
   margin: 0;
   font-family: 'Roboto';

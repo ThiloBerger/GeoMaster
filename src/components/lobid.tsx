@@ -1,7 +1,7 @@
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { LobidItems } from '../interfaces/lobidJson';
 import { ListID } from '../interfaces/listID';
-import { getLobid, getLobidSearch } from '../service/api';
+import { API } from '../service/api';
 import { HREF } from './piglets/Link';
 import { LOB } from '../util/util';
 import { Button } from '@mui/material';
@@ -28,7 +28,7 @@ export const Lobid: FunctionComponent<PanelProps> = ({
     searchIds.lobid.status = true;
     onSearchIds({...searchIds});
 
-    getLobid(searchIds.lobid.id).then(async (data) => {
+    API.getLobid(searchIds.lobid.id).then(async (data) => {
       console.log('Lobid USEEFFECT: ',data.member[0]);
       setDataObject(data.member[0]);
 
@@ -60,7 +60,7 @@ export const Lobid: FunctionComponent<PanelProps> = ({
 
   const onChangeSearchHandler = (text: string) => {
     if (text !== "")
-    getLobidSearch(text).then((data) => {
+    API.getLobidSearch(text).then((data) => {
       const items = data.member.filter((item) =>
         item.type.includes('AuthorityResource')
       );

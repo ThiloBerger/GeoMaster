@@ -141,11 +141,8 @@ export class LOB {
         ));
       };
       static extractString(item: string[]): ReactElement {
-        if (item.length === 1) return <p className='alternate'><em>item[0]</em></p>;
-/*        let x = '';
-         item.forEach((e) => (x += `${e} ─ `));
-        return x.replace(/─ $/g, ''); */
-        return <p className='alternate'>{item.map((s,i) => <em key={i}>{s}</em>)}</p>
+        if (item.length === 1) return <span className='alternate'><em>{item[0]}</em></span>;
+        return <span className='alternate'>{item.map((s,i) => <em key={i}>{s}</em>)}</span>
       }; 
       static extractStringAsBlock(item: string[]): ReactElement[] {
 

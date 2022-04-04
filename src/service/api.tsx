@@ -11,27 +11,27 @@ import { GOVKEY } from '../types/govkey';
 import { Lang } from '../types/lang';
 import { LngLat, Point, WGS84 } from '../util/WGS84';
 
+export class API {
 
-const BASEURL_LOBID = 'https://lobid.org/gnd/search?format=json&q=';
-const BASEURL_WIKIDATA_SPARQL = 'https://query.wikidata.org/sparql?format=json&query=';
-const BASEURL_GETTY_SPARQL = 'http://vocab.getty.edu/sparql.json?query=';
-const BASEURL_GEONAMES = 'http://api.geonames.org/';
-const USER = "quenouil";
+private static readonly BASEURL_LOBID = 'https://lobid.org/gnd/search?format=json&q=';
+private static readonly BASEURL_WIKIDATA_SPARQL = 'https://query.wikidata.org/sparql?format=json&query=';
+private static readonly BASEURL_GETTY_SPARQL = 'http://vocab.getty.edu/sparql.json?query=';
+private static readonly BASEURL_GEONAMES = 'http://api.geonames.org/';
+private static readonly USER = "quenouil";
 
 /* Geonames
 http://api.geonames.org/searchJSON?q=leipzig&name_startsWith=leipzig&maxRows=50&country=&featureClass=P&continentCode=&fuzzy=0.6&username=quenouil
 http://api.geonames.org/childrenJSON?geonameId=2879139&lang=de&username=quenouil
 https://www.geonames.org/getJSON?id=2879139&style=gui&lang=de&username=quenouil
-
 http://overpass-api.de/api/interpreter?data=[out:json];relation["de:amtlicher_gemeindeschluessel"="14713000"];(._;>;);out;
 */
-export const getOverpass = async (ags: string): Promise<OVERPASS> => {
+static readonly getOverpass = async (ags: string): Promise<OVERPASS> => {
   const url = `http://overpass-api.de/api/interpreter?data=[out:json];relation["de:amtlicher_gemeindeschluessel"="${ags}"];(._;>;);out;`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getOverpassLayer = async (wdId: string, [lon, lat]: LngLat): Promise<OVERPASS> => {
+static readonly getOverpassLayer = async (wdId: string, [lon, lat]: LngLat): Promise<OVERPASS> => {
   const url = `http://overpass-api.de/api/interpreter?data=[out:json];
   is_in(${lat},${lon});
   (rel[boundary=administrative][wikidata=${wdId}](pivot);>;);out qt;`;
@@ -39,33 +39,33 @@ export const getOverpassLayer = async (wdId: string, [lon, lat]: LngLat): Promis
   return await response.json();
 }
 
-export const testtest = async (): Promise<{}> => {
+static readonly testtest = async (): Promise<{}> => {
   const url = `https://nominatim.openstreetmap.org/reverse?format=json&osm_id=62649&osm_type=R&polygon_geojson=1`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getGeonamesSearch = async (search: string, lang: Lang, option: string[]): Promise<GeonamesSearch> => {
+static readonly getGeonamesSearch = async (search: string, lang: Lang, option: string[]): Promise<GeonamesSearch> => {
   const de = option?.includes('DE') ? 'de' : '';
   const eu = option?.includes('EU') ? 'eu' : '';
-  const url = `${BASEURL_GEONAMES}searchJSON?name=${search}*&name_startsWith=${search}&lang=${lang}&isNameRequired=true&maxRows=50&country=${de}&featureClass=P&continentCode=${eu}&fuzzy=0.6&username=${USER}`;
+  const url = `${API.BASEURL_GEONAMES}searchJSON?name=${search}*&name_startsWith=${search}&lang=${lang}&isNameRequired=true&maxRows=50&country=${de}&featureClass=P&continentCode=${eu}&fuzzy=0.6&username=${API.USER}`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getGeonamesEntity = async (id: string, lang: Lang): Promise<GeonameById> => {
-  const url = `${BASEURL_GEONAMES}getJSON?id=${id}&style=gui&lang=${lang}&username=${USER}`;
+static readonly getGeonamesEntity = async (id: string, lang: Lang): Promise<GeonameById> => {
+  const url = `${API.BASEURL_GEONAMES}getJSON?id=${id}&style=gui&lang=${lang}&username=${API.USER}`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getGeonamesChildren = async (id: string, lang: Lang): Promise<GeonamesSearch> => {
-  const url = `${BASEURL_GEONAMES}childrenJSON?geonameId=${id}&lang=${lang}&username=${USER}`;
+static readonly getGeonamesChildren = async (id: string, lang: Lang): Promise<GeonamesSearch> => {
+  const url = `${API.BASEURL_GEONAMES}childrenJSON?geonameId=${id}&lang=${lang}&username=${API.USER}`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getSlubMaps = async (lngLat: LngLat, range: number): Promise<Maps> => {
+static readonly getSlubMaps = async (lngLat: LngLat, range: number): Promise<Maps> => {
   const center: Point = { coordinates: lngLat };
   const radius = 1 + range * 1.41;
   const polygon = WGS84.perimeterSquarePolynom(center, radius);
@@ -93,7 +93,7 @@ export const getSlubMaps = async (lngLat: LngLat, range: number): Promise<Maps> 
 } */
 
 // https://github.com/gnuns/allorigins
-export const getGeoPortOst = async (lngLat: LngLat, range: number, page: number, typ: string): Promise<AllOrigins> => {
+static readonly getGeoPortOst = async (lngLat: LngLat, range: number, page: number, typ: string): Promise<AllOrigins> => {
   const mapTyp = typ === '' ? '' : `&f[dc_type_s][]=${typ}`;
   const center: Point = { coordinates: lngLat };
   const radius = 1 + range * 1.41;
@@ -107,22 +107,22 @@ export const getGeoPortOst = async (lngLat: LngLat, range: number, page: number,
   return await response.json();
 }
 
-export const getLobid = async (lobidId: string): Promise<LobidJson> => {
+static readonly getLobid = async (lobidId: string): Promise<LobidJson> => {
   const id = `gndIdentifier:${lobidId}`;
   const filter = '&filter=type:TerritorialCorporateBodyOrAdministrativeUnit';
-  const url = `${BASEURL_LOBID}${id}${filter}&size=1`;
+  const url = `${API.BASEURL_LOBID}${id}${filter}&size=1`;
   const response = await fetch(url)
   return await response.json();
 }
-export const getLobidSearch = async (search: string): Promise<LobidJson> => {
+static readonly getLobidSearch = async (search: string): Promise<LobidJson> => {
   const name = `preferredName:${search}*`;
   const filter = '&filter=type:TerritorialCorporateBodyOrAdministrativeUnit';
-  const url = `${BASEURL_LOBID}${name}${filter}&size=500`;
+  const url = `${API.BASEURL_LOBID}${name}${filter}&size=500`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getGovObject = async (govId: string): Promise<Document> => {
+static readonly getGovObject = async (govId: string): Promise<Document> => {
   const url = `http://gov.genealogy.net/semanticWeb/about/${govId}`;
   const parser = new DOMParser();
   return await fetch(url)
@@ -130,7 +130,7 @@ export const getGovObject = async (govId: string): Promise<Document> => {
     .then(data => parser.parseFromString(data, 'application/xml'))
 }
 
-export const getGovSearch = async (key: GOVKEY, id: String) => {
+static readonly getGovSearch = async (key: GOVKEY, id: String) => {
   const body = `system=${key}&ref=${id}`;
   const url = `http://gov.genealogy.net/search/externalRef`;
   return await fetch(url, {
@@ -140,7 +140,7 @@ export const getGovSearch = async (key: GOVKEY, id: String) => {
   });
 }
 
-export const ifExistGovId = async (id: string) => {
+static readonly ifExistGovId = async (id: string) => {
   const url = `http://gov.genealogy.net/item/show/${id}`;
   return await fetch(url, {
     headers: {
@@ -151,14 +151,14 @@ export const ifExistGovId = async (id: string) => {
   });
 } 
 
-export const getWbSearchEntities = async (search: string, lang: Lang, limit: number): Promise<WbSearch> => {
+static readonly getWbSearchEntities = async (search: string, lang: Lang, limit: number): Promise<WbSearch> => {
   const BASEURL_WIKIDATA = 'https://www.wikidata.org/w/api.php?action=';
   const url = `${BASEURL_WIKIDATA}wbsearchentities&search=${search}&origin=*&format=json&language=${lang}&uselang=${lang}&limit=${limit}`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getWikidataCityData = async (id: string, lang: Lang): Promise<WikidataCity> => {
+static readonly getWikidataCityData = async (id: string, lang: Lang): Promise<WikidataCity> => {
   const SELECT = `SELECT ?property ?x ?propertyLabel ?ab ?bis ?lid ?cityLabel WHERE {
     VALUES ?city {wd:${id}}
     { 
@@ -252,12 +252,12 @@ export const getWikidataCityData = async (id: string, lang: Lang): Promise<Wikid
     }
     SERVICE wikibase:label { bd:serviceParam wikibase:language '${lang},en'. }
   }`;
-  const url = `${BASEURL_WIKIDATA_SPARQL}${SELECT}`;
+  const url = `${API.BASEURL_WIKIDATA_SPARQL}${SELECT}`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getWikidataCityPopulation = async (id: string): Promise<WikidataPopulation> => {
+static readonly getWikidataCityPopulation = async (id: string): Promise<WikidataPopulation> => {
   const SELECT = `SELECT ?population ?date WHERE {
     VALUES ?city {wd:${id}}
     ?city p:P1082 ?_.
@@ -265,12 +265,12 @@ export const getWikidataCityPopulation = async (id: string): Promise<WikidataPop
     optional {?_ pq:P585 ?date.}
   }
   ORDER BY DESC(?date)`;
-  const url = `${BASEURL_WIKIDATA_SPARQL}${SELECT}`;
+  const url = `${API.BASEURL_WIKIDATA_SPARQL}${SELECT}`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getWikidataCityExtra = async (id: string, lang: Lang): Promise<WikidataExtra> => {
+static readonly getWikidataCityExtra = async (id: string, lang: Lang): Promise<WikidataExtra> => {
   const SELECT = `
 SELECT * WHERE {
   {SELECT ?audioLabel 
@@ -306,7 +306,7 @@ SELECT * WHERE {
   } }
 }`;
 
-  const url = `${BASEURL_WIKIDATA_SPARQL}${SELECT}`;
+  const url = `${API.BASEURL_WIKIDATA_SPARQL}${SELECT}`;
   const response = await fetch(url)
   return await response.json();
 }
@@ -315,7 +315,7 @@ SELECT * WHERE {
 // Q839954 Archälogische Stätte
 // Q16970 Kirchen
 // Q178561 Schlacht
-export const getWikidataArchaelog = async (lang: Lang, lngLat: LngLat, radius: number, obj: string = 'Q839954'): Promise<WikidataArchaelog> => {
+static readonly getWikidataArchaelog = async (lang: Lang, lngLat: LngLat, radius: number, obj: string = 'Q839954'): Promise<WikidataArchaelog> => {
   const SELECT = `
   SELECT distinct 
   ?ort ?ortLabel ?ortDescription ?ab
@@ -326,7 +326,7 @@ export const getWikidataArchaelog = async (lang: Lang, lngLat: LngLat, radius: n
       bd:serviceParam wikibase:center "Point(${lngLat[0]} ${lngLat[1]})"^^geo:wktLiteral .
       bd:serviceParam wikibase:radius "${radius}" .
     }
-    ?ort wdt:P31/wdt:P279* wd:${obj} .
+    wd:${obj} ^wdt:P279*/^wdt:P31 ?ort .
     OPTIONAL{ ?ort wdt:P585 ?ab . }
     OPTIONAL{ ?ort wdt:P31 ?sub .
       ?sub rdfs:label ?subLabel .
@@ -344,12 +344,12 @@ export const getWikidataArchaelog = async (lang: Lang, lngLat: LngLat, radius: n
   } GROUP BY ?ort ?ortLabel ?ortDescription ?ab
   ORDER BY ?distNum LIMIT 20`;
 
-  const url = `${BASEURL_WIKIDATA_SPARQL}${SELECT}`;
+  const url = `${API.BASEURL_WIKIDATA_SPARQL}${SELECT}`;
   const response = await fetch(url)
   return await response.json();
 }
 
-export const getGettyNoteAndNames = async (id: string): Promise<GettyJson> => {
+static readonly getGettyNoteAndNames = async (id: string): Promise<GettyJson> => {
   const SELECT = `select ?lab ?historic ?start ?end ?comment ?ScopeNote {
     values ?s {tgn:${id}}
     {
@@ -365,11 +365,11 @@ export const getGettyNoteAndNames = async (id: string): Promise<GettyJson> => {
     optional {?s skos:scopeNote [dct:language gvp_lang:en; rdf:value ?ScopeNote]}
     }
   } order by ?ord`;
-  const url = `${BASEURL_GETTY_SPARQL}${SELECT}`;
+  const url = `${API.BASEURL_GETTY_SPARQL}${SELECT}`;
   const response = await fetch(url)
   return await response.json();
 }
-export const getGettyPlaceTypes = async (id: string): Promise<GettyJson> => {
+static readonly getGettyPlaceTypes = async (id: string): Promise<GettyJson> => {
   const SELECT = `SELECT ?start ?end ?comment ?object ?objectID {
     ?statement rdf:subject tgn:${id};
                   rdf:predicate ?rel;
@@ -382,13 +382,13 @@ export const getGettyPlaceTypes = async (id: string): Promise<GettyJson> => {
               FILTER langMatches(lang(?object), "en")
     } 
   }`;
-  const url = `${BASEURL_GETTY_SPARQL}${SELECT}`;
+  const url = `${API.BASEURL_GETTY_SPARQL}${SELECT}`;
   const response = await fetch(url)
   return await response.json();
 }  
 
 
-export const getDbPedia = async (ags: string): Promise<DbPediaJson> => {
+static readonly getDbPedia = async (ags: string): Promise<DbPediaJson> => {
   const BASEURL_DBPEDIA_SPARQL = 'https://dbpedia.org/sparql?format=json&query=';
   const SELECT = `SELECT DISTINCT ?info
   WHERE {
@@ -407,7 +407,7 @@ export const getDbPedia = async (ags: string): Promise<DbPediaJson> => {
   return await response.json();
 }  
 
-
+}
 /* 
 SELECT ?wasLabel ?ab ?bis ?x
 (GROUP_CONCAT(DISTINCT(?ref); SEPARATOR=";") AS ?referenz)

@@ -7,7 +7,7 @@ import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
 import View from 'ol/View';
 import {fromLonLat} from 'ol/proj';
 import GeoJSON from 'ol/format/GeoJSON';
-import { getOverpass } from './service/api';
+import { API } from './service/api';
 
 export class variante_1 {
   fill = new Fill({
@@ -60,7 +60,7 @@ export class variante_1 {
   
       map.addLayer(layer);
   }
-  getOverpass('14713000').then(data => {
+  API.getOverpass('14713000').then(data => {
     console.log(osmtogeojson(data));
     drawGeoJson(osmtogeojson(data));
   });

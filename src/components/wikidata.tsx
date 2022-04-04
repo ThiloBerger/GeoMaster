@@ -1,14 +1,14 @@
 import { Accordion, AccordionSummary, AccordionDetails, Card, CardActionArea, CardContent, CardMedia, 
   CardActions, CircularProgress, Badge } from '@mui/material';
-import { AccountBalance, Castle, Church, ExpandMore, Flag, GpsFixed, InsertChart, ListAlt, SportsKabaddi,VolumeUp }from '@mui/icons-material';
+import { AccountBalance, Castle, Church, ExpandMore, GpsFixed, Security, VolumeUp }from '@mui/icons-material';
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react'
-import { getGovSearch, getOverpassLayer, getWbSearchEntities, getWikidataArchaelog, getWikidataCityData, getWikidataCityExtra, getWikidataCityPopulation, ifExistGovId, testtest } from '../service/api';
+import { API } from '../service/api';
 import { GOVKEY } from '../types/govkey';
 import { GOVLib, WikidataLib } from '../util/util';
 import { HREF } from './piglets/Link';
 import { Lang } from '../types/lang';
 import { ListID } from '../interfaces/listID';
-import { LngLat } from '../util/WGS84';
+import { LngLat, WGS84 } from '../util/WGS84';
 import Masonry from '@mui/lab/Masonry';
 import osmtogeojson from 'osmtogeojson';
 import { OverlayerOsm } from '../interfaces/overlayerOsm';
@@ -23,8 +23,6 @@ import { WdExtraItem } from './piglets/WdExtraItem';
 import { WikidataArchaelogResult, WikidataExtraResult } from '../interfaces/wikidataCityData';
 import { WikidataArchealogMaps, WikidataMaps, WikiDataPosition } from './GovPosition';
 import { WDPop, WikidataPopulationChart } from './WikidataPopulationChart';
-
-
 
 import './wikidata.scss';
 
@@ -46,7 +44,9 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   const [wdChurch, setWdChurch] = useState<WikidataArchaelogResult[]>([]);
   const [wdChurchStatus, setWdChurchStatus] = useState<boolean>(false);
   const [wdBattle, setWdBattle] = useState<WikidataArchaelogResult[]>([]);
-  const [wdBattleStatus, setWdBattleStatus] = useState<boolean>(false);   
+  const [wdBattleStatus, setWdBattleStatus] = useState<boolean>(false);
+  const [wdDungeon, setWdDungeon] = useState<WikidataArchaelogResult[]>([]);
+  const [wdDungeonStatus, setWdDungeonStatus] = useState<boolean>(false);
   const [wikidataPos, setWikidataPos] = useState<ReactElement>(<></>);
   const [sessionKey, setSessionKey] = useState<string>(uuidv4())
   const [osmLayer, setOsmLayer] = useState<OverlayerOsm>(JSON.parse('{}'));
@@ -70,6 +70,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
     console.log('Wikidata USEEFFECT: ', searchIds.wikidata.id);
     searchIds.wikidata.apiCall = true;
     searchIds.wikidata.status = true;
+
     onSearchIds({...searchIds});
 
     setWdPop(JSON.parse('{}'));
@@ -79,13 +80,14 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
     setWdCastle([]);
     setWdChurch([]);
     setWdBattle([]);
+    setWdDungeon([]);   
     setGovLocatorId('');
 
-    testtest().then(data => console.log('testtest', data))
+    //API.testtest().then(data => console.log('testtest', data))
 
     const table: Table = [];
     const readId = async (from: GOVKEY, id: string) => {
-      await getGovSearch(from, id).then((response) => {
+      await API.getGovSearch(from, id).then((response) => {
         const govId = response.url.replaceAll(/^(.*\/)/g, '');
         if (govId !== 'extended') {
           searchIds.gov.id = govId;
@@ -94,7 +96,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
       });
     };
 
-    getWikidataCityData(searchIds.wikidata.id, lang).then(async (data) => {
+    API.getWikidataCityData(searchIds.wikidata.id, lang).then(async (data) => {
       const results = data.results.bindings;
       results.forEach((item) => {
         const group = item.x ? item.x.value : '';
@@ -133,6 +135,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
           searchIds.geonames.id = item.lid.value;
           onSearchIds({...searchIds});
         }  
+
       });
 
       setGroupTable(table);
@@ -158,12 +161,12 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         if (idx !== -1) readId(GOVKEY.NUTS1999, table[idx].items[0].lid.value);
       }
 
-        searchIds.wikidata.status = false;
-        onSearchIds({...searchIds});
+      searchIds.wikidata.status = false;
+      onSearchIds({...searchIds});
 
     });
 
-    getWikidataCityPopulation(searchIds.wikidata.id).then(async (data) => {
+    API.getWikidataCityPopulation(searchIds.wikidata.id).then(async (data) => {
       const results = data.results.bindings;
       console.log('Wikidata USEEFFECT: 2',results);
       if (results.length !== 0 && results[0].population) {
@@ -171,7 +174,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
       }
     });    
 
-    getWikidataCityExtra(searchIds.wikidata.id, lang).then(async (data) => {
+    API.getWikidataCityExtra(searchIds.wikidata.id, lang).then(async (data) => {
       setSessionKey(uuidv4());
       let extraTmp = data.results.bindings;
       let extra: WikidataExtraResult = {...extraTmp[0]};
@@ -190,14 +193,16 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         const lat = parseFloat(extra.lat.value);
         const lngLat: LngLat = [lon, lat];
 
+        console.log('Koords', WGS84.pot2tkq(WGS84.wgs2pot(lngLat)));
+
         // exisiert berechnete GOV ID?
         const govSolvedId = GOVLib.getGovLocatorId(extra.ort.value, lngLat);
-        ifExistGovId(govSolvedId).then(response => {
+        API.ifExistGovId(govSolvedId).then(response => {
           const test = response.url.replaceAll(/^(.*\/)/g, '');
           setGovLocatorId(test === govSolvedId ? response.url : '');
         });
 
-        getOverpassLayer(searchIds.wikidata.id, lngLat).then(data => {
+        API.getOverpassLayer(searchIds.wikidata.id, lngLat).then(data => {
           console.log('Wikidata Overpass:', data);
           const json = osmtogeojson(data);
           console.log('Wikidata Overpass JSON :', json);
@@ -205,7 +210,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         });
 
         setWdArchaelogStatus(true);
-        getWikidataArchaelog(lang, lngLat, 25).then(data => {
+        API.getWikidataArchaelog(lang, lngLat, 25).then(data => {
           console.log('Wikidata Archaelog:', data);
           setWdArchaelogStatus(false);
           setWdArchaelog(data.results.bindings);
@@ -214,7 +219,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         );
 
         setWdCastleStatus(true);
-        getWikidataArchaelog(lang, lngLat, 25, 'Q23413').then(data => {
+        API.getWikidataArchaelog(lang, lngLat, 25, 'Q23413').then(data => {
           console.log('Wikidata Castle:', data);
           setWdCastleStatus(false);
           setWdCastle(data.results.bindings);
@@ -223,7 +228,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         );
 
         setWdChurchStatus(true);
-        getWikidataArchaelog(lang, lngLat, 25, 'Q16970').then(data => {
+        API.getWikidataArchaelog(lang, lngLat, 25, 'Q16970').then(data => {
           console.log('Wikidata Church:', data);
           setWdChurchStatus(false);
           setWdChurch(data.results.bindings);
@@ -232,18 +237,40 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         );     
         
         setWdBattleStatus(true); //Q13418847 historisches Ereignis
-        getWikidataArchaelog(lang, lngLat, 40, 'Q178561').then(data => {
+        API.getWikidataArchaelog(lang, lngLat, 40, 'Q178561').then(data => {
           console.log('Wikidata Battle:', data);
           setWdBattleStatus(false);
           setWdBattle(data.results.bindings);
         }).catch (
           err => setWdBattleStatus(false)
-        );           
+        );
+        
+        setWdDungeonStatus(true);
+        API.getWikidataArchaelog(lang, lngLat, 40, 'Q35509').then(data => {
+          console.log('Wikidata Höhlen:', data);
+          setWdDungeonStatus(false);
+          setWdDungeon(data.results.bindings);
+        }).catch (
+          err => setWdDungeonStatus(false)
+        );      
 
-        if (searchIds.slub.id === "") {
+        if (searchIds.slub.id === '') {
           searchIds.slub.id = JSON.stringify(lngLat);
           onSearchIds({ ...searchIds });
         }
+
+        let counter = 0;
+        const check = setInterval(() => {
+            console.log('counter', counter);
+            if (counter > 5 && searchIds.gov.id === '' && govSolvedId !== '') {
+              searchIds.gov.id = govSolvedId;
+              onSearchIds({ ...searchIds });
+            }
+            counter++;
+            if(counter > 50 || searchIds.gov.id !== '') {
+                clearInterval(check);
+            }
+          }, 200);
       }
 
     });
@@ -252,7 +279,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
 
   const onChangeSearchHandler = (text: string) => {
     if (text !== "")
-      getWbSearchEntities(text, lang, 20).then((data) =>
+    API.getWbSearchEntities(text, lang, 20).then((data) =>
         setWbSearchEntities(data.search)
       );
     else setWbSearchEntities([]);
@@ -263,6 +290,8 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
     newListId.wikidata.id = id;
     onSearchIds(newListId);
   };
+
+  const show = (length: number, status: boolean): boolean => !(length === 0 && !status);
 
   return (
     <div className='wikidata panel' style={style}>
@@ -283,7 +312,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
           {wdPop.chart && (
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
-                <Badge badgeContent={wdPop.total} color="primary"><InsertChart /></Badge>
+                <Badge badgeContent={wdPop.total} color="primary"><div className='icon population'/></Badge>
                 <span>Einwohner</span>
               </AccordionSummary>
               <AccordionDetails>{wdPop.chart}</AccordionDetails>
@@ -316,7 +345,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
           {(wdExtra && (wdExtra.logoLabel || wdExtra.imgLabel || wdExtra.flagLabel || wdExtra.armsLabel || wdExtra.sealLabel )) && (
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
-                <Flag /><span>Wappen / Logos etc.pp.</span>
+                <Security /><span>Wappen / Logos etc.pp.</span>
               </AccordionSummary>
               <AccordionDetails className='flag'>
                 <WdExtraItem item={wdExtra.logoLabel} label='Logo' openPopup={openPopup}/>
@@ -341,7 +370,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
             </Accordion>
           )}
 
-          {wdArchaelog && ((wdArchaelog.length === 0) || !wdArchaelogStatus) &&
+          {wdArchaelog && show(wdArchaelog.length, wdArchaelogStatus) &&
             <Accordion className='accordioncardhead'>
               <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
               <Badge badgeContent={wdArchaelog.length} color="primary"><AccountBalance /></Badge>
@@ -371,7 +400,38 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
             </Accordion>
           }
 
-          {wdCastle && ((wdCastle.length === 0) || !wdCastleStatus) &&
+          {wdDungeon && show(wdDungeon.length, wdDungeonStatus) &&
+            <Accordion className='accordioncardhead'>
+              <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+              <Badge badgeContent={wdDungeon.length} color="primary"><div className='icon dungeon'/></Badge>
+                <span>Nahe Höhlen</span>
+                {wdDungeonStatus && wdDungeon.length === 0 &&<CircularProgress className='spinner'/>}
+              </AccordionSummary>
+              <AccordionDetails className='accordioncard'>
+                {wdDungeon.length !== 0 && wdDungeon.map((a, i) => <Card key={i}>
+                  <CardActionArea href={a.ort.value} target='_blank'>
+                    <CardContent>
+                      <h1>{a.ortLabel.value}</h1>
+                        {a.imgLabel && <CardMedia
+                          component="img"
+                          height="180"
+                          image={a.imgLabel.value+'?width=600px'}
+                          alt={a.ortLabel.value}
+                        />}                      
+                      <p>{a.ortDescription?.value}</p>
+                      <p>{a.subLabel?.value} ({a.subDescription?.value})</p>
+                    </CardContent>
+                  </CardActionArea>
+                  <CardActions>
+                    <WikidataArchealogMaps entity={a} openPopup={openPopup}/><p>{a.distNum.value.replace(/(\d+\.\d{3}).*/,'$1')} km entfernt</p>
+                  </CardActions>
+                </Card>)}
+              </AccordionDetails>
+            </Accordion>
+          }
+          
+
+          {wdCastle && show(wdCastle.length, wdCastleStatus) &&
             <Accordion className='accordioncardhead'>
               <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
                 <Badge badgeContent={wdCastle.length} color="primary"><Castle /></Badge>
@@ -401,7 +461,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
             </Accordion>
           }
 
-          {wdChurch && ((wdChurch.length === 0) || !wdChurchStatus) &&
+          {wdChurch && show(wdChurch.length, wdChurchStatus) &&
             <Accordion className='accordioncardhead'>
               <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
                 <Badge badgeContent={wdChurch.length} color="primary"><Church /></Badge>
@@ -431,10 +491,10 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
             </Accordion>
           }
 
-          {wdBattle && ((wdBattle.length === 0) || !wdBattleStatus) &&
+          {wdBattle && show(wdBattle.length, wdBattleStatus) &&
             <Accordion className='accordioncardhead'>
               <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
-                <Badge badgeContent={wdBattle.length} color="primary"><SportsKabaddi /></Badge>
+                <Badge badgeContent={wdBattle.length} color="primary"><div className='icon swords'/></Badge>
                 <span>Nahe Schlachten</span>
                 {wdBattleStatus && wdBattle.length === 0 &&<CircularProgress className='spinner'/>}
               </AccordionSummary>
@@ -464,7 +524,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
           {groupTable.filter(f => f.lid).length !== 0 && (
             <Accordion>
               <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
-                <Badge badgeContent={groupTable.filter((f) => f.lid).length} color="primary"><ListAlt /></Badge>
+                <Badge badgeContent={groupTable.filter((f) => f.lid).length} color="primary"><div className='icon ref'/></Badge>
                 <span>Externe Referenzen</span>
               </AccordionSummary>
               <AccordionDetails>

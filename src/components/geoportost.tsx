@@ -1,6 +1,6 @@
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
 import { Slider } from '@mui/material';
-import { getGeoPortOst } from '../service/api';
+import { API } from '../service/api';
 import { PanelProps } from '../interfaces/panelProps';
 
 import './slub.scss';
@@ -24,7 +24,7 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
 
       const lngLat = JSON.parse(searchIds.slub.id);
 
-      getGeoPortOst(lngLat, radius, 1, '').then(async (response) => {
+      API.getGeoPortOst(lngLat, radius, 1, '').then(async (response) => {
         console.log('GeoPortOst USEEFFECT: ', response)
         const data: GeoPortJSON = JSON.parse(response.contents);
         console.log('GeoPortOst USEEFFECT: ', data.response);
@@ -36,7 +36,7 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
 
     const refreshMaps = (page: number, typ: string) => {
       const lngLat: LngLat = JSON.parse(searchIds.slub.id);
-      getGeoPortOst(lngLat, radius, page, typ).then(async (response) => {
+      API.getGeoPortOst(lngLat, radius, page, typ).then(async (response) => {
         console.log('GeoPortOst Slider: ', response)
         const data: GeoPortJSON = JSON.parse(response.contents);
         console.log('GeoPortOst Slider: ', data.response);
