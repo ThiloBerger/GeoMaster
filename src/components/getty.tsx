@@ -1,13 +1,13 @@
-import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
 import { AutoStories, ExpandMore, FactCheck, Language } from '@mui/icons-material';
-import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
+import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
 import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { API } from '../service/api';
 import { GettyItem } from '../interfaces/gettyJson';
-import { HREF } from './piglets/Link';
 import { PanelProps } from '../interfaces/panelProps';
-
+import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
+import { API } from '../service/api';
 import './getty.scss';
+import { HREF } from './piglets/Link';
+
 
 export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearchIds}): ReactElement => {
     

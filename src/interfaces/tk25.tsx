@@ -1,4 +1,4 @@
-export const tk25 = {
+export const tk25Names = {
 '0916': 'List (Insel Sylt)',
 '1015': 'Westerland (Insel Sylt)',
 '1016': 'Kampen (Insel Sylt)',

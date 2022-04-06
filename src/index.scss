@@ -18,7 +18,7 @@
 .icon.population::before { content: '\e300'; }
 .icon.dungeon::before { content: '\f6d9'; }
 .icon.excavation::before { content: '\f713'; }
-
+.icon.explosion::before { content: '\e4e9'; }
 
 
 body {
@@ -175,3 +175,4 @@ button.found {
     display: none;
   };
 }
+

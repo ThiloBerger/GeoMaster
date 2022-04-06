@@ -1,15 +1,19 @@
-import { Fragment, ReactElement } from 'react';
+import { Dispatch, Fragment, ReactElement, SetStateAction } from 'react';
 import { HREF } from '../components/piglets/Link';
+import { GndSameAs, GndString } from '../interfaces/GndJson';
 import { GovObject, GovRdf } from '../interfaces/govRdf';
-import { LobidString, LobidSameAs } from '../interfaces/lobidJson';
+import { ListID } from '../interfaces/listID';
 import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
-import { WikidataCityResult, WikiDate } from '../interfaces/wikidataCityData';
+import { WikidataCardResult, WikidataCityResult, WikidataExtraResult, WikiDate } from '../interfaces/wikidataCityData';
+import { API } from '../service/api';
+import { GOVKEY } from '../types/govkey';
+import { Lang } from '../types/lang';
 import { LngLat } from './WGS84';
 
 export class GOV {
     static xml2json(xml: XMLDocument | any, key: string = ''): {} {
         try {
-            let obj: { [index: string]: any } = {}
+            let obj: Record<string, any> = {}
             // value zurückgeben
             if (xml.children.length === 0) {
                 let attr = xml.getAttribute('rdf:resource');
@@ -117,13 +121,13 @@ export class GOV {
         return xmlhttp.responseXML;
     }
 
-    static jsonToGOV(json: {}): GovObject {
-        return (json as GovRdf)['rdf:RDF']['rdf:Description']['foaf:primaryTopic']['gov:GovObject'];
-    }
+    static jsonToGOV = (json: {}): GovObject =>
+      (json as GovRdf)['rdf:RDF']['rdf:Description']['foaf:primaryTopic']['gov:GovObject'];
+
 }
 
 export class LOB {
-    static extractID(item: LobidSameAs[]): ReactElement[] {
+    static extractID(item: GndSameAs[]): ReactElement[] {
         return item.map(c => (
           <i key={c.id}>
               {c.collection.publisher}{' '}
@@ -132,7 +136,7 @@ export class LOB {
           </i>
         ));
       };
-      static extractLinkArray(item: LobidString[]): ReactElement[] {
+      static extractLinkArray(item: GndString[]): ReactElement[] {
         return item.map(a => (
           <i key={a.id}>
             <HREF link={a.id} text={a.label} />
@@ -152,15 +156,12 @@ export class LOB {
           const arr = s.split(',');
           arr.forEach( s2 => {
             const arr2 = s2.split(';');
-              arr2.forEach(x => out.push(x))
+            arr2.forEach(x => out.push(x))
           })
         });
 
-        return out.map((s, i) => (
-            <i key={`esab${i}`}>
-              {s}
-            </i>
-        ))};
+        return out.map((s, i) => <i key={`esab${i}`}>{s}</i>);
+      };
 
       static pointToCoordinate(point: string): string {
         const float = (x: string): number => parseFloat(x)
@@ -330,16 +331,61 @@ export class GOVLib {
 
 }
 
-export class WikidataLib {
+export class WD {
+
+  static readId = async (from: GOVKEY, id: string, searchIds: ListID, onSearchIds: Function) => {
+    await API.govSearchIDWithKey(from, id).then((response) => {
+      const govId = response.url.replaceAll(/^(.*\/)/g, '');
+      if (govId !== 'extended') {
+        searchIds.gov.id = govId;
+        onSearchIds({...searchIds});
+      }
+    });
+  };
+
+  static testGovId = (extra: WikidataExtraResult, lngLat: LngLat, searchIds: ListID,
+    onSearchIds: Function, setGovLocatorId: Dispatch<SetStateAction<string>>) => {
+    const govSolvedId = GOVLib.getGovLocatorId(extra.ort.value, lngLat);
+    API.govTestId(govSolvedId).then(response => {
+      const test = response.url.replaceAll(/^(.*\/)/g, '');
+      if (test === govSolvedId) {
+        setGovLocatorId(response.url);
+        let counter = 0;
+        const check = setInterval(() => {
+          if (counter > 5 && searchIds.gov.id === '') {
+            searchIds.gov.id = govSolvedId;
+            onSearchIds({ ...searchIds });
+          }
+          counter++;
+          if(counter > 50 || searchIds.gov.id !== '') clearInterval(check);
+        }, 200);
+      }
+    });  
+  }
+
+  static loadCards = (setWdStatus: Dispatch<SetStateAction<boolean>>,
+    setWdItem: Dispatch<SetStateAction<WikidataCardResult[]>>,
+    logLabel: string, radius: number, wdItemId: string, lang: Lang, lngLat: LngLat) => {
+      setWdStatus(true);
+      API.wdCard(lang, lngLat, radius, wdItemId).then(data => {
+        console.log(`Wikidata ${logLabel}:`, data);
+        setWdStatus(false);
+        setWdItem(data.results.bindings);
+      }).catch (
+        err => setWdStatus(false)
+      );
+  } 
+
   static typ(items: WikidataCityResult[]): ReactElement[] {
     return items.filter(f => f.propertyLabel).map((c, i) => (
       <i key={`typ${i}`}>
         {c.propertyLabel.value}
-        <em>{c.ab && ` ab ${WikidataLib.getWikiDate(c.ab)}`}</em>
-        <em>{c.bis && ` bis ${WikidataLib.getWikiDate(c.bis)}`}</em>
+        <em>{c.ab && ` ab ${WD.getWikiDate(c.ab)}`}</em>
+        <em>{c.bis && ` bis ${WD.getWikiDate(c.bis)}`}</em>
       </i>
     ));
   };
+
   static getWikiDate = (p: WikiDate): string =>{
     if (p && /^[\d-\\.]+$/.test(p.value)) {
       if (p.value.startsWith('-')) return p.value.substring(1) + ' (BC)';

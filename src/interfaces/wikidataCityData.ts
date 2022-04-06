@@ -90,16 +90,16 @@ export interface WikidataExtraResult {
 
 // -----------------------------------------------
 
-export interface WikidataArchaelog {
+export interface WikidataCard {
   head: {
     vars: string[];
   };
   results: {
-    bindings: WikidataArchaelogResult[];
+    bindings: WikidataCardResult[];
   };
 }
 
-export interface WikidataArchaelogResult {
+export interface WikidataCardResult {
   ort: WikiValue;
   lat: WikiDate;
   lon: WikiDate;

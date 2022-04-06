@@ -62,19 +62,21 @@
   max-height: 400px;
   overflow-y: scroll;
   width: 400px;
-  border: 1px solid brown;
+  border: 1px solid #14415e;
   background-color: antiquewhite;
   cursor: pointer;
   position: absolute;
+  margin-top: -1px;
   div, button {
     padding: 5px;
     cursor: pointer;
     background-color: antiquewhite;
-    border-top: 1px solid brown;
+    border-top: 1px solid #14415e57;
 
     &:hover {
       color: white;
-      background-color: darkolivegreen;
+      background-color: #14415ec2;
+      text-shadow: 0 0 2px black;
     }
 
     p {
@@ -168,7 +170,7 @@
 }
 
 .tablelist {
-  border: 1px solid darkolivegreen;
+  border: 1px solid #14415e59;
   width: 100%;
   display: table;
   margin-top: 0.5em;
@@ -211,6 +213,7 @@
   p {
     margin: 0;
     font-family: monospace;
+    font-variant-numeric: oldstyle-nums;
     font-weight: 300;
   }
 }
@@ -220,8 +223,9 @@
   color: gray;
 }
 
-p.alternate{
-  display: flex;
+p.alternate,
+span.alternate {
+  display: flex!important;
   gap: .5em;
   flex-flow: wrap;
   background: transparent;
@@ -236,3 +240,8 @@ p.alternate{
                 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
   }  
 } 
+
+.cardlabel em {
+  color: gray;
+  font-size: .8em;
+}

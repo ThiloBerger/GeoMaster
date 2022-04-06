@@ -1,35 +1,41 @@
-import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
-import { LobidItems } from '../interfaces/lobidJson';
-import { ListID } from '../interfaces/listID';
-import { API } from '../service/api';
-import { HREF } from './piglets/Link';
-import { LOB } from '../util/util';
-import { Button } from '@mui/material';
-import { PanelProps } from '../interfaces/panelProps';
 import { Map } from '@mui/icons-material';
+import { Button } from '@mui/material';
+import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import { GndItems } from '../interfaces/GndJson';
+import { ListID } from '../interfaces/listID';
+import { PanelProps } from '../interfaces/panelProps';
+import { API } from '../service/api';
+import { LOB } from '../util/util';
 import { LngLat } from '../util/WGS84';
+import { GndItem } from './piglets/GndItem';
+import { HREF } from './piglets/Link';
 import { SearchList } from './piglets/SearchList';
-import { LobidItem } from './piglets/LobidItem';
 
-export const Lobid: FunctionComponent<PanelProps> = ({
+export const Gnd: FunctionComponent<PanelProps> = ({
   style,
   searchIds,
   openPopup = () => {},
   onSearchIds,
 }): ReactElement => {
-  const [dataObj, setDataObject] = useState<LobidItems>();
-  const [lobidSearchEntities, setLobidSearchEntities] = useState<LobidItems[]>([]);
+  const [dataObj, setDataObject] = useState<GndItems>();
+  const [gndSearchEntities, setGndSearchEntities] = useState<GndItems[]>([]);
 
   useEffect(() => {
     
-    if (searchIds.lobid.apiCall || searchIds.lobid.id === '') return;
-    console.log('Lobid USEEFFECT: ', searchIds.lobid.id);
-    searchIds.lobid.apiCall = true;
-    searchIds.lobid.status = true;
+    if (searchIds.gnd.apiCall || searchIds.gnd.id === '') return;
+    console.log('Gnd USEEFFECT: ', searchIds.gnd.id);
+    searchIds.gnd.apiCall = true;
+    searchIds.gnd.status = true;
     onSearchIds({...searchIds});
 
-    API.getLobid(searchIds.lobid.id).then(async (data) => {
-      console.log('Lobid USEEFFECT: ',data.member[0]);
+    API.gndEntryById(searchIds.gnd.id).then(async (data) => {
+      console.log('Gnd USEEFFECT: ',data.member[0]);
+      if (!data.member[0]) {
+        searchIds.gnd.status = false;
+        searchIds.gnd.id = '';
+        onSearchIds({...searchIds});
+        return;
+      }
       setDataObject(data.member[0]);
 
       if (data.member[0].sameAs) data.member[0].sameAs.forEach( el => {
@@ -51,7 +57,7 @@ export const Lobid: FunctionComponent<PanelProps> = ({
         onSearchIds({...searchIds});
       }
 
-        searchIds.lobid.status = false;
+        searchIds.gnd.status = false;
         onSearchIds({...searchIds});
 
     });
@@ -60,28 +66,22 @@ export const Lobid: FunctionComponent<PanelProps> = ({
 
   const onChangeSearchHandler = (text: string) => {
     if (text !== "")
-    API.getLobidSearch(text).then((data) => {
-      const items = data.member.filter((item) =>
-        item.type.includes('AuthorityResource')
-      );
-      items.sort((a, b) =>
-        a.preferredName.localeCompare(b.preferredName)
-      );
-      setLobidSearchEntities(items);
+    API.gndLookup(text).then((data) => {
+      const items = data.member.filter((item) => item.type.includes('AuthorityResource'));
+      items.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
+      setGndSearchEntities(items);
     })
-    else setLobidSearchEntities([]);
+    else setGndSearchEntities([]);
   };
 
   const onClickSearch = (id: string) => {
     const newListId = new ListID();
-    newListId.lobid.id = id;
+    newListId.gnd.id = id;
     onSearchIds(newListId);
   };
 
   return (
-    <div className='lobid panel' style={style}>
-
-
+    <div className='gnd panel' style={style}>
       <SearchList label='GND Suche' onChangeSearch={onChangeSearchHandler} onClickSearch={onClickSearch}
        getDescription={item => item.biographicalOrHistoricalInformation
         ? item.biographicalOrHistoricalInformation[0]
@@ -89,26 +89,24 @@ export const Lobid: FunctionComponent<PanelProps> = ({
         ? item.definition[0]
         : item.variantName
         ? `wurde auch genannt: ${item.variantName}`
-        : ''} getId={item => item.gndIdentifier} getTitle={item => item.preferredName} items={lobidSearchEntities} />
-
-
+        : ''} getId={item => item.gndIdentifier} getTitle={item => item.preferredName} items={gndSearchEntities} />
       <h3>
         lobid.org
         <br />
         <span>GND aus dem KATALOG DER DEUTSCHEN NATIONALBIBLIOTHEK</span>
       </h3>
-      {searchIds.lobid.id !== '' && (
+      {searchIds.gnd.id !== '' && (
         <Fragment>
           <p>
             <strong>GND ID: </strong>
-            <HREF link={`https://d-nb.info/gnd/${searchIds.lobid.id}`} text={searchIds.lobid.id}/>
+            <HREF link={`https://d-nb.info/gnd/${searchIds.gnd.id}`} text={searchIds.gnd.id}/>
           </p>
           <div className='tablelist'>
-            <LobidItem item={dataObj} label='Name:' attr='preferredName' method={(s: string) => s} />
-            <LobidItem item={dataObj} label='andere Bezeichnungen:' attr='variantName' method={LOB.extractString} />
-            <LobidItem item={dataObj} label='verknüpft mit:' attr='relatedPlaceOrGeographicName' method={LOB.extractLinkArray} />
-            <LobidItem item={dataObj} label='verwandter Begriff:' attr='relatedTerm' method={LOB.extractLinkArray} />
-            <LobidItem item={dataObj} label='Historische Informationen:' attr='biographicalOrHistoricalInformation' method={LOB.extractStringAsBlock} />
+            <GndItem item={dataObj} label='Name:' attr='preferredName' method={(s: string) => s} />
+            <GndItem item={dataObj} label='andere Bezeichnungen:' attr='variantName' method={LOB.extractString} />
+            <GndItem item={dataObj} label='verknüpft mit:' attr='relatedPlaceOrGeographicName' method={LOB.extractLinkArray} />
+            <GndItem item={dataObj} label='verwandter Begriff:' attr='relatedTerm' method={LOB.extractLinkArray} />
+            <GndItem item={dataObj} label='Historische Informationen:' attr='biographicalOrHistoricalInformation' method={LOB.extractStringAsBlock} />
             {dataObj?.geographicAreaCode && (
               <p>
                 <b>Land:</b>
@@ -141,8 +139,8 @@ export const Lobid: FunctionComponent<PanelProps> = ({
                 </span>
               </p>
             )}
-            <LobidItem  item={dataObj} label='Homepage:' attr='homepage' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='siehe auch:' attr='sameAs' method={LOB.extractID}/>
+            <GndItem  item={dataObj} label='Homepage:' attr='homepage' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='siehe auch:' attr='sameAs' method={LOB.extractID}/>
             {dataObj?.wikipedia && (
               <p>
                 <b>Wikipedia:</b>
@@ -151,20 +149,20 @@ export const Lobid: FunctionComponent<PanelProps> = ({
                 </span>
               </p>
             )}            
-            <LobidItem  item={dataObj} label='Kategorie:' attr='broaderTermInstantial' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='Teil von:' attr='hierarchicalSuperiorOfPlaceOrGeographicName' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='Gründungsdatum:' attr='dateOfEstablishment' method={LOB.extractString}/>
-            <LobidItem  item={dataObj} label='bestand bis:' attr='dateOfTermination' method={LOB.extractString}/>
-            <LobidItem  item={dataObj} label='gehört zu:' attr='broaderTermPartitive' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='vormals:' attr='precedingPlaceOrGeographicName' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='später:' attr='succeedingPlaceOrGeographicName' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='Beschreibung:' attr='definition' method={LOB.extractString}/>
-            <LobidItem  item={dataObj} label='Unterkategorie:' attr='gndSubjectCategory' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='geograf. Bezug:' attr='placeOfBusiness' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='Zeit:' attr='dateOfEstablishmentAndTermination' method={LOB.extractString}/>
-            <LobidItem  item={dataObj} label='erstellt:' attr='dateOfProduction' method={LOB.extractString}/>
-            <LobidItem  item={dataObj} label='Geografischer Bezug:' attr='temporaryNameOfThePlaceOrGeographicName' method={LOB.extractLinkArray}/>
-            <LobidItem  item={dataObj} label='zeitweise genannt:' attr='temporaryNameOfThePlaceOrGeographicName' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='Kategorie:' attr='broaderTermInstantial' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='Teil von:' attr='hierarchicalSuperiorOfPlaceOrGeographicName' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='Gründungsdatum:' attr='dateOfEstablishment' method={LOB.extractString}/>
+            <GndItem  item={dataObj} label='bestand bis:' attr='dateOfTermination' method={LOB.extractString}/>
+            <GndItem  item={dataObj} label='gehört zu:' attr='broaderTermPartitive' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='vormals:' attr='precedingPlaceOrGeographicName' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='später:' attr='succeedingPlaceOrGeographicName' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='Beschreibung:' attr='definition' method={LOB.extractString}/>
+            <GndItem  item={dataObj} label='Unterkategorie:' attr='gndSubjectCategory' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='geograf. Bezug:' attr='placeOfBusiness' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='Zeit:' attr='dateOfEstablishmentAndTermination' method={LOB.extractString}/>
+            <GndItem  item={dataObj} label='erstellt:' attr='dateOfProduction' method={LOB.extractString}/>
+            <GndItem  item={dataObj} label='Geografischer Bezug:' attr='temporaryNameOfThePlaceOrGeographicName' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='zeitweise genannt:' attr='temporaryNameOfThePlaceOrGeographicName' method={LOB.extractLinkArray}/>
           </div>
         </Fragment>
       )}

@@ -1,12 +1,12 @@
 export interface DbPediaJson {
-  head: { 
-      link: [], 
-      vars: string[]
-    },
+  head: {
+    link: [];
+    vars: string[];
+  };
   results: {
-    distinct: boolean,
-    ordered: boolean,
-    bindings: DbPediaInfo[]
+    distinct: boolean;
+    ordered: boolean;
+    bindings: DbPediaInfo[];
   };
 }
 

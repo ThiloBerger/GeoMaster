@@ -2,11 +2,11 @@ import { DbPediaJson } from '../interfaces/dbpediaJson';
 import { GeonameById, GeonamesSearch } from '../interfaces/geonamesSearch';
 import { AllOrigins } from '../interfaces/geoport';
 import { GettyJson } from '../interfaces/gettyJson';
-import { LobidJson } from '../interfaces/lobidJson';
+import { GndJson } from '../interfaces/GndJson';
 import { Maps } from '../interfaces/maps';
 import { OVERPASS } from '../interfaces/overpass';
 import { WbSearch } from '../interfaces/wbSearch';
-import { WikidataArchaelog, WikidataCity, WikidataExtra, WikidataPopulation } from '../interfaces/wikidataCityData';
+import { WikidataCard, WikidataCity, WikidataExtra, WikidataPopulation } from '../interfaces/wikidataCityData';
 import { GOVKEY } from '../types/govkey';
 import { Lang } from '../types/lang';
 import { LngLat, Point, WGS84 } from '../util/WGS84';
@@ -92,13 +92,14 @@ static readonly getSlubMaps = async (lngLat: LngLat, range: number): Promise<Map
   return await xhttp.responseText;
 } */
 
+//http://geoportal.ios-regensburg.de/catalog?utf8=✓&f[dc_type_s][]=Topografische+Karte&search_field=dummy_range&range[maps_hasScale_i][begin]=200&range[maps_hasScale_i][end]=100000&commit=Limit&bbox=-5.712891 28.033198 31.552734 57.914848
 // https://github.com/gnuns/allorigins
-static readonly getGeoPortOst = async (lngLat: LngLat, range: number, page: number, typ: string): Promise<AllOrigins> => {
-  const mapTyp = typ === '' ? '' : `&f[dc_type_s][]=${typ}`;
+static readonly getGeoPortOst = async (lngLat: LngLat, range: number): Promise<AllOrigins> => {
+  const limitRange ='&range[maps_hasScale_i][begin]=200&range[maps_hasScale_i][end]=1000000&commit=Limit';
   const center: Point = { coordinates: lngLat };
   const radius = 1 + range * 1.41;
   const bbox = WGS84.bbox(center, radius);
-  const url = `http://geoportal.ios-regensburg.de/catalog?bbox=${bbox}&format=json&page=${page}${mapTyp}`;
+  const url = `http://geoportal.ios-regensburg.de/catalog?utf8=✓${limitRange}&bbox=${bbox}&format=json&page=1&per_page=100`;
   console.log(url);
   const response = await fetch(
     `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
@@ -107,14 +108,9 @@ static readonly getGeoPortOst = async (lngLat: LngLat, range: number, page: numb
   return await response.json();
 }
 
-static readonly getLobid = async (lobidId: string): Promise<LobidJson> => {
-  const id = `gndIdentifier:${lobidId}`;
-  const filter = '&filter=type:TerritorialCorporateBodyOrAdministrativeUnit';
-  const url = `${API.BASEURL_LOBID}${id}${filter}&size=1`;
-  const response = await fetch(url)
-  return await response.json();
-}
-static readonly getLobidSearch = async (search: string): Promise<LobidJson> => {
+// ############### GND ###############
+
+static readonly gndLookup = async (search: string): Promise<GndJson> => {
   const name = `preferredName:${search}*`;
   const filter = '&filter=type:TerritorialCorporateBodyOrAdministrativeUnit';
   const url = `${API.BASEURL_LOBID}${name}${filter}&size=500`;
@@ -122,16 +118,18 @@ static readonly getLobidSearch = async (search: string): Promise<LobidJson> => {
   return await response.json();
 }
 
-static readonly getGovObject = async (govId: string): Promise<Document> => {
-  const url = `http://gov.genealogy.net/semanticWeb/about/${govId}`;
-  const parser = new DOMParser();
-  return await fetch(url)
-    .then(response => response.text())
-    .then(data => parser.parseFromString(data, 'application/xml'))
+static readonly gndEntryById = async (lobidId: string): Promise<GndJson> => {
+  const id = `gndIdentifier:${lobidId}`;
+  const filter = '&filter=type:TerritorialCorporateBodyOrAdministrativeUnit';
+  const url = `${API.BASEURL_LOBID}${id}${filter}&size=1`;
+  const response = await fetch(url)
+  return await response.json();
 }
 
-static readonly getGovSearch = async (key: GOVKEY, id: String) => {
-  const body = `system=${key}&ref=${id}`;
+// ############### GOV ###############
+
+static readonly govSearchIDWithKey = async (key: GOVKEY, idRef: String) => {
+  const body = `system=${key}&ref=${idRef}`;
   const url = `http://gov.genealogy.net/search/externalRef`;
   return await fetch(url, {
     body: body,
@@ -140,8 +138,8 @@ static readonly getGovSearch = async (key: GOVKEY, id: String) => {
   });
 }
 
-static readonly ifExistGovId = async (id: string) => {
-  const url = `http://gov.genealogy.net/item/show/${id}`;
+static readonly govTestId = async (govId: string) => {
+  const url = `http://gov.genealogy.net/item/show/${govId}`;
   return await fetch(url, {
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
@@ -151,14 +149,24 @@ static readonly ifExistGovId = async (id: string) => {
   });
 } 
 
-static readonly getWbSearchEntities = async (search: string, lang: Lang, limit: number): Promise<WbSearch> => {
+static readonly govEntryById = async (govId: string): Promise<Document> => {
+  const url = `http://gov.genealogy.net/semanticWeb/about/${govId}`;
+  const parser = new DOMParser();
+  return await fetch(url)
+    .then(response => response.text())
+    .then(data => parser.parseFromString(data, 'application/xml'))
+}
+
+// ############### WIKIDATA ###############
+
+static readonly wdLookup = async (search: string, lang: Lang, limit: number): Promise<WbSearch> => {
   const BASEURL_WIKIDATA = 'https://www.wikidata.org/w/api.php?action=';
   const url = `${BASEURL_WIKIDATA}wbsearchentities&search=${search}&origin=*&format=json&language=${lang}&uselang=${lang}&limit=${limit}`;
   const response = await fetch(url)
   return await response.json();
 }
 
-static readonly getWikidataCityData = async (id: string, lang: Lang): Promise<WikidataCity> => {
+static readonly wdCityData = async (id: string, lang: Lang): Promise<WikidataCity> => {
   const SELECT = `SELECT ?property ?x ?propertyLabel ?ab ?bis ?lid ?cityLabel WHERE {
     VALUES ?city {wd:${id}}
     { 
@@ -257,7 +265,7 @@ static readonly getWikidataCityData = async (id: string, lang: Lang): Promise<Wi
   return await response.json();
 }
 
-static readonly getWikidataCityPopulation = async (id: string): Promise<WikidataPopulation> => {
+static readonly wdPopulation = async (id: string): Promise<WikidataPopulation> => {
   const SELECT = `SELECT ?population ?date WHERE {
     VALUES ?city {wd:${id}}
     ?city p:P1082 ?_.
@@ -270,7 +278,7 @@ static readonly getWikidataCityPopulation = async (id: string): Promise<Wikidata
   return await response.json();
 }
 
-static readonly getWikidataCityExtra = async (id: string, lang: Lang): Promise<WikidataExtra> => {
+static readonly wdExtra = async (id: string, lang: Lang): Promise<WikidataExtra> => {
   const SELECT = `
 SELECT * WHERE {
   {SELECT ?audioLabel 
@@ -315,7 +323,7 @@ SELECT * WHERE {
 // Q839954 Archälogische Stätte
 // Q16970 Kirchen
 // Q178561 Schlacht
-static readonly getWikidataArchaelog = async (lang: Lang, lngLat: LngLat, radius: number, obj: string = 'Q839954'): Promise<WikidataArchaelog> => {
+static readonly wdCard = async (lang: Lang, lngLat: LngLat, radius: number, obj: string): Promise<WikidataCard> => {
   const SELECT = `
   SELECT distinct 
   ?ort ?ortLabel ?ortDescription ?ab
@@ -348,6 +356,9 @@ static readonly getWikidataArchaelog = async (lang: Lang, lngLat: LngLat, radius
   const response = await fetch(url)
   return await response.json();
 }
+
+
+
 
 static readonly getGettyNoteAndNames = async (id: string): Promise<GettyJson> => {
   const SELECT = `select ?lab ?historic ?start ?end ?comment ?ScopeNote {

@@ -7,7 +7,7 @@ import { Getty } from './components/getty';
 import { Gov } from './components/gov';
 import { Lang } from './types/lang';
 import { ListID } from './interfaces/listID';
-import { Lobid } from './components/lobid';
+import { Gnd } from './components/Gnd';
 import { MapPopup } from './components/piglets/MapPopup';
 import { Slub } from './components/slub';
 import { Wikidata } from './components/wikidata';
@@ -20,7 +20,7 @@ export const App: FunctionComponent = (): ReactElement => {
   const lang = Lang.DE;
   const [showWikidata, setShowWikidata] = useState<boolean>(true);
   const [showGov, setShowGov] = useState<boolean>(true);
-  const [showLobid, setShowLobid] = useState<boolean>(true);
+  const [showGnd, setShowGnd] = useState<boolean>(true);
   const [showGetty, setShowGetty] = useState<boolean>(false);
   const [showGeonames, setShowGeonames] = useState<boolean>(false);   
   const [showSlub, setShowSlub] = useState<boolean>(false);
@@ -32,7 +32,6 @@ export const App: FunctionComponent = (): ReactElement => {
   const [popupImage, setPopupImage] = useState<boolean>(false);
 
   const onSearchIdsHandler = (searchIds: ListID) => {
-    //console.log({...searchIds})
     setSearchIds({...searchIds});
   };
 
@@ -58,11 +57,11 @@ export const App: FunctionComponent = (): ReactElement => {
     setSearchIds(listId);
     setShowGov(!showGov)
   }
-  const onClickLobidHandler = () => {
+  const onClickGndHandler = () => {
     const listId = {...searchIds};
-    listId.lobid.apiCall = false
+    listId.gnd.apiCall = false
     setSearchIds(listId);
-    setShowLobid(!showLobid)
+    setShowGnd(!showGnd)
   }
   const onClickGettyHandler = () => {
     const listId = {...searchIds};
@@ -106,7 +105,7 @@ export const App: FunctionComponent = (): ReactElement => {
           {searchIds.wikidata.status && <div></div>}
           {searchIds.getty.status && <div></div>}
           {searchIds.gov.status && <div></div>}
-          {searchIds.lobid.status && <div></div>}
+          {searchIds.gnd.status && <div></div>}
           {searchIds.slub.status && <div></div>}
           {searchIds.geonames.status && <div></div>}
           {searchIds.geoportost.status && <div></div>}
@@ -122,7 +121,7 @@ export const App: FunctionComponent = (): ReactElement => {
         </div>
         <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 3)}}>
           <Button variant='contained' onClick={()=>sort(3,-1)}><SwitchLeft /></Button>
-          <Button variant='contained' onClick={()=>onClickLobidHandler()} className={searchIds.lobid.id !== '' ? 'found': ''}>GND&nbsp;{showLobid?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
+          <Button variant='contained' onClick={()=>onClickGndHandler()} className={searchIds.gnd.id !== '' ? 'found': ''}>GND&nbsp;{showGnd?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
         </div>
         <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 4)}}>
           <Button variant='contained' onClick={()=>sort(4,-1)}><SwitchLeft /></Button>
@@ -145,7 +144,7 @@ export const App: FunctionComponent = (): ReactElement => {
       <div className='tabs'>
         {showWikidata && <Wikidata style={{order: buttonOrder.findIndex((i) => i === 1)}} searchIds={searchIds} lang={lang} openPopup={openPopup} onSearchIds={onSearchIdsHandler} />}
         {showGov && <Gov style={{order: buttonOrder.findIndex((i) => i === 2)}} searchIds={searchIds} openPopup={openPopup}  onSearchIds={onSearchIdsHandler}/>}
-        {showLobid && <Lobid style={{order: buttonOrder.findIndex((i) => i === 3)}} searchIds={searchIds} openPopup={openPopup} onSearchIds={onSearchIdsHandler}/>}
+        {showGnd && <Gnd style={{order: buttonOrder.findIndex((i) => i === 3)}} searchIds={searchIds} openPopup={openPopup} onSearchIds={onSearchIdsHandler}/>}
         {showGetty && <Getty style={{order: buttonOrder.findIndex((i) => i === 4)}} searchIds={searchIds} onSearchIds={onSearchIdsHandler}/>}
         {showGeonames && <Geonames style={{order: buttonOrder.findIndex((i) => i === 5)}} searchIds={searchIds} openPopup={openPopup} onSearchIds={onSearchIdsHandler}/>}
         {showSlub && <Slub style={{order: buttonOrder.findIndex((i) => i === 6)}} searchIds={searchIds} onSearchIds={onSearchIdsHandler}/>}

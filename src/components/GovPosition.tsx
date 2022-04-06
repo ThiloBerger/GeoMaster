@@ -1,10 +1,11 @@
 import { FunctionComponent, ReactElement } from 'react';
 import { GeonameById } from '../interfaces/geonamesSearch';
 import { GovObject, WGS84Point } from '../interfaces/govRdf';
-import { WikidataArchaelogResult, WikidataExtraResult } from '../interfaces/wikidataCityData';
+import { WikidataCardResult, WikidataExtraResult } from '../interfaces/wikidataCityData';
 import { WGS84 } from '../util/WGS84';
 import { Button } from '@mui/material';
 import { Map } from '@mui/icons-material';
+import { tk25Names } from '../interfaces/tk25';
 
 interface GovMapsProps {
     entity: GovObject,
@@ -46,21 +47,34 @@ export const WikiDataPosition = (extra: WikidataExtraResult): ReactElement => {
 
     const point: WGS84Point = {'wgs84:lon': extra.lon.value, 'wgs84:lat': extra.lat.value};
 
+    const postam = WGS84.wgs2pot([parseFloat(extra.lon.value), parseFloat(extra.lat.value)]);
+    const tk25 = WGS84.pot2tkq(postam);
+    const name = Object.entries(tk25Names).filter(([key, value]) => key === tk25).map(([key, value]) =>  value )[0];
+    const [mtb, h] = WGS84.pot2MTBQQQ(postam);
+    const gk = WGS84.pot2gk(postam);
+
     return (
         <div className='pos'>
-            <p>Geographische Position (WGS84)</p>
+            <p>Geographische Position (WGS84) </p>
             <p>{toDeg(point)}</p>
             <p>{toDeg2(point)}</p>
-            <p>{utm(point)}</p>
+            <p>UTM: {utm(point)}</p>
+            {(gk || name) && <><hr />
+                <p>(Potsdam)</p>
+            </>}
+            {gk && <p>GK: R {gk[0]} H {gk[1]}</p>}
+            {name && <><p>TK25: Blatt {tk25} {name}</p>
+                <p>MTBQ: {mtb[0]} ({h}), MTBQQ: {mtb[0]}{mtb[1]}, MTBQQQ: {mtb}</p>
+            </>}
         </div>
     );
 }
 
-interface WikiDataArchealogMapProps {
-    entity: WikidataArchaelogResult,
+interface WikiDataCardMapProps {
+    entity: WikidataCardResult,
     openPopup: Function
 }
-export const WikidataArchealogMaps: FunctionComponent<WikiDataArchealogMapProps> = ({entity, openPopup}): ReactElement => {
+export const WikidataCardMaps: FunctionComponent<WikiDataCardMapProps> = ({entity, openPopup}): ReactElement => {
     if (!entity.lat) return (<></>);
     const point: WGS84Point = {'wgs84:lon': entity.lon.value, 'wgs84:lat': entity.lat.value};
     return <div className='mapbutton'><Button onClick={() => openPopup(`https://maps.google.com/maps?q=${toDeg(point)}&t=&z=9&ie=UTF8&iwloc=en&output=embed`)}><Map /> Karte</Button></div>;

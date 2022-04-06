@@ -6,12 +6,12 @@ import { PanelProps } from '../interfaces/panelProps';
 import { API } from '../service/api';
 import { GOV, GOVLib } from '../util/util';
 import { LngLat } from '../util/WGS84';
+import { GovAreaChart } from './GovAreaChart';
 import { GOVPop, GovPopulationChart } from './GovPopulationChart';
 import { GovMaps, GovPosition } from './GovPosition';
-
-
 import { HREF } from './piglets/Link';
-import { GovAreaChart } from './GovAreaChart';
+
+
 
 
 
@@ -30,7 +30,7 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
         searchIds.gov.status = true;
         onSearchIds({...searchIds});
 
-        API.getGovObject(searchIds.gov.id).then( async data => {
+        API.govEntryById(searchIds.gov.id).then( async data => {
             const json = GOV.xml2json(data);
             const govObj = GOV.jsonToGOV(json);
             console.log('GOV USEEFFECT: ', govObj);

@@ -17,33 +17,32 @@ export class WGS84 {
     
     const DEG2RAD = Math.PI / 180.0;
     const k0 = 0.9996;
-    var LongTemp = longitude;
     const LatRad = latitude * DEG2RAD;
-    const LongRad = LongTemp * DEG2RAD;
+    const LongRad = longitude * DEG2RAD;
     let ZoneNumber;
 
-    if (LongTemp >= 8 && LongTemp <= 13 && latitude > 54.5 && latitude < 58)
+    if (longitude >= 8 && longitude <= 13 && latitude > 54.5 && latitude < 58)
       ZoneNumber = 32;
     else if (
       latitude >= 56.0 &&
       latitude < 64.0 &&
-      LongTemp >= 3.0 &&
-      LongTemp < 12.0
+      longitude >= 3.0 &&
+      longitude < 12.0
     )
       ZoneNumber = 32;
     else {
-      ZoneNumber = Math.floor((LongTemp + 180) / 6 + 1);
+      ZoneNumber = Math.floor((longitude + 180) / 6 + 1);
       if (latitude >= 72.0 && latitude < 84.0) {
-        if (LongTemp >= 0.0 && LongTemp < 9.0) ZoneNumber = 31;
-        else if (LongTemp >= 9.0 && LongTemp < 21.0) ZoneNumber = 33;
-        else if (LongTemp >= 21.0 && LongTemp < 33.0) ZoneNumber = 35;
-        else if (LongTemp >= 33.0 && LongTemp < 42.0) ZoneNumber = 37;
+        if (longitude >= 0.0 && longitude < 9.0) ZoneNumber = 31;
+        else if (longitude >= 9.0 && longitude < 21.0) ZoneNumber = 33;
+        else if (longitude >= 21.0 && longitude < 33.0) ZoneNumber = 35;
+        else if (longitude >= 33.0 && longitude < 42.0) ZoneNumber = 37;
       }
     }
 
     const LongOrigin = (ZoneNumber - 1) * 6 - 180 + 3; //+3 puts origin in middle of zone
     const LongOriginRad = LongOrigin * DEG2RAD;
-    const UTMZone = WGS84.getUtmLetterDesignator(latitude);
+    const UTMZone = WGS84.getUtmLetterDesignator(longitude, latitude);
     const eccPrimeSquared = WGS84.eccSquared / (1 - WGS84.eccSquared);
 
     const N = WGS84.SEMI_MAJOR_AXIS / Math.sqrt(1 - WGS84.eccSquared * Math.sin(LatRad) * Math.sin(LatRad));
@@ -73,28 +72,10 @@ export class WGS84 {
     };
   };
 
-  private static getUtmLetterDesignator = function (latitude: number): string {
-    if (84 >= latitude && latitude >= 72) return 'X';
-    if (72 > latitude && latitude >= 64) return 'W';
-    if (64 > latitude && latitude >= 56) return 'V';
-    if (56 > latitude && latitude >= 48) return 'U';
-    if (48 > latitude && latitude >= 40) return 'T';
-    if (40 > latitude && latitude >= 32) return 'S';
-    if (32 > latitude && latitude >= 24) return 'R';
-    if (24 > latitude && latitude >= 16) return 'Q';
-    if (16 > latitude && latitude >= 8) return 'P';
-    if (8 > latitude && latitude >= 0) return 'N';
-    if (0 > latitude && latitude >= -8) return 'M';
-    if (-8 > latitude && latitude >= -16) return 'L';
-    if (-16 > latitude && latitude >= -24) return 'K';
-    if (-24 > latitude && latitude >= -32) return 'J';
-    if (-32 > latitude && latitude >= -40) return 'H';
-    if (-40 > latitude && latitude >= -48) return 'G';
-    if (-48 > latitude && latitude >= -56) return 'F';
-    if (-56 > latitude && latitude >= -64) return 'E';
-    if (-64 > latitude && latitude >= -72) return 'D';
-    if (-72 > latitude && latitude >= -80) return 'C';
-    return 'Z';
+  private static getUtmLetterDesignator = function (lon: number, lat: number): string {
+    if (lat > 84) return lon < 0 ? 'Y' : 'Z';
+    if (lat < -80) return lon < 0 ? 'A' : 'B';
+    return "CDEFGHJKLMNPQRSTUVWXX"[Math.floor((lat + 80) / 8)];
   };
 
   /**
@@ -266,6 +247,76 @@ export class WGS84 {
      
   }
 
+
+/* Copyright (c) 2006, HELMUT H. HEIMEIER
+   Permission is hereby granted, free of charge, to any person obtaining a
+   copy of this software and associated documentation files (the "Software"),
+   to deal in the Software without restriction, including without limitation
+   the rights to use, copy, modify, merge, publish, distribute, sublicense,
+   and/or sell copies of the Software, and to permit persons to whom the
+   Software is furnished to do so, subject to the following conditions:
+   The above copyright notice and this permission notice shall be included
+   in all copies or substantial portions of the Software.*/
+
+/* Die Funktion wandelt geographische Koordinaten in GK Koordinaten
+   um. Geographische Länge lp und Breite bp müssen im Potsdam Datum
+   gegeben sein. Berechnet werden Rechtswert rw und Hochwert hw.*/
+
+// Geographische Länge lp und Breite bp im Potsdam Datum
+static pot2gk = ([lp, bp]:number[]):string[] | undefined => {
+  const DEG2RAD = Math.PI / 180.0;
+  // Grenzen des Gauss-Krüger-Systems für Deutschland 46° N < bp < 55° N,
+  //                                                   5° E < lp < 16° E
+  if (bp < 46 || bp > 56 || lp < 5 || lp > 16) return undefined;
+  // Potsdam Datum
+  // Große Halbachse a und Abplattung f
+  const a = 6377397.155;
+  const f = 3.34277321e-3;
+  // Polkrümmungshalbmesser c
+  const c = a / (1 - f);
+  // Quadrat der zweiten numerischen Exzentrizität
+  const ex2 = (2 * f - f * f) / ((1 - f) * (1 - f));
+  const ex4 = ex2 * ex2;
+  const ex6 = ex4 * ex2;
+  const ex8 = ex4 * ex4;
+  // Koeffizienten zur Berechnung der Meridianbogenlänge
+  const e0 = c * DEG2RAD * (1 - 3 * ex2 / 4 + 45 * ex4 / 64 - 175 * ex6 / 256 + 11025 * ex8 / 16384);
+  const e2 = c * (-3 * ex2 / 8 + 15 * ex4 / 32 - 525 * ex6 / 1024 + 2205 * ex8 / 4096);
+  const e4 = c * (15 * ex4 / 256 - 105 * ex6 / 1024 + 2205 * ex8 / 16384);
+  const e6 = c * (-35 * ex6 / 3072 + 315 * ex8 / 12288);
+  // Breite in Radianten
+  const br = bp * DEG2RAD;
+  const tan1 = Math.tan(br);
+  const tan2 = tan1 * tan1;
+  const tan4 = tan2 * tan2;
+  const cos1 = Math.cos(br);
+  const cos2 = cos1 * cos1;
+  const cos4 = cos2 * cos2;
+  const cos3 = cos2 * cos1;
+  const cos5 = cos4 * cos1;
+  const etasq = ex2 * cos2;
+  // Querkrümmungshalbmesser nd
+  const nd = c / Math.sqrt(1 + etasq);
+  // Meridianbogenlänge g aus gegebener geographischer Breite bp
+  const g = e0 * bp + e2 * Math.sin(2 * br) + e4 * Math.sin(4 * br) + e6 * Math.sin(6 * br);
+  // Längendifferenz dl zum Bezugsmeridian lh
+  const kz = Math.floor((lp + 1.5) / 3);
+  const lh = kz * 3;
+  const dl = (lp - lh) * DEG2RAD;
+  const dl2 = dl * dl;
+  const dl4 = dl2 * dl2;
+  const dl3 = dl2 * dl;
+  const dl5 = dl4 * dl;
+  // Hochwert hw und Rechtswert rw als Funktion von geographischer Breite und Länge
+  const hw = g + (nd * cos2 * tan1 * dl2) / 2 +
+    (nd * cos4 * tan1 * (5 - tan2 + 9 * etasq) * dl4) / 24;
+  const rw = nd * cos1 * dl + (nd * cos3 * (1 - tan2 + etasq) * dl3) / 6 +
+    (nd * cos5 * (5 - 18 * tan2 + tan4) * dl5) / 120 + kz * 1e6 + 500000;
+	
+	return [rw.toFixed(3), hw.toFixed(3)];
+}
+
+
   static pot2tkq = ([lp, bp]:number[]) => {
 
     console.log([lp, bp]);
@@ -276,6 +327,25 @@ export class WGS84 {
     return tk.toString().padStart(4, '0');
 
   }
+
+  static pot2MTBQQQ = ([lp, bp]:number[]):string[] => {
+    // Quadrant
+    // erdacht in zwei Mittagspausen von B. Haynold
+    let q1 = Math.floor(lp * 12.0) % 2;
+    let q2 = Math.floor(bp * 20.0) % 2;
+    let qqq = 100 * (q1 + (1-q2) * 2 + 1);
+    // Himmelsrichtungen
+    const qh = 'SN'[q2] + 'WO'[q1];
+    // Quadrant des Quadrant (16tel)
+    q1 = Math.floor(lp * 24.0) % 2;
+    q2 = Math.floor(bp * 40.0) % 2;
+    qqq += 10 * (q1 + (1-q2) * 2 + 1);
+    // Quadrant des Quadrant des Quadrant (64tel)
+    q1  = Math.floor(lp * 48.0) % 2;
+    q2  = Math.floor(bp * 80.0) % 2;
+    qqq += (q1 + (1-q2) * 2 + 1);
+    return [qqq.toString(), qh];
+  }  
 
   static pointInPolygon(lngLat: LngLat, polygon: Polygon) {
 
