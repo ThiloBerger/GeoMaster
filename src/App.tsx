@@ -1,6 +1,6 @@
-import { Button } from '@mui/material';
-import { CheckBoxOutlineBlankTwoTone, CheckBoxTwoTone, SwitchLeft} from '@mui/icons-material';
-import { FunctionComponent, ReactElement, useState } from 'react';
+import { Button, Tooltip } from '@mui/material';
+import { CheckBoxOutlineBlankTwoTone, CheckBoxTwoTone, SaveAlt, SwitchLeft} from '@mui/icons-material';
+import { FunctionComponent, ReactElement, useContext, useState } from 'react';
 import { Geonames } from './components/geonames';
 import { GeoPortOst } from './components/geoportost';
 import { Getty } from './components/getty';
@@ -14,8 +14,12 @@ import { Wikidata } from './components/wikidata';
 
 import '@fontsource/roboto'
 import './App.scss';
+import { Global } from './components/Global';
+import saveAs from 'file-saver';
 
 export const App: FunctionComponent = (): ReactElement => {
+
+  const global = useContext(Global);
 
   const lang = Lang.DE;
   const [showWikidata, setShowWikidata] = useState<boolean>(true);
@@ -30,6 +34,13 @@ export const App: FunctionComponent = (): ReactElement => {
   const [popupUrl, setPopupUrl] = useState<string>('');
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
   const [popupImage, setPopupImage] = useState<boolean>(false);
+
+  const save = () => {
+    const json = JSON.stringify(global);
+    const blob = new Blob([json], {type: 'application/json'});
+    //var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, `${global.search}_${new Date().toJSON().slice(0,10)}.json`);
+  }
 
   const onSearchIdsHandler = (searchIds: ListID) => {
     setSearchIds({...searchIds});
@@ -139,6 +150,9 @@ export const App: FunctionComponent = (): ReactElement => {
           <Button variant='contained' onClick={()=>sort(7,-1)}><SwitchLeft /></Button>
           <Button variant='contained' onClick={()=>onClickGeoPortOstHandler()} className={searchIds.slub.id !== '' ? 'found': ''}>GeoPort&nbsp;{showGeoPortOst?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
         </div>
+        <Tooltip title={`${global.search}.json (${(new Blob([JSON.stringify(global)], {type: 'application/json'}).size/1024).toFixed(1)} KB)`}>
+          <Button variant='contained' onClick={()=>save()} endIcon={<SaveAlt/>} className='save'>Save</Button>
+        </Tooltip>
       </div>
       <div id='svg'><div></div></div>
       <div className='tabs'>

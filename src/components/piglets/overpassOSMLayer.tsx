@@ -89,5 +89,5 @@ export const OverpassOSMLayer: FunctionComponent<Props> = ({data}): ReactElement
 
   },[data]);
 
-  return (<div id="osmmap" className="osmmap"><div id='mouse-position'></div></div>);
+  return (<div className="osmmap"><div id="osmmap"></div><div id='mouse-position'></div></div>);
 }

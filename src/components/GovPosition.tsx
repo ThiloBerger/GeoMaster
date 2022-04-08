@@ -20,11 +20,11 @@ export const GovPosition = (govObject: GovObject): ReactElement => {
     
     if (!govObject['gov:position']) return (<></>);
 
-    const point= govObject['gov:position']['wgs84:Point']
+    const point= govObject['gov:position']['wgs84:Point'];
 
     return (
         <div className='pos'>
-            <p>Geographische Position (WGS84) </p>
+            <p>Geographische Position (WGS84)</p>
             <p>{toDeg(point)}</p>
             <p>{toDeg2(point)}</p>
             <p>{utm(point)}</p>
@@ -49,7 +49,7 @@ export const WikiDataPosition = (extra: WikidataExtraResult): ReactElement => {
 
     const postam = WGS84.wgs2pot([parseFloat(extra.lon.value), parseFloat(extra.lat.value)]);
     const tk25 = WGS84.pot2tkq(postam);
-    const name = Object.entries(tk25Names).filter(([key, value]) => key === tk25).map(([key, value]) =>  value )[0];
+    const name = Object.entries(tk25Names).filter(([key, value]) => key === tk25).map(([key, value]) => value )[0];
     const [mtb, h] = WGS84.pot2MTBQQQ(postam);
     const gk = WGS84.pot2gk(postam);
 

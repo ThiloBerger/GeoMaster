@@ -1,4 +1,4 @@
-.osmmap {
+#osmmap {
     z-index: 0;
     width: auto;
     height: 400px;
@@ -19,20 +19,25 @@
     .ol-rotate {
         display: none;
     }
-    #mouse-position {
-        position: absolute;
-        background: cornsilk;
-        border: 1px solid lightslategray;
-        height: 2em;
-        width: fit-content;
-        padding: .5em;
-        left: 0;
-        font-size: .9em;
-        bottom: 0;
-    }
+
+}
+#mouse-position {
+    position: absolute;
+    background: transparent;
+    border: 1px solid transparent;
+    height: 2em;
+    width: fit-content;
+    padding: .5em;
+    left: 0;
+    font-size: .9em;
+    bottom: 0;
+}
+.osmmap {
+    position: relative;
     &:hover {
         #mouse-position {
-            z-index: 50;
+            background: cornsilk;
+            border: 1px solid lightslategray;
         }
     }
 }

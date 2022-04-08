@@ -245,3 +245,14 @@ span.alternate {
   color: gray;
   font-size: .8em;
 }
+
+button.save {
+  order: 9999;
+  margin-left: 2em;
+  background: darkcyan;
+  border-radius: .5em;
+  &:hover {
+    background: darkred!important;
+    box-shadow: 0 0 0px 1px white;
+  }
+}

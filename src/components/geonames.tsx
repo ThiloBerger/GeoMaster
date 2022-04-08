@@ -1,21 +1,21 @@
-import { Accordion, AccordionSummary, AccordionDetails, ToggleButtonGroup, ToggleButton, Badge } from '@mui/material';
-import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
+import { ExpandMore, GpsFixed, Hive, Language, Search } from '@mui/icons-material';
+import { Accordion, AccordionDetails, AccordionSummary, Badge, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Fragment, FunctionComponent, MouseEvent, ReactElement, useContext, useEffect, useState } from 'react';
 import { DbPediaInfo } from '../interfaces/dbpediaJson';
-import { ExpandMore, GpsFixed, Hive, Language, Search }from '@mui/icons-material';
-import { Fragment, FunctionComponent, MouseEvent, ReactElement, useEffect, useState } from 'react';
 import { GeonameById, GeonamesSearchItem } from '../interfaces/geonamesSearch';
-import { GeonamesMaps, GeonamesPosition } from './GovPosition';
-import { API } from '../service/api';
-import { HREF } from './piglets/Link';
-import { Lang } from '../types/lang';
 import { ListID } from '../interfaces/listID';
-import { LngLat } from '../util/WGS84';
 import { OverpassItem } from '../interfaces/overpass';
 import { PanelProps } from '../interfaces/panelProps';
+import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
+import { API } from '../service/api';
+import { Lang } from '../types/lang';
+import { LngLat } from '../util/WGS84';
+import { defaultGlobal, Global } from './Global';
+import { GeonamesMaps, GeonamesPosition } from './GovPosition';
+import { HREF } from './piglets/Link';
 import { SearchList } from './piglets/SearchList';
 
 import './geonames.scss';
-
 
 export const Geonames: FunctionComponent<PanelProps> = ({
   style,
@@ -25,11 +25,13 @@ export const Geonames: FunctionComponent<PanelProps> = ({
   onSearchIds,
 }): ReactElement => {
 
+  let global = useContext(Global);
+
   const [geonamesSearchEntities, setGeonamesSearchEntities] = useState<GeonamesSearchItem[]>([]);
-  const [geonamesEntity, setGeonamesEntity] = useState<GeonameById>();
+  const [geonamesEntity, setGeonamesEntity] = useState<GeonameById>(JSON.parse('{}'));
   const [geonamesChildren, setGeonamesChildren] = useState<GeonamesSearchItem[]>([]);
   const [geonamesPos, setGeonamesPos] = useState<ReactElement>(<></>);
-  const [overpass, setOverpass] = useState<OverpassItem>();
+  const [overpass, setOverpass] = useState<OverpassItem>(JSON.parse('{}'));
   const [dbPedia, setDbPedia] = useState<DbPediaInfo[]>([]);
   const [option, setOption] = useState(() => ['']);
 
@@ -37,15 +39,16 @@ export const Geonames: FunctionComponent<PanelProps> = ({
     
     if (searchIds.geonames.apiCall || searchIds.geonames.id === '') return;
     console.log('Geonames USEEFFECT: ', searchIds.geonames.id);
+    global.geonames.id = searchIds.geonames.id;
     searchIds.geonames.apiCall = true;
     searchIds.geonames.status = true;
     onSearchIds({...searchIds});
  
 
-    setGeonamesEntity(undefined);
+    setGeonamesEntity(JSON.parse('{}'));
     setGeonamesChildren([]);
     setGeonamesPos(<></>);
-    setOverpass(undefined);
+    setOverpass(JSON.parse('{}'));
     setDbPedia([]);
 
 
@@ -55,6 +58,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
       data.alternateNames = result.alternateNames.filter(f => f.lang && (f.lang.length === 2 || f.lang.length === 3) );
       //data.alternateNames.forEach(s => console.log('Names: ', s.name, ' Lang: ', s.lang, ' Sprache: ', COUNTRIES_DB_DE.find(el => s.lang.toLowerCase() === el.iso639)?.sprache));
       setGeonamesEntity(data);
+      global.geonames.data = data;
       setGeonamesPos(GeonamesPosition(data));
 
       if (searchIds.slub.id === '' && data.lat) {
@@ -65,12 +69,12 @@ export const Geonames: FunctionComponent<PanelProps> = ({
         onSearchIds({...searchIds});
       }
 
-      setOverpass(undefined);
       if (data.adminCode4 && data.adminCode4.length === 8 && /^\d+$/.test(data.adminCode4)) {
         await API.getOverpass(data.adminCode4).then(async (result) => {
           const data = result.elements.filter(f => f.type === 'relation');
           console.log('OVERPASS: ', data);
           setOverpass(data[0]);
+          global.overpass.data = data[0];
           if (searchIds.wikidata.id === '' && data[0].tags.wikidata) {
             searchIds.wikidata.id = data[0].tags.wikidata;
             onSearchIds({...searchIds});
@@ -78,6 +82,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
           if (data[0].tags['de:amtlicher_gemeindeschluessel']) {
             API.getDbPedia(data[0].tags['de:amtlicher_gemeindeschluessel']).then(data => {
               setDbPedia(data.results.bindings);
+              global.dbpedia.data = data.results.bindings;
             })
           }
         })
@@ -90,7 +95,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
       setGeonamesChildren(data.geonames)
     });
     
-  }, [searchIds, openPopup, onSearchIds, lang]);
+  }, [searchIds, openPopup, onSearchIds, lang, global.geonames, global.overpass, global.dbpedia]);
 
   const onChangeSearchHandler = (text: string) => {
     if (text !== "")
@@ -103,6 +108,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
   };
 
   const onClickSearch = (id: string) => {
+    global = {...defaultGlobal};
     const newListId = new ListID();
     newListId.geonames.id = id;
     onSearchIds(newListId);

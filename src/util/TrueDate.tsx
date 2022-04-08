@@ -13,7 +13,7 @@ export class TrueDate {
         const timestamp = new Date(date).getTime()/1000;
         this.trueDate += this.isBC ? -timestamp : timestamp;
         this.shortdate = date.replaceAll(/(-01-01|T).*/g,'').replaceAll(/^0+/g,'');
-        this.normDate = date.replaceAll(/(\d{4}).(\d{2}).(\d{2}).*/g, '$3.$2.$1');
+        this.normDate = date.replaceAll(/(\d{4}).(\d{2}).(\d{2}).*/g, '$3.$2.$1').replaceAll(/^01\.01\.(0+)?/g, '');
         if (this.isBC){
           this.shortdate += ' BC';
           this.normDate += ' BC';

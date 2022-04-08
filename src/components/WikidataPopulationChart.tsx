@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { WikidataPopulationResult } from '../interfaces/wikidataCityData';
+import { TrueDate } from '../util/TrueDate';
 
 export interface WDPop {
     chart: ReactElement;
@@ -15,9 +16,7 @@ export const WikidataPopulationChart = (population: WikidataPopulationResult[]):
     const pops: number[] = [];
 
     population.filter(f => f.date).forEach(c => {
-        let date = c.date.value.replaceAll(/(-01-01|T).*/g,'');
-        if (date.startsWith('-')) date = date.substring(1) + ' BC'
-        years.push(date.replaceAll(/^0+/g,''));
+        years.push(new TrueDate(c.date.value).getNormdate());
         pops.push(parseInt(c.population.value));
     });
 
@@ -34,8 +33,6 @@ export const WikidataPopulationChart = (population: WikidataPopulationResult[]):
                 <div><div style={{ width: `${pops[k]/maxPop*200}px` }}></div></div>
                 <div>{separatedDigit(pops[k].toString())}</div></li>
         )
-        }     
-    </ul>;
-
+    }</ul>;
     return {chart: chart, last: pops[0], total: total};
 }

@@ -1,16 +1,19 @@
 import { AutoStories, ExpandMore, FactCheck, Language } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
-import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import { Fragment, FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
 import { GettyItem } from '../interfaces/gettyJson';
 import { PanelProps } from '../interfaces/panelProps';
 import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
 import { API } from '../service/api';
 import './getty.scss';
+import { Global } from './Global';
 import { HREF } from './piglets/Link';
 
 
 export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearchIds}): ReactElement => {
-    
+
+  const global = useContext(Global);
+  
   const [data, setData] = useState<GettyItem[]>([]);
   const [places, setPlaces] = useState<GettyItem[]>([]);
 
@@ -18,6 +21,7 @@ export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearch
 
       if (searchIds.getty.apiCall || searchIds.getty.id === '') return;
       console.log('Getty USEEFFECT: ', searchIds.getty.id);
+      global.tgn.id = searchIds.getty.id;
       searchIds.getty.apiCall = true;
       searchIds.getty.status = true;
       onSearchIds({...searchIds});
@@ -25,6 +29,7 @@ export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearch
       API.getGettyNoteAndNames(searchIds.getty.id).then(async (data) => {
         console.log('Getty USEEFFECT 1: ', data.results.bindings)
         setData(data.results.bindings);
+        global.tgn.data = data.results.bindings;
       });
       API.getGettyPlaceTypes(searchIds.getty.id).then(async (data) => {
         const allPlaces = data.results.bindings;
@@ -39,12 +44,13 @@ export const Getty: FunctionComponent<PanelProps> = ({style, searchIds, onSearch
         })
         console.log('Getty USEEFFECT 2: ', allPlaces)
         setPlaces(allPlaces);
+        global.tgn.places = allPlaces;
           
         searchIds.getty.status = false;
         onSearchIds({...searchIds});
       });
       
-    }, [searchIds, onSearchIds]);
+    }, [searchIds, onSearchIds, global.tgn]);
 
     return (
       <div className='getty panel' style={style}>

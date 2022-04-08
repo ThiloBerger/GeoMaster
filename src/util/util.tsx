@@ -4,11 +4,13 @@ import { GndSameAs, GndString } from '../interfaces/GndJson';
 import { GovObject, GovRdf } from '../interfaces/govRdf';
 import { ListID } from '../interfaces/listID';
 import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
-import { WikidataCardResult, WikidataCityResult, WikidataExtraResult, WikiDate } from '../interfaces/wikidataCityData';
+import { WikidataCardResult, WikidataCityResult, WikidataExtraResult } from '../interfaces/wikidataCityData';
 import { API } from '../service/api';
 import { GOVKEY } from '../types/govkey';
 import { Lang } from '../types/lang';
+import { TrueDate } from './TrueDate';
 import { LngLat } from './WGS84';
+import { typeGlobal } from '../components/Global';
 
 export class GOV {
     static xml2json(xml: XMLDocument | any, key: string = ''): {} {
@@ -364,13 +366,14 @@ export class WD {
   }
 
   static loadCards = (setWdStatus: Dispatch<SetStateAction<boolean>>,
-    setWdItem: Dispatch<SetStateAction<WikidataCardResult[]>>,
-    logLabel: string, radius: number, wdItemId: string, lang: Lang, lngLat: LngLat) => {
+    setWdItem: Dispatch<SetStateAction<WikidataCardResult[]>>, logLabel: string,
+    radius: number, wdItemId: string, lang: Lang, lngLat: LngLat, global: typeGlobal) => {
       setWdStatus(true);
       API.wdCard(lang, lngLat, radius, wdItemId).then(data => {
         console.log(`Wikidata ${logLabel}:`, data);
         setWdStatus(false);
         setWdItem(data.results.bindings);
+        global.wikidata = { ...global.wikidata, [logLabel]: data.results.bindings };
       }).catch (
         err => setWdStatus(false)
       );
@@ -379,18 +382,17 @@ export class WD {
   static typ(items: WikidataCityResult[]): ReactElement[] {
     return items.filter(f => f.propertyLabel).map((c, i) => (
       <i key={`typ${i}`}>
-        {c.propertyLabel.value}
-        <em>{c.ab && ` ab ${WD.getWikiDate(c.ab)}`}</em>
-        <em>{c.bis && ` bis ${WD.getWikiDate(c.bis)}`}</em>
+        {WD.checkIsDate(c.propertyLabel.value)}
+        {c.ab && <em>{` ab ${c.ab.value}`}</em>}
+        {c.bis && <em>{` bis ${c.bis.value}`}</em>}
       </i>
     ));
   };
 
-  static getWikiDate = (p: WikiDate): string =>{
-    if (p && /^[\d-\\.]+$/.test(p.value)) {
-      if (p.value.startsWith('-')) return p.value.substring(1) + ' (BC)';
-      return p.value;
-    } 
-    return  '';
+  static checkIsDate = (date: string): string => {
+    const pattern = /-?\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z/g;
+    if (!pattern.test(date)) return date;
+    return date.replaceAll(pattern, new TrueDate(date).getNormdate());
   }
+
 }

@@ -1,11 +1,12 @@
 import { ExpandMore, GpsFixed } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
-import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import { Fragment, FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
 import { GovObject } from '../interfaces/govRdf';
 import { PanelProps } from '../interfaces/panelProps';
 import { API } from '../service/api';
 import { GOV, GOVLib } from '../util/util';
 import { LngLat } from '../util/WGS84';
+import { Global } from './Global';
 import { GovAreaChart } from './GovAreaChart';
 import { GOVPop, GovPopulationChart } from './GovPopulationChart';
 import { GovMaps, GovPosition } from './GovPosition';
@@ -17,15 +18,18 @@ import { HREF } from './piglets/Link';
 
 export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchIds, openPopup = () => {}}): ReactElement => {
 
+    const global = useContext(Global);
+    
     const [govPop, setGovPop] = useState<GOVPop>(JSON.parse('{}'));
     const [govPos, setGovPos] = useState<ReactElement>(<></>);
     const [govArea, setGovArea] = useState<ReactElement>(<></>);
-    const [gov, setGov] = useState<GovObject>();
+    const [gov, setGov] = useState<GovObject>(JSON.parse('{}'));
 
     useEffect(() => {
 
         if (searchIds.gov.apiCall || searchIds.gov.id === '') return;
         console.log('GOV USEEFFECT: ', searchIds.gov.id)
+        global.gov.id = searchIds.gov.id;
         searchIds.gov.apiCall = true;
         searchIds.gov.status = true;
         onSearchIds({...searchIds});
@@ -35,6 +39,7 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
             const govObj = GOV.jsonToGOV(json);
             console.log('GOV USEEFFECT: ', govObj);
             setGov(govObj);
+            global.gov.data = govObj;
             setGovPop(GovPopulationChart(govObj));
             setGovPos(GovPosition(govObj));
             setGovArea(GovAreaChart(govObj));
@@ -53,7 +58,7 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
 
         })
         
-    }, [searchIds, onSearchIds]);
+    }, [searchIds, onSearchIds, global]);
 
 
 

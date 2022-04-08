@@ -2,7 +2,7 @@ import { AccountBalance, Castle, Church, ExpandMore, GpsFixed, Security, VolumeU
 import Masonry from '@mui/lab/Masonry';
 import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
 import osmtogeojson from 'osmtogeojson';
-import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import { Fragment, FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { ListID } from '../interfaces/listID';
 import { OverlayerOsm } from '../interfaces/overlayerOsm';
@@ -13,8 +13,10 @@ import { API } from '../service/api';
 import { GOVKEY } from '../types/govkey';
 import { Lang } from '../types/lang';
 import { Table } from '../types/table';
+import { TrueDate } from '../util/TrueDate';
 import { WD } from '../util/util';
 import { LngLat } from '../util/WGS84';
+import { defaultGlobal, Global } from './Global';
 import { WikidataMaps, WikiDataPosition } from './GovPosition';
 import { HREF } from './piglets/Link';
 import { OverpassOSMLayer } from './piglets/overpassOSMLayer';
@@ -32,6 +34,8 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   lang = Lang.DE,
   onSearchIds,
 }): ReactElement => {
+
+  let global = useContext(Global);
   const [groupTable, setGroupTable] = useState<Table>([]);
   const [wdPop, setWdPop] = useState<WDPop>(JSON.parse('{}'));
   const [wbSearchEntities, setWbSearchEntities] = useState<WbSearchEntities[]>([]);
@@ -54,7 +58,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   const [unique, setUnique] = useState<string>('');
   const [govLocatorId, setGovLocatorId] = useState<string>('');
 
-  const externalRef: { [key: string]: string } = {
+  const externalRef: Record<string,string> = {
     Geonames: 'https://www.geonames.org/',
     getty: 'https://www.getty.edu/vow/TGNFullDisplay?find=&place=&nation=&english=Y&subjectid=',
     OSMrelation: 'https://www.openstreetmap.org/relation/',
@@ -69,6 +73,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
       
     if (searchIds.wikidata.apiCall || searchIds.wikidata.id === '') return;
     console.log('Wikidata USEEFFECT: ', searchIds.wikidata.id);
+    global.wikidata.id = searchIds.wikidata.id;
     searchIds.wikidata.apiCall = true;
     searchIds.wikidata.status = true;
 
@@ -99,14 +104,8 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         if (idx === -1) {
           table.push({ group: group, items: [item], lid: lid, prop: prop });
         } else table[idx].items.push(item);
-        if (item.ab)
-          item.ab.value = item.ab.value
-            .replaceAll(/(\d{4})-(\d{2})-(\d{2})(.*)/g, '$3.$2.$1')
-            .replaceAll(/(01\.01\.)/g, '');
-        if (item.bis)
-          item.bis.value = item.bis.value
-            .replaceAll(/(\d{4})-(\d{2})-(\d{2})(.*)/g, '$3.$2.$1')
-            .replaceAll(/(01\.01\.)/g, '');
+        if (item.ab) item.ab.value = new TrueDate(item.ab.value).getNormdate();
+        if (item.bis) item.bis.value = new TrueDate(item.bis.value).getNormdate();
         delete item.x;
 
         if (searchIds.gov.id === '' && lid && group === 'GOV') {
@@ -131,6 +130,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
 
       });
 
+      global.wikidata.table = table;
       setGroupTable(table);
       console.log('Wikidata USEEFFECT 1: ', table);
 
@@ -163,6 +163,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
       const results = data.results.bindings;
       console.log('Wikidata USEEFFECT: 2',results);
       if (results.length !== 0 && results[0].population) {
+        global.wikidata.population = results;
         setWdPop(WikidataPopulationChart(results));
       }
     });    
@@ -178,6 +179,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
 
       console.log('Wikidata USEEFFECT: 3',data.results);
       console.log('Wikidata USEEFFECT: 3',extra);
+      global.wikidata.extra = extra;
       setWdExtra(extra);
       setWikidataPos(WikiDataPosition(extra));
 
@@ -189,16 +191,17 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         API.getOverpassLayer(searchIds.wikidata.id, lngLat).then(data => {
           console.log('Wikidata Overpass:', data);
           const json = osmtogeojson(data);
+          global.overpass.geojson = json;
           console.log('Wikidata Overpass JSON :', json);
           setOsmLayer({data: data, logLat: lngLat});
         });
 
-        WD.loadCards(setWdArchaelogStatus, setWdArchaelog, 'Archaelog', 25, 'Q839954', lang, lngLat);
-        WD.loadCards(setWdCastleStatus, setWdCastle, 'Castle', 25, 'Q23413', lang, lngLat);
-        WD.loadCards(setWdChurchStatus, setWdChurch, 'Church', 25, 'Q16970', lang, lngLat);
-        WD.loadCards(setWdBattleStatus, setWdBattle, 'Battle', 40, 'Q178561', lang, lngLat); //Q13418847 historisches Ereignis
-        WD.loadCards(setWdDungeonStatus, setWdDungeon, 'Cave', 40, 'Q35509', lang, lngLat); 
-        WD.loadCards(setWdKatastrophStatus, setWdKatastroph, 'Katastrophen', 50, 'Q3839081', lang, lngLat);   
+        WD.loadCards(setWdArchaelogStatus, setWdArchaelog, 'archaelog', 25, 'Q839954', lang, lngLat, global);
+        WD.loadCards(setWdCastleStatus, setWdCastle, 'castle', 25, 'Q23413', lang, lngLat, global);
+        WD.loadCards(setWdChurchStatus, setWdChurch, 'church', 25, 'Q16970', lang, lngLat, global);
+        WD.loadCards(setWdBattleStatus, setWdBattle, 'battle', 40, 'Q178561', lang, lngLat, global); //Q13418847 historisches Ereignis
+        WD.loadCards(setWdDungeonStatus, setWdDungeon, 'cave', 40, 'Q35509', lang, lngLat, global); 
+        WD.loadCards(setWdKatastrophStatus, setWdKatastroph, 'katastrophe', 50, 'Q3839081', lang, lngLat, global);   
 
         if (searchIds.slub.id === '') {
           searchIds.slub.id = JSON.stringify(lngLat);
@@ -211,17 +214,16 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
       }
     });
 
-  }, [lang, onSearchIds, searchIds]);
+  }, [global, global.overpass, global.wikidata, lang, onSearchIds, searchIds]);
 
   const onChangeSearchHandler = (text: string) => {
-    if (text !== "")
-    API.wdLookup(text, lang, 20).then((data) =>
-        setWbSearchEntities(data.search)
-      );
+    global.search = text;
+    if (text !== "") API.wdLookup(text, lang, 20).then((data) => setWbSearchEntities(data.search));
     else setWbSearchEntities([]);
   };
 
   const onClickSearch = (id: string) => {
+    global = {...defaultGlobal};
     const newListId = new ListID();
     newListId.wikidata.id = id;
     onSearchIds(newListId);

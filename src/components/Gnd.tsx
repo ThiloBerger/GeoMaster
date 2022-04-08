@@ -1,12 +1,13 @@
 import { Map } from '@mui/icons-material';
 import { Button } from '@mui/material';
-import { Fragment, FunctionComponent, ReactElement, useEffect, useState } from 'react';
+import { Fragment, FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
 import { GndItems } from '../interfaces/GndJson';
 import { ListID } from '../interfaces/listID';
 import { PanelProps } from '../interfaces/panelProps';
 import { API } from '../service/api';
 import { LOB } from '../util/util';
 import { LngLat } from '../util/WGS84';
+import { defaultGlobal, Global } from './Global';
 import { GndItem } from './piglets/GndItem';
 import { HREF } from './piglets/Link';
 import { SearchList } from './piglets/SearchList';
@@ -17,13 +18,17 @@ export const Gnd: FunctionComponent<PanelProps> = ({
   openPopup = () => {},
   onSearchIds,
 }): ReactElement => {
-  const [dataObj, setDataObject] = useState<GndItems>();
+
+  let global = useContext(Global);
+
+  const [dataObj, setDataObject] = useState<GndItems>(JSON.parse('{}'));
   const [gndSearchEntities, setGndSearchEntities] = useState<GndItems[]>([]);
 
   useEffect(() => {
     
     if (searchIds.gnd.apiCall || searchIds.gnd.id === '') return;
     console.log('Gnd USEEFFECT: ', searchIds.gnd.id);
+    global.gnd.id = searchIds.gnd.id;
     searchIds.gnd.apiCall = true;
     searchIds.gnd.status = true;
     onSearchIds({...searchIds});
@@ -37,6 +42,7 @@ export const Gnd: FunctionComponent<PanelProps> = ({
         return;
       }
       setDataObject(data.member[0]);
+      global.gnd.data = data.member[0];
 
       if (data.member[0].sameAs) data.member[0].sameAs.forEach( el => {
         const id = el.id;
@@ -62,7 +68,7 @@ export const Gnd: FunctionComponent<PanelProps> = ({
 
     });
     
-  }, [searchIds, openPopup, onSearchIds]);
+  }, [searchIds, openPopup, onSearchIds, global.gnd]);
 
   const onChangeSearchHandler = (text: string) => {
     if (text !== "")
@@ -75,6 +81,7 @@ export const Gnd: FunctionComponent<PanelProps> = ({
   };
 
   const onClickSearch = (id: string) => {
+    global = {...defaultGlobal};
     const newListId = new ListID();
     newListId.gnd.id = id;
     onSearchIds(newListId);

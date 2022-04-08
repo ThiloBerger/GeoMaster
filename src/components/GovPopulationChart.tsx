@@ -1,5 +1,6 @@
 import { ReactElement } from 'react';
 import { GovObject, GovPopulation } from '../interfaces/govRdf';
+import { TrueDate } from '../util/TrueDate';
 
 export interface GOVPop {
     chart: ReactElement;
@@ -10,40 +11,27 @@ export const GovPopulationChart = (govObject: GovObject): GOVPop => {
 
     if (!govObject['gov:hasPopulation']) return {chart: <></>, total: 0 };
 
-    if (!Array.isArray(govObject['gov:hasPopulation'])) {
-        const c = govObject['gov:hasPopulation'];
-        return { 
-            chart: <ul className='pop'><li>
-                    <div>{c['gov:PropertyForObject']['gov:timeBegin'] ? c['gov:PropertyForObject']['gov:timeBegin'] : ''}</div>
-                    <div><div style={{ width: `200px` }}></div></div>
-                    <div>{c['gov:PropertyForObject']['gov:value'] ? parseInt(c['gov:PropertyForObject']['gov:value']) : 0}</div>
-                    </li></ul>, 
-        total: 1};
-    }
-
+    if (!Array.isArray(govObject['gov:hasPopulation']))
+        govObject['gov:hasPopulation']=[govObject['gov:hasPopulation']];
 
     const years: string[] = [];
     const pops: number[] = [];
-    const sgo = govObject['gov:hasPopulation'].sort((a, b) => {
-        return getMedianPopulation(b) - getMedianPopulation(a);  //DESC
-    })
+    const sgo = govObject['gov:hasPopulation'].sort((a, b) => getMedianPopulation(b) - getMedianPopulation(a))
     sgo.forEach(c => {
         years.push(c['gov:PropertyForObject']['gov:timeBegin'] ? c['gov:PropertyForObject']['gov:timeBegin'] : '');
         pops.push(c['gov:PropertyForObject']['gov:value'] ? parseInt(c['gov:PropertyForObject']['gov:value']) : 0);
     });
     const maxPop = Math.max(...pops)
-    const total = years.length;
 
     const chart: ReactElement = <ul className='pop'>{
-        years.map((year, k) => 
-            <li key={`govpop-${k}`}>
-                <div>{year}</div>
-                <div><div style={{ width: `${pops[k]/maxPop*200}px` }}></div></div>
-                <div>{pops[k]}</div></li>
+        years.map((year, idx) => 
+            <li key={idx}>
+                <div>{new TrueDate(year).getNormdate}</div>
+                <div><div style={{ width: `${pops[idx]/maxPop*200}px` }}></div></div>
+                <div>{pops[idx]}</div></li>
         )
-        }     
-    </ul>;
-    return {chart: chart, total: total};
+    }</ul>;
+    return {chart: chart, total: years.length};
 }
 
 const getMedianPopulation = (pop: GovPopulation): number => {

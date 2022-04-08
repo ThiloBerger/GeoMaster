@@ -13,7 +13,7 @@ export class WGS84 {
 
 
 
-  static convertLatLngToUtm = (latitude: number, longitude: number) => {
+  static convertLatLngToUtm = (latitude: number, longitude: number): Record<string,string|number> => {
     
     const DEG2RAD = Math.PI / 180.0;
     const k0 = 0.9996;
