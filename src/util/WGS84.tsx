@@ -350,42 +350,31 @@ static pot2gk = ([lp, bp]:number[]):string[] | undefined => {
   static pointInPolygon(lngLat: LngLat, polygon: Polygon) {
 
     const [x, y] = lngLat;
-    let tmpX;
-    let tmpY;
-    let crossings = 0;
     const polygonX: number[] = [];
     const polygonY: number[] = [];
-
     polygon.forEach(p => { 
       polygonX.push(p[0]); 
       polygonY.push(p[1]);
     });
-  
-    for ( let i = 0; i < polygonX.length; i++) {
-      if( polygonX[i] < polygonX[(i + 1) % polygonX.length]) {
-        tmpX = polygonX[i];
-        tmpY = polygonX[(i + 1) % polygonX.length];
-      } else {
-        tmpX = polygonX[(i + 1) % polygonX.length];
-        tmpY = polygonX[i];
-      }
 
-      if (x > tmpX && x <= tmpY && (y < polygonY[i] || y <= polygonY[(i + 1) % polygonX.length])) {
-
-        const dx = polygonX[(i + 1) % polygonX.length] - polygonX[i];
-        const dy = polygonY[(i + 1) % polygonX.length] - polygonY[i];
-
+    const len = polygonX.length;
+    let crossings = false;
+    for ( let i = 0; i < len; i++) {
+      const nextX = polygonX[(i + 1) % len];
+      const nextY = polygonY[(i + 1) % len];
+      const [tmpX1, tmpX2] = polygonX[i] < nextX ? [polygonX[i], nextX] : [nextX, polygonX[i]];
+      if (x > tmpX1 && x <= tmpX2 && (y < polygonY[i] || y <= nextY)) {
+        const dx = nextX - polygonX[i];
+        const dy = nextY - polygonY[i];
         const eps = 0.000001;
         let k = Number.MAX_SAFE_INTEGER / 180;
         if (Math.abs(dx) >= eps) k = dy / dx;
-
         const m = polygonY[i] - k * polygonX[i];
         const y2 = k * x + m;
-        if (y <= y2) crossings++;
+        if (y <= y2) crossings = !crossings;
       }
     }
-  
-    return (crossings % 2 === 1);
+    return crossings;
   }
 
 }

@@ -98,12 +98,12 @@ export const Geonames: FunctionComponent<PanelProps> = ({
   }, [searchIds, openPopup, onSearchIds, lang, global.geonames, global.overpass, global.dbpedia]);
 
   const onChangeSearchHandler = (text: string) => {
-    if (text !== "")
-      setTimeout(() => {
-        API.getGeonamesSearch(text, lang, option).then((data) => {
-          setGeonamesSearchEntities(data.geonames);
-        });
-      }, 50);
+    if (text !== '')
+      setTimeout(() => 
+        API.getGeonamesSearch(text, lang, option).then((data) => 
+          setGeonamesSearchEntities(data.geonames)
+        )
+      , 50);
     else setGeonamesSearchEntities([]);
   };
 

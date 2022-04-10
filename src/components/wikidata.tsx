@@ -3,7 +3,6 @@ import Masonry from '@mui/lab/Masonry';
 import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
 import osmtogeojson from 'osmtogeojson';
 import { Fragment, FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 import { ListID } from '../interfaces/listID';
 import { OverlayerOsm } from '../interfaces/overlayerOsm';
 import { PanelProps } from '../interfaces/panelProps';
@@ -53,9 +52,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   const [wdKatastroph, setWdKatastroph] = useState<WikidataCardResult[]>([]);
   const [wdKatastrophStatus, setWdKatastrophStatus] = useState<boolean>(false);
   const [wikidataPos, setWikidataPos] = useState<ReactElement>(<></>);
-  const [sessionKey, setSessionKey] = useState<string>(uuidv4())
   const [osmLayer, setOsmLayer] = useState<OverlayerOsm>(JSON.parse('{}'));
-  const [unique, setUnique] = useState<string>('');
   const [govLocatorId, setGovLocatorId] = useState<string>('');
 
   const externalRef: Record<string,string> = {
@@ -81,7 +78,6 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
 
     setWdPop(JSON.parse('{}'));
     setOsmLayer(JSON.parse('{}'));
-    setUnique(uuidv4());
     setWdArchaelog([]);
     setWdCastle([]);
     setWdChurch([]);
@@ -159,7 +155,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
 
     });
 
-    API.wdPopulation(searchIds.wikidata.id).then(async (data) => {
+    API.wdPopulation(searchIds.wikidata.id).then(async data => {
       const results = data.results.bindings;
       console.log('Wikidata USEEFFECT: 2',results);
       if (results.length !== 0 && results[0].population) {
@@ -168,8 +164,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
       }
     });    
 
-    API.wdExtra(searchIds.wikidata.id, lang).then(async (data) => {
-      setSessionKey(uuidv4());
+    API.wdExtra(searchIds.wikidata.id, lang).then(async data => {
       let extraTmp = data.results.bindings;
       let extra: WikidataExtraResult = {...extraTmp[0]};
       if (extraTmp.length > 1) {
@@ -217,8 +212,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   }, [global, global.overpass, global.wikidata, lang, onSearchIds, searchIds]);
 
   const onChangeSearchHandler = (text: string) => {
-    global.search = text;
-    if (text !== "") API.wdLookup(text, lang, 20).then((data) => setWbSearchEntities(data.search));
+    if (text !== '') API.wdLookup(text, lang, 20).then(data => setWbSearchEntities(data.search));
     else setWbSearchEntities([]);
   };
 
@@ -263,7 +257,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
               <AccordionDetails className='geo'>
                 {wdExtra.area && <p>Fläche: {wdExtra.area.value} km<sup>2</sup> {wdPop.last && wdPop.last > 0 && <>≙ {Math.floor(wdPop.last/parseFloat(wdExtra.area.value))} Einwohner/km<sup>2</sup></>}</p>}
                 {wdExtra.height && <p>Höhe: {wdExtra.height.value} m</p>}
-                {wdExtra.time && wdExtra.time.value.split('; ').map((s, i) => <p key={unique+i}>
+                {wdExtra.time && wdExtra.time.value.split('; ').map((s, i) => <p key={i}>
                   {wdExtra.timename.value.split('; ')[i]}: {s}
                 </p> )}                
                 {wikidataPos}
@@ -299,7 +293,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
                 <VolumeUp /><span>Aussprache</span>
               </AccordionSummary>
               <AccordionDetails className='audio'>
-              <audio key={sessionKey} controls>
+              <audio key={wdExtra.audioLabel.value} controls>
                 <source src={wdExtra.audioLabel.value} type='audio/ogg; codecs="vorbis"' data-width='0' data-height='0' data-bandwidth='125373' />
               </audio>
               </AccordionDetails>

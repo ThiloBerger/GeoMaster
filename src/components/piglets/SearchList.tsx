@@ -1,5 +1,6 @@
 import { TextField } from "@mui/material";
-import { ReactElement, useRef, useState } from "react";
+import { ReactElement, useContext, useRef, useState } from "react";
+import { Global } from "../Global";
 
 interface SearchProps<T> {
   label: string,
@@ -20,6 +21,8 @@ export const SearchList = <T extends {}>({
     onClickSearch,
 }: SearchProps<T>): ReactElement => {
   
+  const global = useContext(Global);
+
   const [showSearch, setShowSearch] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('');
 
@@ -27,6 +30,7 @@ export const SearchList = <T extends {}>({
 
   const onClickList = (identifier: string, title: string): void => {
     console.log('### Du hast gesucht: ', title);
+    global.search = title;
     const input = document?.activeElement as HTMLInputElement;
     input?.blur();
     setSearch(title);

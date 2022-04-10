@@ -19,6 +19,10 @@ private static readonly BASEURL_GETTY_SPARQL = 'http://vocab.getty.edu/sparql.js
 private static readonly BASEURL_GEONAMES = 'http://api.geonames.org/';
 private static readonly USER = "quenouil";
 
+/*
+https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/PLZ_Gebiete/FeatureServer/0/query?f=json&where=1%3D1&outFields=*&returnGeometry=false
+https://opendata-esri-de.opendata.arcgis.com/datasets/esri-de-content::postleitzahlengebiete-osm/explore?location=50.978073%2C13.325856%2C8.00&showTable=true
+
 /* Geonames
 http://api.geonames.org/searchJSON?q=leipzig&name_startsWith=leipzig&maxRows=50&country=&featureClass=P&continentCode=&fuzzy=0.6&username=quenouil
 http://api.geonames.org/childrenJSON?geonameId=2879139&lang=de&username=quenouil

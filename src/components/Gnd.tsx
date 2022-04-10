@@ -71,7 +71,7 @@ export const Gnd: FunctionComponent<PanelProps> = ({
   }, [searchIds, openPopup, onSearchIds, global.gnd]);
 
   const onChangeSearchHandler = (text: string) => {
-    if (text !== "")
+    if (text !== '')
     API.gndLookup(text).then((data) => {
       const items = data.member.filter((item) => item.type.includes('AuthorityResource'));
       items.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
