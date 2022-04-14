@@ -4,14 +4,13 @@ import { API } from '../service/api';
 import { PanelProps } from '../interfaces/panelProps';
 
 import './slub.scss';
-import { LngLat, Polygon, WGS84 } from '../util/WGS84';
-import { GeoPortJSON, GeoPortResponse, GeoPostOstMaps } from '../interfaces/geoport';
+import { LngLat, WGS84 } from '../util/WGS84';
+import { GeoPostOstMaps } from '../interfaces/geoport';
 
 
 export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onSearchIds}): ReactElement => {
     
   const [radius, setRadius] = useState<number>(20000);
-/*   const [gpoData, setGpoData] = useState<GeoPortResponse>(); */
   const [count, setCount] = useState<number>(0);
   const mapList = useRef(null);
   const [gpoMaps,setGpoMaps] = useState<GeoPostOstMaps[]>([]);
@@ -26,7 +25,6 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
       onSearchIds({...searchIds});
 
       const lngLat = JSON.parse(searchIds.slub.id);
-
 
       API.getGeoPortOstTopo100000().then(async data => {
         let maps: GeoPostOstMaps[] = data.results.bindings;
@@ -47,26 +45,10 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
         onSearchIds({...searchIds});    
       });
 
-
-/*       API.getGeoPortOst(lngLat, radius).then(async response => {
-        console.log('GeoPortOst USEEFFECT: ', response)
-        const data: GeoPortJSON = JSON.parse(response.contents);
-        console.log('GeoPortOst USEEFFECT: ', data.response);
-        setCount(0);
-        setGpoData(data.response);
-        searchIds.geoportost.status = false;
-        onSearchIds({...searchIds});          
-      }); */
     }, [searchIds, onSearchIds, radius]);
 
     const refreshMaps = () => {
       const lngLat: LngLat = JSON.parse(searchIds.slub.id);
-/*       API.getGeoPortOst(lngLat, radius).then(async (response) => {
-        console.log('GeoPortOst Slider: ', response)
-        const data: GeoPortJSON = JSON.parse(response.contents);
-        console.log('GeoPortOst Slider: ', data.response);
-        setGpoData(data.response);
-      }); */
       const points: LngLat[] = WGS84.perimeterSquareBox(lngLat, radius);
       const mapsByRadius = gpoMaps.filter(map => 
         WGS84.intersectionOfPolygons(WGS84.polygonStringToNumber(map.area.value), points));
@@ -148,45 +130,6 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
                 ))}
               </ul>
             )}
-
-
-
-
-{/*             {gpoData && gpoData.docs && gpoData.docs.length > 0 && (
-              <ul className="map" ref={mapList}>
-                {gpoData.docs.map((map, i) => (
-                  <li key={`gpomap${i}`}>
-                    <a href={map.bibo_uri_s} target="_blank" rel="noreferrer">
-                      <img
-                        src={map.thumbnail_path_ss}
-                        alt="map"
-                        onError={({ currentTarget }) => {
-                          currentTarget.onerror = null;
-                          const el = currentTarget.parentElement;
-                          if (el) el.style.display = "none";
-                        }}
-                        onLoad={({ currentTarget }) => {
-                          let allmaps = 0
-                          if (mapList.current) allmaps = (mapList.current as HTMLElement).querySelectorAll('a[style="display: flex;"]').length;
-                          setCount(allmaps);
-                          const el = currentTarget.parentElement;
-                          if (el) el.style.display = "flex";
-                        }}
-                      />
-                      <div>
-                        <h3>{map.dc_title_s}</h3>
-                        <span>
-                          {map.dc_type_s} - 1:{map.maps_hasScale_i}
-                        </span>
-                        <p>
-                          {map.dct_provenance_s}, {map.dc_spatial_sm.toString()}
-                        </p>
-                      </div>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )} */}
           </Fragment>
         )}
       </div>

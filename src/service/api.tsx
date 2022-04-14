@@ -1,6 +1,6 @@
 import { DbPediaJson } from '../interfaces/dbpediaJson';
 import { GeonameById, GeonamesSearch } from '../interfaces/geonamesSearch';
-import { AllOrigins, GeoPortOstSparQl } from '../interfaces/geoport';
+import { GeoPortOstSparQl } from '../interfaces/geoport';
 import { GettyJson } from '../interfaces/gettyJson';
 import { GndJson } from '../interfaces/GndJson';
 import { Maps } from '../interfaces/maps';
@@ -9,7 +9,7 @@ import { WbSearch } from '../interfaces/wbSearch';
 import { WikidataCard, WikidataCity, WikidataExtra, WikidataPopulation } from '../interfaces/wikidataCityData';
 import { GOVKEY } from '../types/govkey';
 import { Lang } from '../types/lang';
-import { LngLat, Point, WGS84 } from '../util/WGS84';
+import { LngLat, WGS84 } from '../util/WGS84';
 
 export class API {
 
@@ -88,32 +88,6 @@ static readonly getSlubMaps = async (lngLat: LngLat, range: number): Promise<Map
   return await response.json();
 }
 
-/* export const getGeoPortOst3 = async (lngLat: LngLat, range: number, page: number): Promise<string>  => {
-  const radius = 1 + range * 1.41;
-  const bbox = WGS84.bbox(lngLat, radius);
-  const url = `https://cors-anywhere.herokuapp.com/http://geoportal.ios-regensburg.de:8080/catalog?bbox=${bbox}&format=json&page=${page}`;
-  const xhttp = new XMLHttpRequest();
-  xhttp.overrideMimeType('text/plain');
-  xhttp.open("get", url, false);
-  //xhttp.setRequestHeader('Access-Control-Allow-Origin', '*');
-  xhttp.send(null);
-  return await xhttp.responseText;
-} */
-
-//http://geoportal.ios-regensburg.de/catalog?utf8=✓&f[dc_type_s][]=Topografische+Karte&search_field=dummy_range&range[maps_hasScale_i][begin]=200&range[maps_hasScale_i][end]=100000&commit=Limit&bbox=-5.712891 28.033198 31.552734 57.914848
-// https://github.com/gnuns/allorigins
-static readonly getGeoPortOst = async (lngLat: LngLat, range: number): Promise<AllOrigins> => {
-  const limitRange ='&range[maps_hasScale_i][begin]=200&range[maps_hasScale_i][end]=1000000&commit=Limit';
-  const radius = 1 + range * 1.41;
-  const bbox = WGS84.bbox(lngLat, radius);
-  const url = `http://geoportal.ios-regensburg.de/catalog?utf8=✓${limitRange}&bbox=${bbox}&format=json&page=1&per_page=100`;
-  console.log(url);
-  const response = await fetch(
-    `https://api.allorigins.win/get?url=${encodeURIComponent(url)}`,
-    {headers: new Headers({'content-type': 'application/json'})}
-  );
-  return await response.json();
-}
 static readonly getGeoPortOstTopo100000 = async (): Promise<GeoPortOstSparQl> => {
   const sparql =`
 PREFIX geo: <http://www.opengis.net/ont/geosparql#>
@@ -140,7 +114,8 @@ WHERE {
   const url = `http://geoportost.ios-regensburg.de:3030/geoportost/sparql?query=${encodeURIComponent(sparql)}`;
   const response = await fetch(url);
   return await response.json();
-}//`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`//`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`{headers: new Headers({'content-type': 'application/json'})}
+}
+
 // ############### GND ###############
 
 static readonly gndLookup = async (search: string): Promise<GndJson> => {
@@ -452,149 +427,3 @@ static readonly getDbPedia = async (ags: string): Promise<DbPediaJson> => {
 }  
 
 }
-/* 
-SELECT ?wasLabel ?ab ?bis ?x
-(GROUP_CONCAT(DISTINCT(?ref); SEPARATOR=";") AS ?referenz)
-WHERE {
-  VALUES ?city {wd:Q2079}
-  # wd:Q64 p:P31 ?_. #P31 P1376
-  {
-    VALUES ?x {'ist eine'}
-    ?city p:P31 ?_.
-    optional{ ?_ ps:P31 ?was.}  
-    optional{ ?_ pq:P580 ?ab.}
-    optional{ ?_ pq:P582 ?bis.}
-    optional{ ?_ prov:wasDerivedFrom [ pr:P854 ?ref ].}
-  } UNION {
-    VALUES ?x {'administrative Einheit von'}
-    ?city p:P1376 ?_.
-    optional{ ?_ ps:P1376 ?was.}  
-    optional{ ?_ pq:P580 ?ab.}
-    optional{ ?_ pq:P582 ?bis.}
-    optional{ ?_ prov:wasDerivedFrom [ pr:P854 ?ref ].}
-  } UNION {
-    VALUES ?x {'liegt in der Verwaltungseinheit'}
-    ?city p:P131 ?_.
-    optional{ ?_ ps:P131 ?was.}  
-    optional{ ?_ pq:P580 ?ab.}
-    optional{ ?_ pq:P582 ?bis.}
-    optional{ ?_ prov:wasDerivedFrom [ pr:P854 ?ref ].}
-  } UNION {
-    VALUES ?x {'Einwohner'}
-    ?city p:P1082 ?_.
-    optional{ ?_ ps:P1082 ?was.}  
-    optional{ ?_ pq:P585 ?ab.}
-    optional{ ?_ prov:wasDerivedFrom [ pr:P854 ?ref ].}
-  } UNION {
-    VALUES ?x {'wichtige Ereignisse'}
-    ?city p:P793 ?_.
-    optional{ ?_ ps:P793 ?was.}  
-    optional{ ?_ pq:P585 ?ab.}
-    optional{ ?_ prov:wasDerivedFrom [ pr:P854 ?ref ].}
-  } UNION {
-    VALUES ?x {'Postleitzahl'}
-    ?city p:P281 ?_.
-    optional{ ?_ ps:P281 ?was.}  
-    optional{ ?_ pq:P580 ?ab.}
-    optional{ ?_ pq:P582 ?bis.}
-    optional{ ?_ prov:wasDerivedFrom [ pr:P854 ?ref ].}
-  }
-  
-
-
-  
-  
-SERVICE wikibase:label { bd:serviceParam wikibase:language "de". }
-}
-GROUP BY ?wasLabel ?ab ?bis ?x
-#ORDER BY DESC(?ab) 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-PREFIX fo: <http://purl.org/ontology/fo/>
-PREFIX te: <http://www.w3.org/2006/time-entry#>
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX el: <http://purl.org/dc/elements/1.1/>
-PREFIX m: <http://geoportost.ios-regensburg.de/map/>
-PREFIX area:<http://www.geographicknowledge.de/vocab/maps#>
-PREFIX terms: <http://purl.org/dc/terms/>
-PREFIX rd: <http://rdvocab.info/Elements/>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area (group_concat(?sub; separator="; ") as ?keywords) 
-WHERE {
-	?url el:title ?title .
-  	#?url ?a ?b
-    FILTER( REGEX( lcase(str(?title)), 'rlitz' ) ) .
-    optional { ?url terms:identifier ?id }.
-  	optional { ?url el:issued ?year}.
-    optional { ?url el:type ?typ }.
-    optional { ?url rd:dimensionsOfMapEtc ?scale }.
-    optional { ?url el:spatial ?gnd }.
-    optional { ?url terms:spatial ?sub }.
-    optional { ?url foaf:depiction ?thumb }.
-  	optional { ?url area:mapsArea/geo:asWKT ?area .
-  FILTER (geof:sfWithin(?area , 
- """<http://www.opengis.net/def/crs/OGC/1.3/CRS84>Polygon ((16 49, 16 50, 18 50, 18 49, 16 49))"""^^geo:wktLiteral)) 
-  }.
-} GROUP BY ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area
-
-
-
-
-
-
-
-
-
-
-
-
-PREFIX fo: <http://purl.org/ontology/fo/>
-PREFIX te: <http://www.w3.org/2006/time-entry#>
-PREFIX geo: <http://www.opengis.net/ont/geosparql#>
-PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
-PREFIX el: <http://purl.org/dc/elements/1.1/>
-PREFIX m: <http://geoportost.ios-regensburg.de/map/>
-PREFIX area:<http://www.geographicknowledge.de/vocab/maps#>
-PREFIX terms: <http://purl.org/dc/terms/>
-PREFIX rd: <http://rdvocab.info/Elements/>
-PREFIX foaf: <http://xmlns.com/foaf/0.1/>
-PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
-SELECT ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area (group_concat(?sub; separator="; ") as ?keywords) 
-WHERE {
-	?url el:title ?title .
-    # FILTER( REGEX( lcase(str(?title)), 'rlitz' ) ) .
-    ?url terms:identifier ?id .
-  	optional { ?url el:issued ?year}.
-    ?url el:type ?typ .
-  	FILTER( REGEX( lcase(str(?typ)), 'topografische karte' ) ) .
-    ?url rd:dimensionsOfMapEtc ?scale .
-  	FILTER( strlen(str(?scale)) < 6 ) .
-    optional { ?url el:spatial ?gnd }.
-    optional { ?url terms:spatial ?sub }.
-    ?url foaf:depiction ?thumb .
-  	?url area:mapsArea/geo:asWKT ?area .
-} GROUP BY ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area order by ?scale
-
-
-
-
-*/
