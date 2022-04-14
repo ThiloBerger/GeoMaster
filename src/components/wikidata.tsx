@@ -86,8 +86,6 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
     setWdKatastroph([]);
     setGovLocatorId('');
 
-    //API.testtest().then(data => console.log('testtest', data))
-
     const table: Table = [];
 
     API.wdCityData(searchIds.wikidata.id, lang).then(async (data) => {

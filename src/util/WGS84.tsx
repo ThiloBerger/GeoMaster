@@ -84,13 +84,13 @@ export class WGS84 {
    * Uses Vincenty direct calculation
    * Adapted from http://www.movable-type.co.uk/scripts/latlong-vincenty.html
    *
-   * @param   {Point} point  GeoJSON point
+   * @param   {LngLat} lngLat  GeoJSON point
    * @param   {number} bearing  initial bearing in degrees from north
    * @param   {number} distance  distance along bearing in meters
    * @returns {object} GeoJSON destination point, finalBearing
    * @throws  {Error}  if formula failed to converge
    */
-  static destination = (point: Point, bearing: number, distance: number): Point => {
+  static destination = (lngLat: LngLat, bearing: number, distance: number): Point => {
     // f = 1/298.257223563
     const FLATTENING = 0.0033528106647474805;
 
@@ -101,7 +101,7 @@ export class WGS84 {
     const sinAlpha1 = Math.sin(alpha1);
     const cosAlpha1 = Math.cos(alpha1);
     const tanU1 =
-        (1 - FLATTENING) * Math.tan(point.coordinates[1] * DEG2RAD),
+        (1 - FLATTENING) * Math.tan(lngLat[1] * DEG2RAD),
       cosU1 = 1 / Math.sqrt(1 + tanU1 * tanU1),
       sinU1 = tanU1 * cosU1;
     const sigma1 = Math.atan2(tanU1, cosAlpha1);
@@ -139,7 +139,7 @@ export class WGS84 {
     const L = lambda - (1 - C) * FLATTENING * sinAlpha * (sigma + C * sinSigma *
             (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)));
     const lambda2 =
-      (((point.coordinates[0] * DEG2RAD) + L + 3 * Math.PI) %
+      (((lngLat[0] * DEG2RAD) + L + 3 * Math.PI) %
         (2 * Math.PI)) - Math.PI; // normalise to -180...+180
 
     return {
@@ -150,34 +150,39 @@ export class WGS84 {
     };
   };
 
-  static perimeterSquarePolynom = (center: Point, radius: number): LngLat[] => {
+  static perimeterSquareBox = (lngLat: LngLat, radius: number): Polygon => {
     const lu: LngLat = [
-      WGS84.destination(center, 225, radius).coordinates[0],
-      WGS84.destination(center, 225, radius).coordinates[1],
+      WGS84.destination(lngLat, 225, radius).coordinates[0],
+      WGS84.destination(lngLat, 225, radius).coordinates[1],
     ];
     const lo: LngLat = [
-      WGS84.destination(center, 315, radius).coordinates[0],
-      WGS84.destination(center, 315, radius).coordinates[1],
+      WGS84.destination(lngLat, 315, radius).coordinates[0],
+      WGS84.destination(lngLat, 315, radius).coordinates[1],
     ];
     const ro: LngLat = [
-      WGS84.destination(center, 45, radius).coordinates[0],
-      WGS84.destination(center, 45, radius).coordinates[1],
+      WGS84.destination(lngLat, 45, radius).coordinates[0],
+      WGS84.destination(lngLat, 45, radius).coordinates[1],
     ];
     const ru: LngLat = [
-      WGS84.destination(center, 135, radius).coordinates[0],
-      WGS84.destination(center, 135, radius).coordinates[1],
+      WGS84.destination(lngLat, 135, radius).coordinates[0],
+      WGS84.destination(lngLat, 135, radius).coordinates[1],
     ];
-    return [lu, lo, ro, ru, lu];
+    return [lu, lo, ro, ru];
   };
 
-  static bbox = (center: Point, radius: number): string => {
+  static perimeterSquarePolynom = (lngLat: LngLat, radius: number): Polygon => {
+    const box = WGS84.perimeterSquareBox(lngLat, radius);
+    return [...box, box[0]];
+  };
+
+  static bbox = (lngLat: LngLat, radius: number): string => {
     const lu: LngLat = [
-      WGS84.destination(center, 225, radius).coordinates[0],
-      WGS84.destination(center, 225, radius).coordinates[1],
+      WGS84.destination(lngLat, 225, radius).coordinates[0],
+      WGS84.destination(lngLat, 225, radius).coordinates[1],
     ];
     const ro: LngLat = [
-      WGS84.destination(center, 45, radius).coordinates[0],
-      WGS84.destination(center, 45, radius).coordinates[1],
+      WGS84.destination(lngLat, 45, radius).coordinates[0],
+      WGS84.destination(lngLat, 45, radius).coordinates[1],
     ];
     return `${lu[0]} ${lu[1]} ${ro[0]} ${ro[1]}`;
   }
@@ -242,9 +247,7 @@ export class WGS84 {
     if (x < 0 && y < 0)
        lp = Math.atan(y/x) / DEG2RAD - 180;
   
-  
     return [lp, bp];
-     
   }
 
 
@@ -347,29 +350,22 @@ static pot2gk = ([lp, bp]:number[]):string[] | undefined => {
     return [qqq.toString(), qh];
   }  
 
-  static pointInPolygon(lngLat: LngLat, polygon: Polygon) {
+  static pointInPolygon(lngLat: LngLat, polygon: Polygon): boolean {
 
     const [x, y] = lngLat;
-    const polygonX: number[] = [];
-    const polygonY: number[] = [];
-    polygon.forEach(p => { 
-      polygonX.push(p[0]); 
-      polygonY.push(p[1]);
-    });
-
-    const len = polygonX.length;
+    const len = polygon.length;
     let crossings = false;
     for ( let i = 0; i < len; i++) {
-      const nextX = polygonX[(i + 1) % len];
-      const nextY = polygonY[(i + 1) % len];
-      const [tmpX1, tmpX2] = polygonX[i] < nextX ? [polygonX[i], nextX] : [nextX, polygonX[i]];
-      if (x > tmpX1 && x <= tmpX2 && (y < polygonY[i] || y <= nextY)) {
-        const dx = nextX - polygonX[i];
-        const dy = nextY - polygonY[i];
+      const nextX = polygon[(i + 1) % len][0];
+      const nextY = polygon[(i + 1) % len][1];
+      const [tmpX1, tmpX2] = polygon[i][0] < nextX ? [polygon[i][0], nextX] : [nextX, polygon[i][0]];
+      if (x > tmpX1 && x <= tmpX2 && (y < polygon[i][1] || y <= nextY)) {
+        const dx = nextX - polygon[i][0];
+        const dy = nextY - polygon[i][1];
         const eps = 0.000001;
         let k = Number.MAX_SAFE_INTEGER / 180;
         if (Math.abs(dx) >= eps) k = dy / dx;
-        const m = polygonY[i] - k * polygonX[i];
+        const m = polygon[i][1] - k * polygon[i][0];
         const y2 = k * x + m;
         if (y <= y2) crossings = !crossings;
       }
@@ -377,10 +373,63 @@ static pot2gk = ([lp, bp]:number[]):string[] | undefined => {
     return crossings;
   }
 
+  static intersectionLines = (p0: LngLat, p1: LngLat, p2: LngLat, p3: LngLat): boolean => {
+    const s10_x = p1[0] - p0[0];
+    const s10_y = p1[1] - p0[1];
+    const s32_x = p3[0] - p2[0];
+    const s32_y = p3[1] - p2[1];
+    const denom = s10_x * s32_y - s32_x * s10_y;
+    if(denom === 0) return false;
+    const denom_positive = denom > 0;
+    const s02_x = p0[0] - p2[0];
+    const s02_y = p0[1] - p2[1];
+    const s_numer = s10_x * s02_y - s10_y * s02_x;
+    if((s_numer < 0) === denom_positive) return false;
+    const t_numer = s32_x * s02_y - s32_y * s02_x;
+    if((t_numer < 0) === denom_positive) return false;
+    if((s_numer > denom) === denom_positive || (t_numer > denom) === denom_positive) return false;
+    /*
+    const t = t_numer / denom;
+    const p = {x: p0[0] + (t * s10_x), y: p0[1] + (t * s10_y)}; */
+    return true;
+  }
+
+  static intersectionOfPolygons = (polygon1: Polygon, polygon2: Polygon): boolean => {
+    if (WGS84.pointInPolygon(WGS84.medianBox(polygon1),polygon2)) return true;
+    if (WGS84.pointInPolygon(WGS84.medianBox(polygon2),polygon1)) return true;
+    if (WGS84.polygonBorderOverlap(polygon2, polygon1)) return true;
+    return false;
+  }
+
+  static polygonBorderOverlap = (polygon1: Polygon, polygon2: Polygon): boolean => {
+    for (let i = 0; i < polygon1.length; i++) {
+      for (let j = 0; j < polygon2.length; j++) {
+        const p0 = polygon1[i];
+        const p1 = polygon1[(i + 1) % polygon1.length];
+        const p2 = polygon2[j];
+        const p3 = polygon2[(j + 1) % polygon2.length];
+        if(WGS84.intersectionLines(p0,p1,p2,p3)) return true;
+      }
+    }
+    return false;
+  }
+
+  static medianBox = (polygon: Polygon): LngLat => {
+    const sum = polygon.reduce((a,b) => [b[0]+a[0],b[1]+a[1]],[0,0]);
+    return sum.map(a => a/polygon.length) as LngLat;
+  }
+
+  static polygonStringToNumber(polygon: string): Polygon {
+    const polygonStr = polygon.replaceAll(/[POLYGON()]/gi,'');
+    return polygonStr.split(',').map(p => p.trim().split(' ')).map(p => [parseFloat(p[0]),parseFloat(p[1])]);
+  }
+
 }
+
+
 
 export interface Point {
   coordinates: LngLat
 }
 export type LngLat = [number, number];
-export type Polygon = [LngLat];
+export type Polygon = LngLat[];

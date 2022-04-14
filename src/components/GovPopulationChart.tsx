@@ -1,6 +1,5 @@
 import { ReactElement } from 'react';
 import { GovObject, GovPopulation } from '../interfaces/govRdf';
-import { TrueDate } from '../util/TrueDate';
 
 export interface GOVPop {
     chart: ReactElement;
@@ -26,7 +25,7 @@ export const GovPopulationChart = (govObject: GovObject): GOVPop => {
     const chart: ReactElement = <ul className='pop'>{
         years.map((year, idx) => 
             <li key={idx}>
-                <div>{new TrueDate(year).getNormdate}</div>
+                <div>{year}</div>
                 <div><div style={{ width: `${pops[idx]/maxPop*200}px` }}></div></div>
                 <div>{pops[idx]}</div></li>
         )

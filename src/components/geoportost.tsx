@@ -4,16 +4,18 @@ import { API } from '../service/api';
 import { PanelProps } from '../interfaces/panelProps';
 
 import './slub.scss';
-import { LngLat } from '../util/WGS84';
-import { GeoPortJSON, GeoPortResponse } from '../interfaces/geoport';
+import { LngLat, Polygon, WGS84 } from '../util/WGS84';
+import { GeoPortJSON, GeoPortResponse, GeoPostOstMaps } from '../interfaces/geoport';
 
 
 export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onSearchIds}): ReactElement => {
     
   const [radius, setRadius] = useState<number>(20000);
-  const [gpoData, setGpoData] = useState<GeoPortResponse>();
+/*   const [gpoData, setGpoData] = useState<GeoPortResponse>(); */
   const [count, setCount] = useState<number>(0);
   const mapList = useRef(null);
+  const [gpoMaps,setGpoMaps] = useState<GeoPostOstMaps[]>([]);
+  const [gpoMapsRadius,setGpoMapsRadius] = useState<GeoPostOstMaps[]>([]);
 
     useEffect(() => {
 
@@ -25,7 +27,28 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
 
       const lngLat = JSON.parse(searchIds.slub.id);
 
-      API.getGeoPortOst(lngLat, radius).then(async (response) => {
+
+      API.getGeoPortOstTopo100000().then(async data => {
+        let maps: GeoPostOstMaps[] = data.results.bindings;
+        const points: LngLat[] = WGS84.perimeterSquareBox(lngLat, radius);
+        console.log(points)
+        const set = new Set<string>([])
+        maps = maps.filter(f=>{
+          if ( set.has(f.id.value) ) return false;
+          set.add(f.id.value);
+          return true;
+        });
+        setGpoMaps(maps);
+        const mapsByRadius = maps.filter(map => 
+          WGS84.intersectionOfPolygons(WGS84.polygonStringToNumber(map.area.value), points));
+        console.log('mapsbyradius',mapsByRadius);
+        setGpoMapsRadius(mapsByRadius);
+        searchIds.geoportost.status = false;
+        onSearchIds({...searchIds});    
+      });
+
+
+/*       API.getGeoPortOst(lngLat, radius).then(async response => {
         console.log('GeoPortOst USEEFFECT: ', response)
         const data: GeoPortJSON = JSON.parse(response.contents);
         console.log('GeoPortOst USEEFFECT: ', data.response);
@@ -33,17 +56,21 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
         setGpoData(data.response);
         searchIds.geoportost.status = false;
         onSearchIds({...searchIds});          
-      });
+      }); */
     }, [searchIds, onSearchIds, radius]);
 
     const refreshMaps = () => {
       const lngLat: LngLat = JSON.parse(searchIds.slub.id);
-      API.getGeoPortOst(lngLat, radius).then(async (response) => {
+/*       API.getGeoPortOst(lngLat, radius).then(async (response) => {
         console.log('GeoPortOst Slider: ', response)
         const data: GeoPortJSON = JSON.parse(response.contents);
         console.log('GeoPortOst Slider: ', data.response);
         setGpoData(data.response);
-      });
+      }); */
+      const points: LngLat[] = WGS84.perimeterSquareBox(lngLat, radius);
+      const mapsByRadius = gpoMaps.filter(map => 
+        WGS84.intersectionOfPolygons(WGS84.polygonStringToNumber(map.area.value), points));
+      setGpoMapsRadius(mapsByRadius);
     }
 
     const sliderChange = (event: Event, newValue: number | number[]) => {
@@ -85,7 +112,47 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
               onMouseUp={() => refreshMaps()}
             />
 
-            {gpoData && gpoData.docs && gpoData.docs.length > 0 && (
+
+            {gpoMapsRadius?.length > 0 && (
+              <ul className="map" ref={mapList}>
+                {gpoMapsRadius.map((map, i) => (
+                  <li key={`${map.id.value}${i}`}>
+                    <a href={map.url.value} target="_blank" rel="noreferrer">
+                      <img
+                        src={map.thumb.value}
+                        alt="map"
+                        onError={({ currentTarget }) => {
+                          currentTarget.onerror = null;
+                          const el = currentTarget.parentElement;
+                          if (el) el.style.display = "none";
+                        }}
+                        onLoad={({ currentTarget }) => {
+                          let allmaps = 0
+                          if (mapList.current) allmaps = (mapList.current as HTMLElement).querySelectorAll('a[style="display: flex;"]').length;
+                          setCount(allmaps);
+                          const el = currentTarget.parentElement;
+                          if (el) el.style.display = "flex";
+                        }}
+                      />
+                      <div>
+                        <h3>{map.title.value}</h3>
+                        <span>
+                          {map.typ.value} - 1:{map.scale.value}
+                        </span>
+                        <p>
+                          {map.keywords.value}
+                        </p>
+                      </div>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+
+
+
+{/*             {gpoData && gpoData.docs && gpoData.docs.length > 0 && (
               <ul className="map" ref={mapList}>
                 {gpoData.docs.map((map, i) => (
                   <li key={`gpomap${i}`}>
@@ -119,7 +186,7 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
                   </li>
                 ))}
               </ul>
-            )}
+            )} */}
           </Fragment>
         )}
       </div>

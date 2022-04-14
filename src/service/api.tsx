@@ -1,6 +1,6 @@
 import { DbPediaJson } from '../interfaces/dbpediaJson';
 import { GeonameById, GeonamesSearch } from '../interfaces/geonamesSearch';
-import { AllOrigins } from '../interfaces/geoport';
+import { AllOrigins, GeoPortOstSparQl } from '../interfaces/geoport';
 import { GettyJson } from '../interfaces/gettyJson';
 import { GndJson } from '../interfaces/GndJson';
 import { Maps } from '../interfaces/maps';
@@ -43,6 +43,12 @@ static readonly getOverpassLayer = async (wdId: string, [lon, lat]: LngLat): Pro
   return await response.json();
 }
 
+static readonly loadAgsPlz = async (): Promise<{}> => {
+  const url = `https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/PLZ_Gebiete/FeatureServer/0/query?f=json&where=1%3D1&outFields=plz,ags,einwohner&returnGeometry=false`;
+  const response = await fetch(url)
+  return await response.json();
+}
+
 static readonly testtest = async (): Promise<{}> => {
   const url = `https://nominatim.openstreetmap.org/reverse?format=json&osm_id=62649&osm_type=R&polygon_geojson=1`;
   const response = await fetch(url)
@@ -70,9 +76,8 @@ static readonly getGeonamesChildren = async (id: string, lang: Lang): Promise<Ge
 }
 
 static readonly getSlubMaps = async (lngLat: LngLat, range: number): Promise<Maps> => {
-  const center: Point = { coordinates: lngLat };
   const radius = 1 + range * 1.41;
-  const polygon = WGS84.perimeterSquarePolynom(center, radius);
+  const polygon = WGS84.perimeterSquarePolynom(lngLat, radius);
   const body = `{"query":{"filtered":{"filter":{"bool":{"must":[{"geo_shape":{"geometry":{"shape":{"type":"polygon","coordinates":[${JSON.stringify(polygon)}]}}}}]}}}}}`;
   const url = `https://kartenforum.slub-dresden.de/spatialdocuments/_search?from=0&size=100`;
   const response = await fetch(url, {
@@ -84,9 +89,8 @@ static readonly getSlubMaps = async (lngLat: LngLat, range: number): Promise<Map
 }
 
 /* export const getGeoPortOst3 = async (lngLat: LngLat, range: number, page: number): Promise<string>  => {
-  const center: Point = { coordinates: lngLat };
   const radius = 1 + range * 1.41;
-  const bbox = WGS84.bbox(center, radius);
+  const bbox = WGS84.bbox(lngLat, radius);
   const url = `https://cors-anywhere.herokuapp.com/http://geoportal.ios-regensburg.de:8080/catalog?bbox=${bbox}&format=json&page=${page}`;
   const xhttp = new XMLHttpRequest();
   xhttp.overrideMimeType('text/plain');
@@ -100,9 +104,8 @@ static readonly getSlubMaps = async (lngLat: LngLat, range: number): Promise<Map
 // https://github.com/gnuns/allorigins
 static readonly getGeoPortOst = async (lngLat: LngLat, range: number): Promise<AllOrigins> => {
   const limitRange ='&range[maps_hasScale_i][begin]=200&range[maps_hasScale_i][end]=1000000&commit=Limit';
-  const center: Point = { coordinates: lngLat };
   const radius = 1 + range * 1.41;
-  const bbox = WGS84.bbox(center, radius);
+  const bbox = WGS84.bbox(lngLat, radius);
   const url = `http://geoportal.ios-regensburg.de/catalog?utf8=✓${limitRange}&bbox=${bbox}&format=json&page=1&per_page=100`;
   console.log(url);
   const response = await fetch(
@@ -111,7 +114,33 @@ static readonly getGeoPortOst = async (lngLat: LngLat, range: number): Promise<A
   );
   return await response.json();
 }
-
+static readonly getGeoPortOstTopo100000 = async (): Promise<GeoPortOstSparQl> => {
+  const sparql =`
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX el: <http://purl.org/dc/elements/1.1/>
+PREFIX area:<http://www.geographicknowledge.de/vocab/maps#>
+PREFIX terms: <http://purl.org/dc/terms/>
+PREFIX rd: <http://rdvocab.info/Elements/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+SELECT ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area (group_concat(?sub; separator="; ") as ?keywords) 
+WHERE {
+	?url el:title ?title .
+    ?url terms:identifier ?id .
+  	optional { ?url el:issued ?year}.
+    ?url el:type ?typ .
+#  	FILTER( REGEX( lcase(str(?typ)), 'topografische karte' ) ) .
+    ?url rd:dimensionsOfMapEtc ?scale .
+  	FILTER( strlen(str(?scale)) < 7 ) .
+    optional { ?url el:spatial ?gnd }.
+    optional { ?url terms:spatial ?sub }.
+    ?url foaf:depiction ?thumb .
+  	?url area:mapsArea/geo:asWKT ?area .
+} GROUP BY ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area
+  `;
+  const url = `http://geoportost.ios-regensburg.de:3030/geoportost/sparql?query=${encodeURIComponent(sparql)}`;
+  const response = await fetch(url);
+  return await response.json();
+}//`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`//`https://api.allorigins.win/get?url=${encodeURIComponent(url)}`{headers: new Headers({'content-type': 'application/json'})}
 // ############### GND ###############
 
 static readonly gndLookup = async (search: string): Promise<GndJson> => {
@@ -478,4 +507,94 @@ WHERE {
 SERVICE wikibase:label { bd:serviceParam wikibase:language "de". }
 }
 GROUP BY ?wasLabel ?ab ?bis ?x
-#ORDER BY DESC(?ab) */
+#ORDER BY DESC(?ab) 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PREFIX fo: <http://purl.org/ontology/fo/>
+PREFIX te: <http://www.w3.org/2006/time-entry#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX el: <http://purl.org/dc/elements/1.1/>
+PREFIX m: <http://geoportost.ios-regensburg.de/map/>
+PREFIX area:<http://www.geographicknowledge.de/vocab/maps#>
+PREFIX terms: <http://purl.org/dc/terms/>
+PREFIX rd: <http://rdvocab.info/Elements/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+SELECT ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area (group_concat(?sub; separator="; ") as ?keywords) 
+WHERE {
+	?url el:title ?title .
+  	#?url ?a ?b
+    FILTER( REGEX( lcase(str(?title)), 'rlitz' ) ) .
+    optional { ?url terms:identifier ?id }.
+  	optional { ?url el:issued ?year}.
+    optional { ?url el:type ?typ }.
+    optional { ?url rd:dimensionsOfMapEtc ?scale }.
+    optional { ?url el:spatial ?gnd }.
+    optional { ?url terms:spatial ?sub }.
+    optional { ?url foaf:depiction ?thumb }.
+  	optional { ?url area:mapsArea/geo:asWKT ?area .
+  FILTER (geof:sfWithin(?area , 
+ """<http://www.opengis.net/def/crs/OGC/1.3/CRS84>Polygon ((16 49, 16 50, 18 50, 18 49, 16 49))"""^^geo:wktLiteral)) 
+  }.
+} GROUP BY ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area
+
+
+
+
+
+
+
+
+
+
+
+
+PREFIX fo: <http://purl.org/ontology/fo/>
+PREFIX te: <http://www.w3.org/2006/time-entry#>
+PREFIX geo: <http://www.opengis.net/ont/geosparql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX el: <http://purl.org/dc/elements/1.1/>
+PREFIX m: <http://geoportost.ios-regensburg.de/map/>
+PREFIX area:<http://www.geographicknowledge.de/vocab/maps#>
+PREFIX terms: <http://purl.org/dc/terms/>
+PREFIX rd: <http://rdvocab.info/Elements/>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX geof: <http://www.opengis.net/def/function/geosparql/>
+SELECT ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area (group_concat(?sub; separator="; ") as ?keywords) 
+WHERE {
+	?url el:title ?title .
+    # FILTER( REGEX( lcase(str(?title)), 'rlitz' ) ) .
+    ?url terms:identifier ?id .
+  	optional { ?url el:issued ?year}.
+    ?url el:type ?typ .
+  	FILTER( REGEX( lcase(str(?typ)), 'topografische karte' ) ) .
+    ?url rd:dimensionsOfMapEtc ?scale .
+  	FILTER( strlen(str(?scale)) < 6 ) .
+    optional { ?url el:spatial ?gnd }.
+    optional { ?url terms:spatial ?sub }.
+    ?url foaf:depiction ?thumb .
+  	?url area:mapsArea/geo:asWKT ?area .
+} GROUP BY ?url ?title ?id ?year ?typ ?scale ?gnd ?thumb ?area order by ?scale
+
+
+
+
+*/
