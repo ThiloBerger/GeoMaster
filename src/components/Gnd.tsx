@@ -11,6 +11,8 @@ import { defaultGlobal, Global } from './Global';
 import { GndItem } from './piglets/GndItem';
 import { HREF } from './piglets/Link';
 import { SearchList } from './piglets/SearchList';
+import { fuzzy } from 'fast-fuzzy';
+
 
 export const Gnd: FunctionComponent<PanelProps> = ({
   style,
@@ -74,7 +76,13 @@ export const Gnd: FunctionComponent<PanelProps> = ({
     if (text !== '')
     API.gndLookup(text).then((data) => {
       const items = data.member.filter((item) => item.type.includes('AuthorityResource'));
-      items.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
+      for (const entry of items) entry.fuzzy = fuzzy(entry.preferredName, text);
+
+      items.sort((b, a) => a.fuzzy && b.fuzzy ? a.fuzzy - b.fuzzy: 0);
+
+console.log('sortet:',items)
+
+      //items.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
       setGndSearchEntities(items);
     })
     else setGndSearchEntities([]);
@@ -176,167 +184,3 @@ export const Gnd: FunctionComponent<PanelProps> = ({
     </div>
   );
 };
-
-
-/* 
-
-            {dataObj?.preferredName && (
-              <p>
-                <b>Name:</b>
-                <span>{dataObj.preferredName}</span>
-              </p>
-            )}
-            {dataObj?.variantName && (
-              <p>
-                <b>andere Bezeichnungen:</b>
-                <span>{LOB.extractString(dataObj.variantName)}</span>
-              </p>
-            )}
-            {dataObj?.relatedPlaceOrGeographicName && (
-              <p>
-                <b>verknüpft mit:</b>
-                <span>
-                  {LOB.extractLinkArray(dataObj.relatedPlaceOrGeographicName)}
-                </span>
-              </p>
-            )}
-            {dataObj?.relatedTerm && (
-              <p>
-                <b>verwandter Begriff:</b>
-                <span>{LOB.extractLinkArray(dataObj.relatedTerm)}</span>
-              </p>
-            )}
-            {dataObj?.biographicalOrHistoricalInformation && (
-              <p>
-                <b>Historische Informationen:</b>
-                <span>
-                  {LOB.extractStringAsBlock(
-                    dataObj.biographicalOrHistoricalInformation
-                  )}
-                </span>
-              </p>
-            )}
-
-            {dataObj?.homepage && (
-              <p>
-                <b>Homepage:</b>
-                <span>{LOB.extractLinkArray(dataObj.homepage)}</span>
-              </p>
-            )}
-
-            {dataObj?.sameAs && (
-              <p>
-                <b>siehe auch:</b>
-                <span>{LOB.extractID(dataObj.sameAs)}</span>
-              </p>
-            )}
-
-            {dataObj?.broaderTermInstantial && (
-              <p>
-                <b>Kategorie:</b>
-                <span>
-                  {LOB.extractLinkArray(dataObj.broaderTermInstantial)}
-                </span>
-              </p>
-            )}
-            {dataObj?.hierarchicalSuperiorOfPlaceOrGeographicName && (
-              <p>
-                <b>Teil von:</b>
-                <span>
-                  {LOB.extractLinkArray(
-                    dataObj.hierarchicalSuperiorOfPlaceOrGeographicName
-                  )}
-                </span>
-              </p>
-            )}
-            {dataObj?.dateOfEstablishment && (
-              <p>
-                <b>Gründungsdatum: </b>
-                <span>{LOB.extractString(dataObj.dateOfEstablishment)}</span>
-              </p>
-            )}
-            {dataObj?.dateOfTermination && (
-              <p>
-                <b>bestand bis: </b>
-                <span>{LOB.extractString(dataObj.dateOfTermination)}</span>
-              </p>
-            )}
-            {dataObj?.broaderTermPartitive && (
-              <p>
-                <b>gehört zu: </b>
-                <span>
-                  {LOB.extractLinkArray(dataObj.broaderTermPartitive)}
-                </span>
-              </p>
-            )}
-            {dataObj?.precedingPlaceOrGeographicName && (
-              <p>
-                <b>vormals:</b>
-                <span>
-                  {LOB.extractLinkArray(dataObj.precedingPlaceOrGeographicName)}
-                </span>
-              </p>
-            )}
-            {dataObj?.succeedingPlaceOrGeographicName && (
-              <p>
-                <b>später:</b>
-                <span>
-                  {LOB.extractLinkArray(
-                    dataObj.succeedingPlaceOrGeographicName
-                  )}
-                </span>
-              </p>
-            )}
-            {dataObj?.definition && (
-              <p>
-                <b>Beschreibung:</b>
-                <span>{LOB.extractString(dataObj.definition)}</span>
-              </p>
-            )}
-            {dataObj?.gndSubjectCategory && (
-              <p>
-                <b>Unterkategorie: </b>
-                <span>{LOB.extractLinkArray(dataObj.gndSubjectCategory)}</span>
-              </p>
-            )}
-            {dataObj?.placeOfBusiness && (
-              <p>
-                <b>geograf. Bezug: </b>
-                <span>{LOB.extractLinkArray(dataObj.placeOfBusiness)}</span>
-              </p>
-            )}
-            {dataObj?.dateOfEstablishmentAndTermination && (
-              <p>
-                <b>Zeit: </b>
-                <span>
-                  {LOB.extractString(dataObj.dateOfEstablishmentAndTermination)}
-                </span>
-              </p>
-            )}
-            {dataObj?.dateOfProduction && (
-              <p>
-                <b>erstellt: </b>
-                <span>{LOB.extractString(dataObj.dateOfProduction)}</span>
-              </p>
-            )}
-            {dataObj?.place && (
-              <p>
-                <b>Geografischer Bezug: </b>
-                <span>{LOB.extractLinkArray(dataObj.place)}</span>
-              </p>
-            )}
-            {dataObj?.temporaryNameOfThePlaceOrGeographicName && (
-              <p>
-                <b>zeitweise genannt: </b>
-                <span>
-                  {LOB.extractLinkArray(
-                    dataObj.temporaryNameOfThePlaceOrGeographicName
-                  )}
-                </span>
-              </p>
-            )}
-
-
-
-
-*/

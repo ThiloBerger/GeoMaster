@@ -36,6 +36,7 @@ export interface GndItems {
     dateOfProduction: string[],
     place: GndString[],
     temporaryNameOfThePlaceOrGeographicName: GndString[],
+    fuzzy?: number // for fuzzy search
 }
 
 export interface GndString {

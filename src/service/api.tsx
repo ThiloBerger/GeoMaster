@@ -1,3 +1,4 @@
+import { ArgGisJson } from '../interfaces/ArgGis';
 import { DbPediaJson } from '../interfaces/dbpediaJson';
 import { GeonameById, GeonamesSearch } from '../interfaces/geonamesSearch';
 import { GeoPortOstSparQl } from '../interfaces/geoport';
@@ -43,7 +44,9 @@ static readonly getOverpassLayer = async (wdId: string, [lon, lat]: LngLat): Pro
   return await response.json();
 }
 
-static readonly loadAgsPlz = async (): Promise<{}> => {
+// https://opendata-esri-de.opendata.arcgis.com/datasets/esri-de-content::postleitzahlengebiete-osm/explore?location=50.954647%2C13.325856%2C8.00&showTable=true
+// https://opendata-esri-de.opendata.arcgis.com/datasets/esri-de-content::postleitzahlengebiete-osm/about
+static readonly loadAgsPlz = async (): Promise<ArgGisJson> => {
   const url = `https://services2.arcgis.com/jUpNdisbWqRpMo35/arcgis/rest/services/PLZ_Gebiete/FeatureServer/0/query?f=json&where=1%3D1&outFields=plz,ags,einwohner&returnGeometry=false`;
   const response = await fetch(url)
   return await response.json();
@@ -77,7 +80,7 @@ static readonly getGeonamesChildren = async (id: string, lang: Lang): Promise<Ge
 
 static readonly getSlubMaps = async (lngLat: LngLat, range: number): Promise<Maps> => {
   const radius = 1 + range * 1.41;
-  const polygon = WGS84.perimeterSquarePolynom(lngLat, radius);
+  const polygon = WGS84.bboxToPolynom(lngLat, radius);
   const body = `{"query":{"filtered":{"filter":{"bool":{"must":[{"geo_shape":{"geometry":{"shape":{"type":"polygon","coordinates":[${JSON.stringify(polygon)}]}}}}]}}}}}`;
   const url = `https://kartenforum.slub-dresden.de/spatialdocuments/_search?from=0&size=100`;
   const response = await fetch(url, {
@@ -187,6 +190,12 @@ static readonly wdCityData = async (id: string, lang: Lang): Promise<WikidataCit
       VALUES ?x {'administriert durch'}
       ?city p:P1376 ?_.
       optional{ ?_ ps:P1376 ?property.}  
+      optional{ ?_ pq:P580 ?ab.}
+      optional{ ?_ pq:P582 ?bis.}
+    } UNION {
+      VALUES ?x {'gehört zu (Staat, Fürstentum, Reich)'}
+      ?city p:P17 ?_.
+      optional{ ?_ ps:P17 ?property.}  
       optional{ ?_ pq:P580 ?ab.}
       optional{ ?_ pq:P582 ?bis.}
     } UNION {

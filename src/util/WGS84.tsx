@@ -150,7 +150,7 @@ export class WGS84 {
     };
   };
 
-  static perimeterSquareBox = (lngLat: LngLat, radius: number): Polygon => {
+  static pointToBbox = (lngLat: LngLat, radius: number): Polygon => {
     const lu: LngLat = [
       WGS84.destination(lngLat, 225, radius).coordinates[0],
       WGS84.destination(lngLat, 225, radius).coordinates[1],
@@ -170,8 +170,8 @@ export class WGS84 {
     return [lu, lo, ro, ru];
   };
 
-  static perimeterSquarePolynom = (lngLat: LngLat, radius: number): Polygon => {
-    const box = WGS84.perimeterSquareBox(lngLat, radius);
+  static bboxToPolynom = (lngLat: LngLat, radius: number): Polygon => {
+    const box = WGS84.pointToBbox(lngLat, radius);
     return [...box, box[0]];
   };
 

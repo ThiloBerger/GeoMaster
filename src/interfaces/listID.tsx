@@ -13,4 +13,5 @@ export class ListID {
     nuts2003 = {id: '', apiCall: false, status: false};
     slub = {id: '', apiCall: false, status: false};    
     wikidata = {id: '', apiCall: false, status: false};
+    ags = {id: '', apiCall: false, status: false};
 }

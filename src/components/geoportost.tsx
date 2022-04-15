@@ -16,6 +16,8 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
   const [gpoMaps,setGpoMaps] = useState<GeoPostOstMaps[]>([]);
   const [gpoMapsRadius,setGpoMapsRadius] = useState<GeoPostOstMaps[]>([]);
 
+
+
     useEffect(() => {
 
       if (searchIds.geoportost.apiCall || searchIds.slub.id === '') return;
@@ -24,12 +26,11 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
       searchIds.geoportost.status = true;
       onSearchIds({...searchIds});
 
-      const lngLat = JSON.parse(searchIds.slub.id);
+      
+      
 
       API.getGeoPortOstTopo100000().then(async data => {
-        let maps: GeoPostOstMaps[] = data.results.bindings;
-        const points: LngLat[] = WGS84.perimeterSquareBox(lngLat, radius);
-        console.log(points)
+        let maps: GeoPostOstMaps[] = data.results.bindings; 
         const set = new Set<string>([])
         maps = maps.filter(f=>{
           if ( set.has(f.id.value) ) return false;
@@ -37,10 +38,17 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
           return true;
         });
         setGpoMaps(maps);
+
+        const lngLat = JSON.parse(searchIds.slub.id);
+        const bbox: LngLat[] = WGS84.pointToBbox(lngLat, radius);
         const mapsByRadius = maps.filter(map => 
-          WGS84.intersectionOfPolygons(WGS84.polygonStringToNumber(map.area.value), points));
-        console.log('mapsbyradius',mapsByRadius);
+          WGS84.intersectionOfPolygons(WGS84.polygonStringToNumber(map.area.value), bbox));
         setGpoMapsRadius(mapsByRadius);
+        setCount(mapsByRadius.length);
+        console.log("MAPS:", mapsByRadius.length);
+        console.log("MAPS:", mapsByRadius);
+
+
         searchIds.geoportost.status = false;
         onSearchIds({...searchIds});    
       });
@@ -48,11 +56,14 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
     }, [searchIds, onSearchIds, radius]);
 
     const refreshMaps = () => {
-      const lngLat: LngLat = JSON.parse(searchIds.slub.id);
-      const points: LngLat[] = WGS84.perimeterSquareBox(lngLat, radius);
+      const lngLat = JSON.parse(searchIds.slub.id);
+      const bbox: LngLat[] = WGS84.pointToBbox(lngLat, radius);
       const mapsByRadius = gpoMaps.filter(map => 
-        WGS84.intersectionOfPolygons(WGS84.polygonStringToNumber(map.area.value), points));
+        WGS84.intersectionOfPolygons(WGS84.polygonStringToNumber(map.area.value), bbox));
       setGpoMapsRadius(mapsByRadius);
+      setCount(mapsByRadius.length);
+      console.log("MAPS:", mapsByRadius.length);
+      console.log("MAPS:", mapsByRadius);
     }
 
     const sliderChange = (event: Event, newValue: number | number[]) => {
@@ -79,8 +90,8 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
           <Fragment>
             <p>
               <strong>Radius: </strong>
-              {radius} m - Karten:{" "}
-              {count > 0 ? count : "keine"}
+              {radius} m
+              {count > 2 ? `, ${count} Karten` : ''}
             </p>
             <Slider
               size="small"
@@ -110,10 +121,10 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
                         }}
                         onLoad={({ currentTarget }) => {
                           let allmaps = 0
-                          if (mapList.current) allmaps = (mapList.current as HTMLElement).querySelectorAll('a[style="display: flex;"]').length;
-                          setCount(allmaps);
+                          if (mapList.current) allmaps = (mapList.current as HTMLElement).querySelectorAll('a[style="display: flex;"]').length + 1;  
                           const el = currentTarget.parentElement;
                           if (el) el.style.display = "flex";
+                          setCount(allmaps);
                         }}
                       />
                       <div>
@@ -122,7 +133,7 @@ export const GeoPortOst: FunctionComponent<PanelProps> = ({style, searchIds, onS
                           {map.typ.value} - 1:{map.scale.value}
                         </span>
                         <p>
-                          {map.keywords.value}
+                          {map.keywords.value} - {map.year.value}
                         </p>
                       </div>
                     </a>

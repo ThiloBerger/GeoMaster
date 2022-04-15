@@ -1,6 +1,6 @@
 import { Button, Tooltip } from '@mui/material';
 import { CheckBoxOutlineBlankTwoTone, CheckBoxTwoTone, SaveAlt, SwitchLeft} from '@mui/icons-material';
-import { FunctionComponent, ReactElement, useContext, useState } from 'react';
+import { FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
 import { Geonames } from './components/geonames';
 import { GeoPortOst } from './components/geoportost';
 import { Getty } from './components/getty';
@@ -16,6 +16,8 @@ import '@fontsource/roboto'
 import './App.scss';
 import { Global } from './components/Global';
 import saveAs from 'file-saver';
+import { API } from './service/api';
+import { ArgGisFeatures } from './interfaces/ArgGis';
 
 export const App: FunctionComponent = (): ReactElement => {
 
@@ -34,6 +36,11 @@ export const App: FunctionComponent = (): ReactElement => {
   const [popupUrl, setPopupUrl] = useState<string>('');
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
   const [popupImage, setPopupImage] = useState<boolean>(false);
+  const [features, setFeatures] = useState<ArgGisFeatures[]>([]);
+  
+  useEffect(() => {
+    API.loadAgsPlz().then(data => setFeatures(data.features));
+  }, []);
 
   const save = () => {
     const json = JSON.stringify(global);
@@ -156,7 +163,7 @@ export const App: FunctionComponent = (): ReactElement => {
       </div>
       <div id='svg'><div></div></div>
       <div className='tabs'>
-        {showWikidata && <Wikidata style={{order: buttonOrder.findIndex((i) => i === 1)}} searchIds={searchIds} lang={lang} openPopup={openPopup} onSearchIds={onSearchIdsHandler} />}
+        {showWikidata && <Wikidata style={{order: buttonOrder.findIndex((i) => i === 1)}} searchIds={searchIds} lang={lang} openPopup={openPopup} onSearchIds={onSearchIdsHandler} features={features}/>}
         {showGov && <Gov style={{order: buttonOrder.findIndex((i) => i === 2)}} searchIds={searchIds} openPopup={openPopup}  onSearchIds={onSearchIdsHandler}/>}
         {showGnd && <Gnd style={{order: buttonOrder.findIndex((i) => i === 3)}} searchIds={searchIds} openPopup={openPopup} onSearchIds={onSearchIdsHandler}/>}
         {showGetty && <Getty style={{order: buttonOrder.findIndex((i) => i === 4)}} searchIds={searchIds} onSearchIds={onSearchIdsHandler}/>}

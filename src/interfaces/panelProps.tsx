@@ -1,4 +1,5 @@
 import { Lang } from "../types/lang";
+import { ArgGisFeatures } from "./ArgGis";
 import { ListID } from "./listID";
 
 export interface PanelProps {
@@ -8,5 +9,6 @@ export interface PanelProps {
     lang?: Lang,
     style: {
         order: number;
-    }
+    },
+    features?: ArgGisFeatures[],
 }

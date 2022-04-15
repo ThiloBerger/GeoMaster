@@ -79,8 +79,9 @@ export const Geonames: FunctionComponent<PanelProps> = ({
             searchIds.wikidata.id = data[0].tags.wikidata;
             onSearchIds({...searchIds});
           }
-          if (data[0].tags['de:amtlicher_gemeindeschluessel']) {
-            API.getDbPedia(data[0].tags['de:amtlicher_gemeindeschluessel']).then(data => {
+          const ags = searchIds.ags.id !== '' ? searchIds.ags.id : data[0].tags['de:amtlicher_gemeindeschluessel'];
+          if (ags) {
+            API.getDbPedia(ags).then(data => {
               setDbPedia(data.results.bindings);
               global.dbpedia.data = data.results.bindings;
             })

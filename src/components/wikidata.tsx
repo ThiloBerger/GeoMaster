@@ -24,6 +24,7 @@ import { WdCard } from './piglets/WdCard';
 import { WdExtraItem } from './piglets/WdExtraItem';
 import './wikidata.scss';
 import { WDPop, WikidataPopulationChart } from './WikidataPopulationChart';
+import { WDPLZPop, WikidataPopulationPLZChart } from './WikidataPopulationPLZChart';
 
 
 export const Wikidata: FunctionComponent<PanelProps> = ({
@@ -32,6 +33,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   openPopup = () => {},
   lang = Lang.DE,
   onSearchIds,
+  features,
 }): ReactElement => {
 
   let global = useContext(Global);
@@ -53,7 +55,8 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   const [wdKatastrophStatus, setWdKatastrophStatus] = useState<boolean>(false);
   const [wikidataPos, setWikidataPos] = useState<ReactElement>(<></>);
   const [osmLayer, setOsmLayer] = useState<OverlayerOsm>(JSON.parse('{}'));
-  const [govLocatorId, setGovLocatorId] = useState<string>('');
+  const [govLocatorId, setGovLocatorId] = useState<string>(''); 
+  const [plzPop, setPlzPop] = useState<WDPLZPop>(JSON.parse('{}'));
 
   const externalRef: Record<string,string> = {
     Geonames: 'https://www.geonames.org/',
@@ -85,6 +88,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
     setWdDungeon([]);
     setWdKatastroph([]);
     setGovLocatorId('');
+    setPlzPop(JSON.parse('{}'));
 
     const table: Table = [];
 
@@ -120,8 +124,19 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
         if (lid && group === 'Geonames' && searchIds.geonames.id === '') {
           searchIds.geonames.id = item.lid.value;
           onSearchIds({...searchIds});
-        }  
+        }
 
+        if (lid && group === 'AGS' && searchIds.ags.id === '') {
+          searchIds.ags.id = item.lid.value;
+          onSearchIds({...searchIds});
+          
+          if(features) {
+            setPlzPop(WikidataPopulationPLZChart(features
+              .filter(feat => feat.attributes.ags === item.lid.value)
+              .sort((a,b) => parseInt(a.attributes.plz) - parseInt(b.attributes.plz))
+            ));
+          }
+        }
       });
 
       global.wikidata.table = table;
@@ -207,7 +222,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
       }
     });
 
-  }, [global, global.overpass, global.wikidata, lang, onSearchIds, searchIds]);
+  }, [features, global, global.overpass, global.wikidata, lang, onSearchIds, searchIds]);
 
   const onChangeSearchHandler = (text: string) => {
     if (text !== '') API.wdLookup(text, lang, 20).then(data => setWbSearchEntities(data.search));
@@ -244,6 +259,16 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
                 <span>Einwohner</span>
               </AccordionSummary>
               <AccordionDetails>{wdPop.chart}</AccordionDetails>
+            </Accordion>
+          )}
+
+          {plzPop.chart && (
+            <Accordion>
+              <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
+                <Badge badgeContent={plzPop.total} color="primary"><div className='icon population'/></Badge>
+                <span>Einwohner nach PLZ <em className='popplz'>(ges. {plzPop.sum}**)</em></span>
+              </AccordionSummary>
+              <AccordionDetails>{plzPop.chart}</AccordionDetails>
             </Accordion>
           )}
 
