@@ -1,12 +1,12 @@
 import { ReactElement } from 'react';
-import { GovArea, GovObject } from '../interfaces/govRdf';
+import { GovArea, GovData } from '../interfaces/govRdf';
 
-export const GovAreaChart = (govObject: GovObject): ReactElement => {
+export const GovAreaChart = (govData: GovData): ReactElement => {
 
-    if (!govObject['gov:hasArea']) return (<></>);
+    if (!govData['gov:hasArea']) return (<></>);
 
-    if (!Array.isArray(govObject['gov:hasArea'])) {
-        const c = govObject['gov:hasArea'];
+    if (!Array.isArray(govData['gov:hasArea'])) {
+        const c = govData['gov:hasArea'];
         return (<ul className='pop'>
             <li>
                 <div>{c['gov:PropertyForObject']['gov:timeBegin'] ? c['gov:PropertyForObject']['gov:timeBegin'] : ''}</div>
@@ -17,7 +17,7 @@ export const GovAreaChart = (govObject: GovObject): ReactElement => {
 
     const years: string[] = [];
     const pops: number[] = [];
-    const sgo = govObject['gov:hasArea'].sort((a, b) => {
+    const sgo = govData['gov:hasArea'].sort((a, b) => {
         return getMedianDate(b) - getMedianDate(a);  //DESC
     })
     sgo.forEach(c => {

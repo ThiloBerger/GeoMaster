@@ -1,7 +1,7 @@
 import { Map } from '@mui/icons-material';
 import { Button } from '@mui/material';
 import { Fragment, FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
-import { GndItems } from '../interfaces/GndJson';
+import { GndData } from '../interfaces/GndJson';
 import { ListID } from '../interfaces/listID';
 import { PanelProps } from '../interfaces/panelProps';
 import { API } from '../service/api';
@@ -23,8 +23,8 @@ export const Gnd: FunctionComponent<PanelProps> = ({
 
   let global = useContext(Global);
 
-  const [dataObj, setDataObject] = useState<GndItems>(JSON.parse('{}'));
-  const [gndSearchEntities, setGndSearchEntities] = useState<GndItems[]>([]);
+  const [dataObj, setDataObject] = useState<GndData>({} as GndData);
+  const [gndSearchEntities, setGndSearchEntities] = useState<GndData[]>([]);
 
   useEffect(() => {
     
@@ -75,14 +75,12 @@ export const Gnd: FunctionComponent<PanelProps> = ({
   const onChangeSearchHandler = (text: string) => {
     if (text !== '')
     API.gndLookup(text).then((data) => {
+      console.log('GND',data)
       const items = data.member.filter((item) => item.type.includes('AuthorityResource'));
+      console.log('GND',items)
+      console.log('GND',data.member.filter((item) => item.type.includes('PlaceOrGeographicName')))
       for (const entry of items) entry.fuzzy = fuzzy(entry.preferredName, text);
-
       items.sort((b, a) => a.fuzzy && b.fuzzy ? a.fuzzy - b.fuzzy: 0);
-
-console.log('sortet:',items)
-
-      //items.sort((a, b) => a.preferredName.localeCompare(b.preferredName));
       setGndSearchEntities(items);
     })
     else setGndSearchEntities([]);
@@ -176,7 +174,7 @@ console.log('sortet:',items)
             <GndItem  item={dataObj} label='geograf. Bezug:' attr='placeOfBusiness' method={LOB.extractLinkArray}/>
             <GndItem  item={dataObj} label='Zeit:' attr='dateOfEstablishmentAndTermination' method={LOB.extractString}/>
             <GndItem  item={dataObj} label='erstellt:' attr='dateOfProduction' method={LOB.extractString}/>
-            <GndItem  item={dataObj} label='Geografischer Bezug:' attr='temporaryNameOfThePlaceOrGeographicName' method={LOB.extractLinkArray}/>
+            <GndItem  item={dataObj} label='Geografischer Bezug:' attr='place' method={LOB.extractLinkArray}/>
             <GndItem  item={dataObj} label='zeitweise genannt:' attr='temporaryNameOfThePlaceOrGeographicName' method={LOB.extractLinkArray}/>
           </div>
         </Fragment>

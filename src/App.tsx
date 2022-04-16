@@ -45,7 +45,6 @@ export const App: FunctionComponent = (): ReactElement => {
   const save = () => {
     const json = JSON.stringify(global);
     const blob = new Blob([json], {type: 'application/json'});
-    //var blob = new Blob([JSON.stringify(data)], {type: "text/plain;charset=utf-8"});
     saveAs(blob, `${global.search}_${new Date().toJSON().slice(0,10)}.json`);
   }
 

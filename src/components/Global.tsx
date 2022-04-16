@@ -1,9 +1,10 @@
 import { createContext } from "react";
+import { ArgGisFeatures } from "../interfaces/ArgGis";
 import { DbPediaInfo } from "../interfaces/dbpediaJson";
-import { GeonameById } from "../interfaces/geonamesSearch";
+import { GeonameData } from "../interfaces/geonamesSearch";
 import { GettyItem } from "../interfaces/gettyJson";
-import { GndItems } from "../interfaces/GndJson";
-import { GovObject } from "../interfaces/govRdf";
+import { GndData } from "../interfaces/GndJson";
+import { GovData } from "../interfaces/govRdf";
 import { OverpassItem } from "../interfaces/overpass";
 import { WikidataCardResult, WikidataExtraResult, WikidataPopulationResult } from "../interfaces/wikidataCityData";
 import { Table } from '../types/table';
@@ -12,18 +13,21 @@ export type typeGlobal = {
     search: string,
     dbpedia: {
         data: DbPediaInfo[]
-    }
+    },
+    esri: {
+        data: ArgGisFeatures[]
+    },
     geonames: { 
         id: string,
-        data: GeonameById
-    }
+        data: GeonameData
+    },
     gnd: {
         id: string,
-        data: GndItems
+        data: GndData
     },
     gov: {
         id: string,
-        data: GovObject
+        data: GovData
     },
     overpass: {
         geojson: any,
@@ -48,21 +52,24 @@ export type typeGlobal = {
     }
 }
 export const defaultGlobal: typeGlobal = {
-    search: 'nur so',
+    search: 'empty',
     dbpedia: {
+        data: []
+    },
+    esri: {
         data: []
     },
     geonames: {
         id: '',
-        data: JSON.parse('{}')
+        data: {} as GeonameData
     },
     gnd: {
         id: '',
-        data: JSON.parse('{}')
+        data: {} as GndData
     },
     gov: {
         id: '',
-        data: JSON.parse('{}')
+        data: {} as GovData
     },
     overpass: {
         geojson: JSON.parse('{}'),

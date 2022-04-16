@@ -1,6 +1,6 @@
 import { ArgGisJson } from '../interfaces/ArgGis';
 import { DbPediaJson } from '../interfaces/dbpediaJson';
-import { GeonameById, GeonamesSearch } from '../interfaces/geonamesSearch';
+import { GeonameData, GeonamesSearch } from '../interfaces/geonamesSearch';
 import { GeoPortOstSparQl } from '../interfaces/geoport';
 import { GettyJson } from '../interfaces/gettyJson';
 import { GndJson } from '../interfaces/GndJson';
@@ -66,7 +66,7 @@ static readonly getGeonamesSearch = async (search: string, lang: Lang, option: s
   return await response.json();
 }
 
-static readonly getGeonamesEntity = async (id: string, lang: Lang): Promise<GeonameById> => {
+static readonly getGeonamesEntity = async (id: string, lang: Lang): Promise<GeonameData> => {
   const url = `${API.BASEURL_GEONAMES}getJSON?id=${id}&style=gui&lang=${lang}&username=${API.USER}`;
   const response = await fetch(url)
   return await response.json();
@@ -169,6 +169,14 @@ static readonly govEntryById = async (govId: string): Promise<Document> => {
 }
 
 // ############### WIKIDATA ###############
+// Alternative https://wikidata.reconci.link/en/api?query={"query":"Leipzig","type":"Q56061"}
+static readonly recondiLookup = async (search: string, lang: Lang, limit: number): Promise<WbSearch> => {
+  const BASEURL_RECONCI = `https://wikidata.reconci.link/${lang}/api?query=`;
+  const json = {query: search, type: "Q486972"};
+  const url = `${BASEURL_RECONCI}${JSON.stringify(json)}`;
+  const response = await fetch(url)
+  return await response.json();
+}
 
 static readonly wdLookup = async (search: string, lang: Lang, limit: number): Promise<WbSearch> => {
   const BASEURL_WIKIDATA = 'https://www.wikidata.org/w/api.php?action=';

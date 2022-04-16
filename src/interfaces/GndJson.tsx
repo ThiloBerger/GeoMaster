@@ -1,15 +1,8 @@
-export interface GndLockup {
-    category: string,
-    id: string,
-    image: string,
-    label: string
-}
-
 export interface GndJson {
-    member: GndItems[]
+    member: GndData[]
 }
 
-export interface GndItems {
+export interface GndData {
     type: string[],
     gndIdentifier: string,
     relatedTerm: GndString[],

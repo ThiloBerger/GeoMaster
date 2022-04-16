@@ -1,3 +1,5 @@
+@import 'color.scss';
+
 [data-box] {
   display: flex;
   flex-direction: column;
@@ -7,10 +9,10 @@
 [data-buttons] {
   display: flex;
   padding: 0.5em;
-  background-color: #14415e;
+  background-color: $bg-btn-panel;
   box-shadow: 0 0 0 4.2em burlywood, 0 1px 0 4.2em rgba(0, 0, 0, 0.3),
     0 -1px 0 0 inset rgba(255, 255, 255, 0.5);
-  border-bottom: 1px solid darkred;
+  border-bottom: 1px solid $bg-btn-panel;
   width: 100%;
   position: fixed;
   z-index: 3;
@@ -23,14 +25,14 @@
       border-radius: 0;
       color: #FFFFFF80;
       &:hover {
-        color:white;
+        color: $foreground;
       }
     }
     button:nth-child(2) {
       font-size: small;
       padding: 0.5em;
       border-radius: 0;
-      color: white;
+      color: $foreground;
       svg {
         height: 0.8em;
       }
@@ -63,18 +65,18 @@
   overflow-y: scroll;
   width: 400px;
   border: 1px solid #14415e;
-  background-color: antiquewhite;
+  background-color: $background;
   cursor: pointer;
   position: absolute;
   margin-top: -1px;
   div, button {
     padding: 5px;
     cursor: pointer;
-    background-color: antiquewhite;
+    background-color: $background;
     border-top: 1px solid #14415e57;
 
     &:hover {
-      color: white;
+      color: $foreground;
       background-color: #14415ec2;
       text-shadow: 0 0 2px black;
     }
@@ -83,7 +85,6 @@
       font-size: 0.9em;
       margin: 0;
       font-weight: 700;
-
       + p {
         font-size: 0.8em;
         font-weight: 100;
@@ -132,7 +133,11 @@
   }
 }
 .mapbutton {
-  margin-bottom: 0.5em;
+  margin: 0.5em 0 1em;
+  button:hover {
+    color: white;
+    background-color: #1976d2;
+  }
 }
 
 .pop {
@@ -173,54 +178,54 @@
   border: 1px solid #14415e59;
   width: 100%;
   display: table;
-  margin-top: 0.5em;
+  margin-top: .5em;
+  background-color: $foreground;
   p {
     display: table-row;
-    background-color: whitesmoke;
     b {
-      border-right: 1px dotted gray;
+      border-right: 1px dotted $darker;
       display: table-cell;
-      padding: 0.25em;
+      padding: .5em .25em;
     }
     span {
       display: table-cell;
-      padding: 0.25em;
+      padding: 0 .25em .5em;
+      button {
+        margin: -.5em .5em;
+        box-shadow: 0 0 0 1px #0003;
+        transform: scale(.8);
+        &:hover {
+          color: white;
+          background-color: #1976d2;
+        }
+      }
     }
-    &:nth-child(even) {
-      background-color: white;
+    &:nth-child(odd) {
+      background-color: $zebra;
     }
     span i {
       font-style: normal;
       display: block;
-      padding: 0.5em 0;
-      border-top: 1px dotted gray;
+      padding: .5em 0;
+      border-top: 1px dotted $darker;
       &:first-child {
-        margin-top: 0;
+        padding-top: 0;
         border: none;
       }
+      &:last-child {
+        padding-bottom: 0;
+      }
       em {
-        color: gray;
-        font-size: 0.8em;
+        color: $darker;
+        font-size: .8em;
       }
     }
-  }
-}
-
-.pos {
-  background-color: floralwhite;
-  padding: 0.5em;
-  width: fit-content;
-  p {
-    margin: 0;
-    font-family: monospace;
-    font-variant-numeric: oldstyle-nums;
-    font-weight: 300;
   }
 }
 
 .small {
   font-size: 0.8em;
-  color: gray;
+  color: $darker;
 }
 
 p.alternate,
@@ -235,14 +240,14 @@ span.alternate {
     background: #90500010;
     display: inline-flex;
     padding: .15em .5em;
-    border-radius: .5em;
+    border-radius: .25em;
     box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14),
-                0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+                0px 1px 3px 0px rgba(0, 0, 0, 0.12), inset 0 0 1px 0 #0008;
   }  
 } 
 
 .cardlabel em {
-  color: gray;
+  color: $darker;
   font-size: .8em;
 }
 
@@ -253,11 +258,14 @@ button.save {
   border-radius: .5em;
   &:hover {
     background: darkred!important;
-    box-shadow: 0 0 0px 1px white;
+    box-shadow: 0 0 0px 1px inset darkred, 0 0 0px 2px inset #fffa;
   }
 }
 
 .popplz {
-  color: gray;
+  color: $darker;
   font-size: 0.8em;
 }
+
+
+

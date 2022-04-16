@@ -15,10 +15,10 @@ export interface GovDescriptionItem {
 }
 
 export interface  GovPrimaryTopic {
-    'gov:GovObject': GovObject
+    'gov:GovObject': GovData
 }
 
-export interface GovObject {
+export interface GovData {
     'gov:hasPopulation': GovPopulation[],
     'gov:note': GovNote | GovNote[],
     'gov:isPartOf': GovPartOf | GovPartOf[],

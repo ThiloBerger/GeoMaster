@@ -38,7 +38,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
 
   let global = useContext(Global);
   const [groupTable, setGroupTable] = useState<Table>([]);
-  const [wdPop, setWdPop] = useState<WDPop>(JSON.parse('{}'));
+  const [wdPop, setWdPop] = useState<WDPop>({} as WDPop);
   const [wbSearchEntities, setWbSearchEntities] = useState<WbSearchEntities[]>([]);
   const [wdExtra, setWdExtra] = useState<WikidataExtraResult>(JSON.parse('{}'));
   const [wdArchaelog, setWdArchaelog] = useState<WikidataCardResult[]>([]);
@@ -54,9 +54,9 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   const [wdKatastroph, setWdKatastroph] = useState<WikidataCardResult[]>([]);
   const [wdKatastrophStatus, setWdKatastrophStatus] = useState<boolean>(false);
   const [wikidataPos, setWikidataPos] = useState<ReactElement>(<></>);
-  const [osmLayer, setOsmLayer] = useState<OverlayerOsm>(JSON.parse('{}'));
+  const [osmLayer, setOsmLayer] = useState<OverlayerOsm>({} as OverlayerOsm);
   const [govLocatorId, setGovLocatorId] = useState<string>(''); 
-  const [plzPop, setPlzPop] = useState<WDPLZPop>(JSON.parse('{}'));
+  const [plzPop, setPlzPop] = useState<WDPLZPop>({} as WDPLZPop);
 
   const externalRef: Record<string,string> = {
     Geonames: 'https://www.geonames.org/',
@@ -79,8 +79,8 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
 
     onSearchIds({...searchIds});
 
-    setWdPop(JSON.parse('{}'));
-    setOsmLayer(JSON.parse('{}'));
+    setWdPop({} as WDPop);
+    setOsmLayer({} as OverlayerOsm);
     setWdArchaelog([]);
     setWdCastle([]);
     setWdChurch([]);
@@ -88,7 +88,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
     setWdDungeon([]);
     setWdKatastroph([]);
     setGovLocatorId('');
-    setPlzPop(JSON.parse('{}'));
+    setPlzPop({} as WDPLZPop);
 
     const table: Table = [];
 
@@ -131,10 +131,11 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
           onSearchIds({...searchIds});
           
           if(features) {
-            setPlzPop(WikidataPopulationPLZChart(features
+            const plz = features
               .filter(feat => feat.attributes.ags === item.lid.value)
-              .sort((a,b) => parseInt(a.attributes.plz) - parseInt(b.attributes.plz))
-            ));
+              .sort((a,b) => parseInt(a.attributes.plz) - parseInt(b.attributes.plz));
+            global.esri.data = plz;
+            setPlzPop(WikidataPopulationPLZChart(plz));
           }
         }
       });
@@ -227,6 +228,9 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   const onChangeSearchHandler = (text: string) => {
     if (text !== '') API.wdLookup(text, lang, 20).then(data => setWbSearchEntities(data.search));
     else setWbSearchEntities([]);
+
+    // if (text !== '') API.recondiLookup(text, lang, 20).then(data => console.log('Recondi: ', data));
+    
   };
 
   const onClickSearch = (id: string) => {

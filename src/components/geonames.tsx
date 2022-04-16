@@ -2,7 +2,7 @@ import { ExpandMore, GpsFixed, Hive, Language, Search } from '@mui/icons-materia
 import { Accordion, AccordionDetails, AccordionSummary, Badge, ToggleButton, ToggleButtonGroup } from '@mui/material';
 import { Fragment, FunctionComponent, MouseEvent, ReactElement, useContext, useEffect, useState } from 'react';
 import { DbPediaInfo } from '../interfaces/dbpediaJson';
-import { GeonameById, GeonamesSearchItem } from '../interfaces/geonamesSearch';
+import { GeonameData, GeonamesSearchItem } from '../interfaces/geonamesSearch';
 import { ListID } from '../interfaces/listID';
 import { OverpassItem } from '../interfaces/overpass';
 import { PanelProps } from '../interfaces/panelProps';
@@ -28,10 +28,10 @@ export const Geonames: FunctionComponent<PanelProps> = ({
   let global = useContext(Global);
 
   const [geonamesSearchEntities, setGeonamesSearchEntities] = useState<GeonamesSearchItem[]>([]);
-  const [geonamesEntity, setGeonamesEntity] = useState<GeonameById>(JSON.parse('{}'));
+  const [geonamesEntity, setGeonamesEntity] = useState<GeonameData>({} as GeonameData);
   const [geonamesChildren, setGeonamesChildren] = useState<GeonamesSearchItem[]>([]);
   const [geonamesPos, setGeonamesPos] = useState<ReactElement>(<></>);
-  const [overpass, setOverpass] = useState<OverpassItem>(JSON.parse('{}'));
+  const [overpass, setOverpass] = useState<OverpassItem>({} as OverpassItem);
   const [dbPedia, setDbPedia] = useState<DbPediaInfo[]>([]);
   const [option, setOption] = useState(() => ['']);
 
@@ -45,10 +45,10 @@ export const Geonames: FunctionComponent<PanelProps> = ({
     onSearchIds({...searchIds});
  
 
-    setGeonamesEntity(JSON.parse('{}'));
+    setGeonamesEntity({} as GeonameData);
     setGeonamesChildren([]);
     setGeonamesPos(<></>);
-    setOverpass(JSON.parse('{}'));
+    setOverpass({} as OverpassItem);
     setDbPedia([]);
 
 

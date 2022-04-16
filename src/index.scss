@@ -1,3 +1,6 @@
+@import 'color.scss';
+
+
 @font-face {
   font-family: 'icons';
   src: url('./fa-solid-900.woff2') format('woff2');
@@ -29,7 +32,7 @@ body {
 }
 
 html {
-  background-color: antiquewhite;
+  background-color: $background;
   z-index: -2;
   position: relative;
 }
@@ -63,7 +66,7 @@ html, body, #root {
 /* Firefox */
 * {
   scrollbar-width: auto;
-  scrollbar-color: #a07d40 #e5e3dc;
+  scrollbar-color: $scrollbar $scrollbar-background;
 }
 
 /* Chrome, Edge, and Safari */
@@ -72,13 +75,13 @@ html, body, #root {
 }
 
 *::-webkit-scrollbar-track {
-  background: #e5e3dc;
+  background: $scrollbar-background;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #a07d40;
+  background-color: $scrollbar;
   border-radius: 10px;
-  border: 3px solid #e5e3dc;
+  border: 3px solid $scrollbar-background;
 }
 
   
@@ -90,19 +93,21 @@ a[target='_blank']:before {
 a {
   color:rgb(0, 89, 119);
   text-underline-offset: 2px;
+  text-decoration-style: dotted;
+  text-decoration-color: rgb(0, 138, 184);
   font-size: .9rem;
-}
-
-a:hover {
-  color:rgb(0, 138, 184);
-  text-underline-offset: 1px;
+  &:hover {
+    color:rgb(0, 138, 184);
+    text-underline-offset: 1px;
+    text-decoration-style: solid;
+  }
 }
 
 .panel {
   flex: none;
   padding: 4em .5em 2em;
-  border-right: 1px dotted darkgray;
-  border-left: 1px solid white;
+  border-right: 1px dotted $lightdark;
+  border-left: 1px solid $foreground;
   min-width: 26em;
   width: min-content;
   flex-grow: 1;
@@ -111,7 +116,7 @@ a:hover {
       font-size: .7em;
       font-weight: 100;
       display: block;
-      color: gray;
+      color: $darker;
     }
     a {
       font-size: .7em;
@@ -125,7 +130,7 @@ a:hover {
     > p {
       width: 250px;
       font-size: .8em;
-      text-shadow: 1px 1px 0px rgba(255,255,255,.3);
+      text-shadow: 1px 1px 0px $white-shadow;
       position: relative;
       display: inline-flex;
       margin: 0;
@@ -133,9 +138,9 @@ a:hover {
     }
     input {
       width: 250px;
-      background-color: antiquewhite;
+      background-color: $background;
       &:focus {
-        background-color: white;
+        background-color: $foreground;
       }
     }
   } 
@@ -160,12 +165,29 @@ span.MuiBadge-root span {
 }
 
 button.found {
-  box-shadow: 0 -6px 0 -3px inset rgb(163, 218, 12) !important;
+  box-shadow: 0 -6px 0 -3px inset $marker !important;
 }
 
 .pos {
-  margin: .5em 0;
+  margin: 0.5em 0;
+  background-color: floralwhite;
+  width: fit-content;
+  border: 1px solid rgba(20, 65, 94, 0.3490196078);
+  p {
+    margin: 0;
+    font-family: monospace;
+    font-feature-settings: "onum";
+    font-variant-numeric: oldstyle-nums;
+    font-weight: 300;
+    padding: .1em .5em;
+    &:nth-child(odd) {
+      background-color: $zebra;
+    }    
+  }
 }
+
+
+
 #map {
   position: absolute;
   top: 120px;
@@ -175,4 +197,5 @@ button.found {
     display: none;
   };
 }
+
 

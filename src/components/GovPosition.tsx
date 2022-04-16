@@ -1,6 +1,6 @@
 import { FunctionComponent, ReactElement } from 'react';
-import { GeonameById } from '../interfaces/geonamesSearch';
-import { GovObject, WGS84Point } from '../interfaces/govRdf';
+import { GeonameData } from '../interfaces/geonamesSearch';
+import { GovData, WGS84Point } from '../interfaces/govRdf';
 import { WikidataCardResult, WikidataExtraResult } from '../interfaces/wikidataCityData';
 import { WGS84 } from '../util/WGS84';
 import { Button } from '@mui/material';
@@ -8,7 +8,7 @@ import { Map } from '@mui/icons-material';
 import { tk25Names } from '../interfaces/tk25';
 
 interface GovMapsProps {
-    entity: GovObject,
+    entity: GovData,
     openPopup: Function
 }
 export const GovMaps: FunctionComponent<GovMapsProps> = ({entity, openPopup}): ReactElement => {
@@ -16,7 +16,7 @@ export const GovMaps: FunctionComponent<GovMapsProps> = ({entity, openPopup}): R
     const point= entity['gov:position']['wgs84:Point']
     return <div className='mapbutton'><Button onClick={() => openPopup(`https://maps.google.com/maps?q=${toDeg(point)}&t=&z=11&ie=UTF8&iwloc=en&output=embed`)}><Map /> Karte</Button></div>
 }
-export const GovPosition = (govObject: GovObject): ReactElement => {
+export const GovPosition = (govObject: GovData): ReactElement => {
     
     if (!govObject['gov:position']) return (<></>);
 
@@ -59,9 +59,7 @@ export const WikiDataPosition = (extra: WikidataExtraResult): ReactElement => {
             <p>{toDeg(point)}</p>
             <p>{toDeg2(point)}</p>
             <p>UTM: {utm(point)}</p>
-            {(gk || name) && <><hr />
-                <p>(Potsdam)</p>
-            </>}
+            {(gk || name) && <p>&nbsp;</p>}
             {gk && <p>GK: R {gk[0]} H {gk[1]}</p>}
             {name && <><p>TK25: Blatt {tk25} {name}</p>
                 <p>MTBQ: {mtb[0]} ({h}), MTBQQ: {mtb[0]}{mtb[1]}, MTBQQQ: {mtb}</p>
@@ -81,7 +79,7 @@ export const WikidataCardMaps: FunctionComponent<WikiDataCardMapProps> = ({entit
 }
 
 
-export const GeonamesPosition = (entity: GeonameById): ReactElement => {
+export const GeonamesPosition = (entity: GeonameData): ReactElement => {
     
     if (!entity.lat) return (<></>);
 
@@ -97,7 +95,7 @@ export const GeonamesPosition = (entity: GeonameById): ReactElement => {
     );
 }
 interface GeonamesMapsProps {
-    entity: GeonameById,
+    entity: GeonameData,
     openPopup: Function
 }
 export const GeonamesMaps: FunctionComponent<GeonamesMapsProps> = ({entity, openPopup}): ReactElement => {

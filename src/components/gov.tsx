@@ -1,7 +1,7 @@
 import { ExpandMore, GpsFixed } from '@mui/icons-material';
 import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
 import { Fragment, FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
-import { GovObject } from '../interfaces/govRdf';
+import { GovData } from '../interfaces/govRdf';
 import { PanelProps } from '../interfaces/panelProps';
 import { API } from '../service/api';
 import { GOV, GOVLib } from '../util/util';
@@ -20,10 +20,10 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
 
     const global = useContext(Global);
     
-    const [govPop, setGovPop] = useState<GOVPop>(JSON.parse('{}'));
+    const [govPop, setGovPop] = useState<GOVPop>({} as GOVPop);
     const [govPos, setGovPos] = useState<ReactElement>(<></>);
     const [govArea, setGovArea] = useState<ReactElement>(<></>);
-    const [gov, setGov] = useState<GovObject>(JSON.parse('{}'));
+    const [govData, setGovData] = useState<GovData>({} as GovData);
 
     useEffect(() => {
 
@@ -38,7 +38,7 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
             const json = GOV.xml2json(data);
             const govObj = GOV.jsonToGOV(json);
             console.log('GOV USEEFFECT: ', govObj);
-            setGov(govObj);
+            setGovData(govObj);
             global.gov.data = govObj;
             setGovPop(GovPopulationChart(govObj));
             setGovPos(GovPosition(govObj));
@@ -89,47 +89,47 @@ export const Gov: FunctionComponent<PanelProps> = ({style, searchIds, onSearchId
               </Accordion>
             )}
 
-            {gov && (gov['gov:position'] || gov['gov:hasArea']) && searchIds.gov.id !== '' && (
+            {(govData?.['gov:position'] || govData?.['gov:hasArea']) && searchIds.gov.id !== '' && (
               <Accordion>
                 <AccordionSummary expandIcon={<ExpandMore />} className='accordionSum' >
                   <GpsFixed /><span>Geografische Informationen</span>
                 </AccordionSummary>
                 <AccordionDetails className='geo'>
-                  {gov['gov:hasArea'] && <p style={{textAlign:'center'}}>Fläche in Km<sup>2</sup></p>}
+                  {govData['gov:hasArea'] && <p style={{textAlign:'center'}}>Fläche in Km<sup>2</sup></p>}
                   {govArea}
                   {govPos}
-                  {gov['gov:position'] && <GovMaps entity={gov} openPopup={openPopup}/>}
+                  {govData['gov:position'] && <GovMaps entity={govData} openPopup={openPopup}/>}
                 </AccordionDetails>
               </Accordion>
             )}
 
             <div className='tablelist'>
-              {gov && gov['gov:hasMunicipalityId'] && (
-                <p><b>amtlicher Gemeindeschlüssel:</b><span>{GOVLib.ags(gov)}</span></p>
+              {govData?.['gov:hasMunicipalityId'] && (
+                <p><b>amtlicher Gemeindeschlüssel:</b><span>{GOVLib.ags(govData)}</span></p>
               )}
 
-              {gov && gov['gov:hasName'] && (
-                <p><b>Name(n):</b><span>{GOVLib.hasname(gov)}</span></p>
+              {govData?.['gov:hasName'] && (
+                <p><b>Name(n):</b><span>{GOVLib.hasname(govData)}</span></p>
               )}
 
-              {gov && gov['gov:hasType'] && (
-                <p><b>ist:</b><span>{GOVLib.typ(gov)}</span></p>
+              {govData?.['gov:hasType'] && (
+                <p><b>ist:</b><span>{GOVLib.typ(govData)}</span></p>
               )}
 
-              {gov && gov['gov:hasURL'] && (
-                <p><b>Website:</b><span>{GOVLib.url(gov)}</span></p>
+              {govData?.['gov:hasURL'] && (
+                <p><b>Website:</b><span>{GOVLib.url(govData)}</span></p>
               )}
 
-              {gov && gov['gov:isPartOf'] && (
-                <p><b>übergeordnete Objekte:</b><span>{GOVLib.partOf(gov)}</span></p>
+              {govData?.['gov:isPartOf'] && (
+                <p><b>übergeordnete Objekte:</b><span>{GOVLib.partOf(govData)}</span></p>
               )}
 
-              {gov && gov['gov:note'] && (
-                <p><b>Fakten:</b><span>{GOVLib.note(gov)}</span></p>
+              {govData?.['gov:note'] && (
+                <p><b>Fakten:</b><span>{GOVLib.note(govData)}</span></p>
               )}
               
-              {gov && gov['owl:sameAs'] && (
-                <p><b>externe Referenzen:</b><span>{GOVLib.sameAs(gov)}</span></p>
+              {govData?.['owl:sameAs'] && (
+                <p><b>externe Referenzen:</b><span>{GOVLib.sameAs(govData)}</span></p>
               )}
 
             </div>

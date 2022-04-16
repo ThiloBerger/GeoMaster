@@ -1,5 +1,5 @@
 import { TextField } from "@mui/material";
-import { ReactElement, useContext, useRef, useState } from "react";
+import { ReactElement, useContext, useState } from "react";
 import { Global } from "../Global";
 
 interface SearchProps<T> {
@@ -26,18 +26,16 @@ export const SearchList = <T extends {}>({
   const [showSearch, setShowSearch] = useState<boolean>(false);
   const [search, setSearch] = useState<string>('');
 
-  const inputRef = useRef<HTMLInputElement>(null);
-
   const onClickList = (identifier: string, title: string): void => {
     console.log('### Du hast gesucht: ', title);
     global.search = title;
-    const input = document?.activeElement as HTMLInputElement;
-    input?.blur();
+    const input = document.activeElement as HTMLInputElement;
+    input.blur();
     setSearch(title);
     onClickSearch(identifier);
   }
 
-  const onChangeInput = (text: string) => {
+  const onChangeInput = (text: string): void => {
     setSearch(text);
     onChangeSearch(text);
   }
@@ -45,8 +43,7 @@ export const SearchList = <T extends {}>({
   return (
     <div className="search" onFocus={() => setShowSearch(true)} onBlur={() => setShowSearch(false)}>
       <TextField label={label} variant="filled"  size="small" autoComplete="off"
-        ref={inputRef}
-        onChange={(e) => onChangeInput(e.target.value)}
+        onChange={e => onChangeInput(e.target.value)}
         value={search}
       />
       <div

@@ -1,12 +1,12 @@
 import { ReactElement } from 'react';
-import { GovObject, GovPopulation } from '../interfaces/govRdf';
+import { GovData, GovPopulation } from '../interfaces/govRdf';
 
 export interface GOVPop {
     chart: ReactElement;
     total: number;
 }
 
-export const GovPopulationChart = (govObject: GovObject): GOVPop => {
+export const GovPopulationChart = (govObject: GovData): GOVPop => {
 
     if (!govObject['gov:hasPopulation']) return {chart: <></>, total: 0 };
 

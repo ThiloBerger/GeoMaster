@@ -25,7 +25,7 @@ export interface AdminCodes1 {
     ISO3166_2: string
 }
 
-export interface GeonameById {
+export interface GeonameData {
     adminCode1: string,
     adminCode2: string,
     adminCode3: string,

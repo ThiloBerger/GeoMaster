@@ -1,7 +1,7 @@
 import { Dispatch, Fragment, ReactElement, SetStateAction } from 'react';
 import { HREF } from '../components/piglets/Link';
 import { GndSameAs, GndString } from '../interfaces/GndJson';
-import { GovObject, GovRdf } from '../interfaces/govRdf';
+import { GovData, GovRdf } from '../interfaces/govRdf';
 import { ListID } from '../interfaces/listID';
 import { COUNTRIES_DB_DE } from '../interfaces/sprachen';
 import { WikidataCardResult, WikidataCityResult, WikidataExtraResult } from '../interfaces/wikidataCityData';
@@ -123,7 +123,7 @@ export class GOV {
         return xmlhttp.responseXML;
     }
 
-    static jsonToGOV = (json: {}): GovObject =>
+    static jsonToGOV = (json: {}): GovData =>
       (json as GovRdf)['rdf:RDF']['rdf:Description']['foaf:primaryTopic']['gov:GovObject'];
 
 }
@@ -180,7 +180,7 @@ export class LOB {
 }
 
 export class GOVLib {
-  static ags(govObj: GovObject): ReactElement[] {
+  static ags(govObj: GovData): ReactElement[] {
     const arr = govObj["gov:hasMunicipalityId"];
     const items = Array.isArray(arr) ? arr : [arr];
     return items.map((c, i) => (
@@ -188,7 +188,7 @@ export class GOVLib {
     ));
   }
 
-  static url(govObj: GovObject): ReactElement[] {
+  static url(govObj: GovData): ReactElement[] {
     const arr = govObj["gov:hasURL"];
     const items = Array.isArray(arr) ? arr : [arr];
     return items.map((c, i) =>
@@ -202,7 +202,7 @@ export class GOVLib {
     );
   }
 
-  static hasname(govObj: GovObject): ReactElement[] {
+  static hasname(govObj: GovData): ReactElement[] {
     const arr = govObj["gov:hasName"];
     const items = Array.isArray(arr) ? arr : [arr];
     return items.map((c, i) => (
@@ -230,7 +230,7 @@ export class GOVLib {
     ));
   }
 
-  static typ(govObj: GovObject): ReactElement[] {
+  static typ(govObj: GovData): ReactElement[] {
     const arr = govObj["gov:hasType"];
     const items = Array.isArray(arr) ? arr : [arr];
     return items.map((c, i) => (
@@ -248,7 +248,7 @@ export class GOVLib {
     ));
   }
 
-  static partOf(govObj: GovObject): ReactElement[] {
+  static partOf(govObj: GovData): ReactElement[] {
     const arr = govObj["gov:isPartOf"];
     const items = Array.isArray(arr) ? arr : [arr];
     return items.map((c, i) => (
@@ -269,7 +269,7 @@ export class GOVLib {
     ));
   }
 
-  static sameAs(govObj: GovObject): ReactElement[] {
+  static sameAs(govObj: GovData): ReactElement[] {
     const arr = govObj["owl:sameAs"];
     const items = Array.isArray(arr) ? arr : [arr];
     return items.map((c, i) => (
@@ -279,7 +279,7 @@ export class GOVLib {
     ));
   }
 
-  static note(govObj: GovObject): ReactElement[] {
+  static note(govObj: GovData): ReactElement[] {
     const arr = govObj["gov:note"];
     const items = Array.isArray(arr) ? arr : [arr];
     return items.map((c, i) => (
@@ -325,7 +325,13 @@ export class GOVLib {
   }
 
   static getGovLocatorId = (ort: string, lngLat: LngLat): string => {
-    const name = ort.toUpperCase().replaceAll(/^BAD\s/g,'').replaceAll(/(\s+)?\(.*\)/g,'');
+    const name = ort.replaceAll('ß', 's')
+      .toUpperCase()
+      .replaceAll(/^BAD\s/g,'')
+      .replaceAll(/(\s+)?\(.*\)/g,'')
+      .replaceAll('Ä','A')
+      .replaceAll('Ö','O')
+      .replaceAll('Ü','U');
     const prefix = (name.slice(0,3) + name.slice(-3))
     const sufix = this.getMaidenheadLocator(lngLat[0], lngLat[1]);
     return prefix + sufix;
@@ -348,6 +354,7 @@ export class WD {
   static testGovId = (extra: WikidataExtraResult, lngLat: LngLat, searchIds: ListID,
     onSearchIds: Function, setGovLocatorId: Dispatch<SetStateAction<string>>) => {
     const govSolvedId = GOVLib.getGovLocatorId(extra.ort.value, lngLat);
+    console.log('berechnete GOVid', govSolvedId);
     API.govTestId(govSolvedId).then(response => {
       const test = response.url.replaceAll(/^(.*\/)/g, '');
       if (test === govSolvedId) {
