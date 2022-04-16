@@ -9,7 +9,7 @@ import { Lang } from './types/lang';
 import { ListID } from './interfaces/listID';
 import { Gnd } from './components/Gnd';
 import { MapPopup } from './components/piglets/MapPopup';
-import { Slub } from './components/slub';
+/* import { Slub } from './components/slub'; */
 import { Wikidata } from './components/wikidata';
 
 import '@fontsource/roboto'
@@ -29,10 +29,10 @@ export const App: FunctionComponent = (): ReactElement => {
   const [showGnd, setShowGnd] = useState<boolean>(true);
   const [showGetty, setShowGetty] = useState<boolean>(false);
   const [showGeonames, setShowGeonames] = useState<boolean>(false);   
-  const [showSlub, setShowSlub] = useState<boolean>(false);
+/*   const [showSlub, setShowSlub] = useState<boolean>(false); */
   const [showGeoPortOst, setShowGeoPortOst] = useState<boolean>(false);  
   const [searchIds, setSearchIds] = useState(new ListID());
-  const [buttonOrder, setButtonOrder] = useState<number[]>([1,2,3,4,5,6,7]);
+  const [buttonOrder, setButtonOrder] = useState<number[]>([1,2,3,4,5,6]);
   const [popupUrl, setPopupUrl] = useState<string>('');
   const [popupOpen, setPopupOpen] = useState<boolean>(false);
   const [popupImage, setPopupImage] = useState<boolean>(false);
@@ -92,12 +92,12 @@ export const App: FunctionComponent = (): ReactElement => {
     setSearchIds(listId);
     setShowGeonames(!showGeonames)
   }  
-  const onClickSlubHandler = () => {
+/*   const onClickSlubHandler = () => {
     const listId = {...searchIds};
     listId.slub.apiCall = false
     setSearchIds(listId);
     setShowSlub(!showSlub)
-  }
+  } */
   const onClickGeoPortOstHandler = () => {
     const listId = {...searchIds};
     listId.geoportost.apiCall = false
@@ -148,12 +148,12 @@ export const App: FunctionComponent = (): ReactElement => {
           <Button variant='contained' onClick={()=>sort(5,-1)}><SwitchLeft /></Button>
           <Button variant='contained' onClick={()=>onClickGeonamesHandler()} className={searchIds.geonames.id !== '' ? 'found': ''}>GeoNames&nbsp;{showGeonames?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
         </div>
-        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 6)}}>
+{/*         <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 6)}}>
           <Button variant='contained' onClick={()=>sort(6,-1)}><SwitchLeft /></Button>
           <Button variant='contained' onClick={()=>onClickSlubHandler()} className={searchIds.slub.id !== '' ? 'found': ''}>SLUB&nbsp;{showSlub?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
-        </div>
-        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 7)}}>
-          <Button variant='contained' onClick={()=>sort(7,-1)}><SwitchLeft /></Button>
+        </div> */}
+        <div className='button-container' style={{order: buttonOrder.findIndex((i) => i === 6)}}>
+          <Button variant='contained' onClick={()=>sort(6,-1)}><SwitchLeft /></Button>
           <Button variant='contained' onClick={()=>onClickGeoPortOstHandler()} className={searchIds.slub.id !== '' ? 'found': ''}>GeoPort&nbsp;{showGeoPortOst?<CheckBoxTwoTone />:<CheckBoxOutlineBlankTwoTone />}</Button>
         </div>
         <Tooltip title={`${global.search}.json (${(new Blob([JSON.stringify(global)], {type: 'application/json'}).size/1024).toFixed(1)} KB)`}>
@@ -167,8 +167,8 @@ export const App: FunctionComponent = (): ReactElement => {
         {showGnd && <Gnd style={{order: buttonOrder.findIndex((i) => i === 3)}} searchIds={searchIds} openPopup={openPopup} onSearchIds={onSearchIdsHandler}/>}
         {showGetty && <Getty style={{order: buttonOrder.findIndex((i) => i === 4)}} searchIds={searchIds} onSearchIds={onSearchIdsHandler}/>}
         {showGeonames && <Geonames style={{order: buttonOrder.findIndex((i) => i === 5)}} searchIds={searchIds} openPopup={openPopup} onSearchIds={onSearchIdsHandler}/>}
-        {showSlub && <Slub style={{order: buttonOrder.findIndex((i) => i === 6)}} searchIds={searchIds} onSearchIds={onSearchIdsHandler}/>}
-        {showGeoPortOst && <GeoPortOst style={{order: buttonOrder.findIndex((i) => i === 7)}} searchIds={searchIds} onSearchIds={onSearchIdsHandler}/>}
+        {/* {showSlub && <Slub style={{order: buttonOrder.findIndex((i) => i === 6)}} searchIds={searchIds} onSearchIds={onSearchIdsHandler}/>}
+         */}{showGeoPortOst && <GeoPortOst style={{order: buttonOrder.findIndex((i) => i === 6)}} searchIds={searchIds} onSearchIds={onSearchIdsHandler}/>}
       </div>
     </div>
   );
