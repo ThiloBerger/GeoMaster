@@ -1,6 +1,6 @@
 import { AccountBalance, Castle, Church, ExpandMore, GpsFixed, Security, VolumeUp } from '@mui/icons-material';
 import Masonry from '@mui/lab/Masonry';
-import { Accordion, AccordionDetails, AccordionSummary, Badge } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Badge, ToggleButton, ToggleButtonGroup, Tooltip } from '@mui/material';
 import osmtogeojson from 'osmtogeojson';
 import { Fragment, FunctionComponent, ReactElement, useContext, useEffect, useState } from 'react';
 import { ListID } from '../interfaces/listID';
@@ -57,6 +57,7 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   const [osmLayer, setOsmLayer] = useState<OverlayerOsm>({} as OverlayerOsm);
   const [govLocatorId, setGovLocatorId] = useState<string>(''); 
   const [plzPop, setPlzPop] = useState<WDPLZPop>({} as WDPLZPop);
+  const [reconci, setReconci] = useState<string|null>(null);
 
   const externalRef: Record<string,string> = {
     Geonames: 'https://www.geonames.org/',
@@ -226,11 +227,17 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
   }, [features, global, global.overpass, global.wikidata, lang, onSearchIds, searchIds]);
 
   const onChangeSearchHandler = (text: string) => {
-    if (text !== '') API.wdLookup(text, lang, 20).then(data => setWbSearchEntities(data.search));
-    else setWbSearchEntities([]);
-
-    // if (text !== '') API.recondiLookup(text, lang, 20).then(data => console.log('Recondi: ', data));
-    
+    if (text !== '') {
+      if (reconci) API.reconciLookup(text, lang, 20).then(data => {
+        const searchEntities: WbSearchEntities[] = [];
+        data.result.forEach(item => {
+          searchEntities.push({id: item.id, label: item.name, description: item.description});
+        });
+        setWbSearchEntities(searchEntities);
+      });
+      else API.wdLookup(text, lang, 20).then(data => setWbSearchEntities(data.search));
+    }
+    else setWbSearchEntities([]);    
   };
 
   const onClickSearch = (id: string) => {
@@ -240,11 +247,31 @@ export const Wikidata: FunctionComponent<PanelProps> = ({
     onSearchIds(newListId);
   };
 
+  const handleReconci = (event: React.MouseEvent<HTMLElement>, value: string | null) => {
+      setReconci(value);
+      console.log('Reconci: ', value);
+  };
+
   return (
     <div className='wikidata panel' style={style}>
 
-      <SearchList label='WikiData Suche' onChangeSearch={onChangeSearchHandler} onClickSearch={onClickSearch}
-       getDescription={item => item.description} getId={item => item.id} getTitle={item => item.label} items={wbSearchEntities} />
+      <div className='search-box'>
+        <SearchList label='WikiData Suche' onChangeSearch={onChangeSearchHandler} onClickSearch={onClickSearch}
+        getDescription={item => item.description} getId={item => item.id} getTitle={item => item.label} items={wbSearchEntities} />
+
+        <ToggleButtonGroup
+          value={reconci}
+          exclusive
+          onChange={handleReconci}
+          aria-label="RECONCI"
+        >
+          <Tooltip title="verwendet Reconci zur Wikidata-Suche (genauer, aber langsamer)">
+            <ToggleButton value="RECONCI" aria-label="RECONCI" >
+              RECONCI
+            </ToggleButton>
+          </Tooltip>
+        </ToggleButtonGroup> 
+      </div>
 
       <h3>Wikidata.org<br /><span>Die freie Wissensdatenbank</span></h3>
       {searchIds.wikidata.id !== '' && (

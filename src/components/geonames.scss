@@ -13,12 +13,7 @@
     }
   }
 }
-.region {
-  position: fixed;
-  top: 5em;
-  z-index: 3;
-  margin-left: 285px;
-}
+
 
 button {
   &[aria-pressed='true'].Mui-selected {

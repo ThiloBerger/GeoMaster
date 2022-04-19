@@ -134,7 +134,7 @@ export const Geonames: FunctionComponent<PanelProps> = ({
 
   return (
     <div className='geonames panel' style={style}>
-
+<div className='search-box'>
       <SearchList label='Geonames Suche' onChangeSearch={onChangeSearchHandler} onClickSearch={onClickSearch}
        getDescription={item => item.countryName} getId={item => item.geonameId.toString()} getTitle={item => item.name} items={geonamesSearchEntities} />
 
@@ -143,12 +143,11 @@ export const Geonames: FunctionComponent<PanelProps> = ({
         onChange={handleOption}
         color="primary"
         aria-label="Region"
-        className='region'
       >
         <ToggleButton value="DE" aria-label="Deutschland">DE</ToggleButton>
         <ToggleButton value="EU" aria-label="Europa">EU</ToggleButton>
       </ToggleButtonGroup>
-
+</div>
 
       <h3>geonames.org<br />
         <span>The GeoNames Geographical Database</span>

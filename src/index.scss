@@ -146,6 +146,19 @@ a {
   } 
 }
 
+.search-box {
+  display: flex;
+  align-items: center;
+  .search {
+    width: min-content;
+  }
+  div[role="group"] {
+    z-index: 3;
+    height: 2em;
+    margin-left: 1em;
+  }
+}
+
 .accordionSum > div {
   align-items: center;
   .spinner {

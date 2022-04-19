@@ -6,7 +6,7 @@ import { GettyJson } from '../interfaces/gettyJson';
 import { GndJson } from '../interfaces/GndJson';
 import { Maps } from '../interfaces/maps';
 import { OVERPASS } from '../interfaces/overpass';
-import { WbSearch } from '../interfaces/wbSearch';
+import { riconciJson, WbSearch } from '../interfaces/wbSearch';
 import { WikidataCard, WikidataCity, WikidataExtra, WikidataPopulation } from '../interfaces/wikidataCityData';
 import { GOVKEY } from '../types/govkey';
 import { Lang } from '../types/lang';
@@ -170,7 +170,7 @@ static readonly govEntryById = async (govId: string): Promise<Document> => {
 
 // ############### WIKIDATA ###############
 // Alternative https://wikidata.reconci.link/en/api?query={"query":"Leipzig","type":"Q56061"}
-static readonly recondiLookup = async (search: string, lang: Lang, limit: number): Promise<WbSearch> => {
+static readonly reconciLookup = async (search: string, lang: Lang, limit: number): Promise<riconciJson> => {
   const BASEURL_RECONCI = `https://wikidata.reconci.link/${lang}/api?query=`;
   const json = {query: search, type: "Q486972"};
   const url = `${BASEURL_RECONCI}${JSON.stringify(json)}`;
